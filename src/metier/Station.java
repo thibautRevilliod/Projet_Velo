@@ -9,15 +9,15 @@ public class Station {
 	private String nomStation;
 	private Position position;
 	public static HashMap<Integer, Station> lesStations = new HashMap<Integer, Station>();
-	public ArrayList<Velo> lesVelos = new ArrayList<Velo>();
+	public static ArrayList<Velo> lesVelos = new ArrayList<Velo>();
 	public static int idsStation = 0; 
 	
 
-	public Station(int idStation, String nomStation, Position position) {
-		this.idStation = idStation;
+	public Station(int idStation, String nomStation, Position position) {		
 		this.nomStation = nomStation;
 		this.position = position;
 		idsStation++;
+		this.idStation = idsStation;
 		lesStations.put(idsStation,this);
 	}
 	
