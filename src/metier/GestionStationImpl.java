@@ -91,6 +91,23 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		client.setVelo(null);
 		station.lesVelos.add(velo);
 	}
+	
+	@Override
+	public synchronized boolean estUtilisateurIdentifie(int identifiant, String motDePasse) throws RemoteException
+	{
+		Utilisateur utilisateur;
+		
+		if (Utilisateur.lesUtilisateurs.containsKey(identifiant))
+		{
+			utilisateur = Utilisateur.lesUtilisateurs.get(identifiant);
+			return utilisateur.getIdUtilisateur()==identifiant && utilisateur.getMotDePasse()==motDePasse;
+		}
+		else
+		{
+			return false;
+		}
+		
+	}
 
 	public synchronized static void main(String[] args) throws Exception {
 		LocateRegistry.createRegistry(1099);

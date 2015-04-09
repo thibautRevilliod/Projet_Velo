@@ -40,6 +40,25 @@ public abstract class Utilisateur {
 		this.idUtilisateur = idUtilisateur;
 	}
 	
+	
+	
+	public String getMotDePasse() {
+		return motDePasse;
+	}
+
+	public void setMotDePasse(String motDePasse) {
+		this.motDePasse = motDePasse;
+	}
+
+	public static HashMap<Integer, Utilisateur> getLesUtilisateurs() {
+		return lesUtilisateurs;
+	}
+
+	public static void setLesUtilisateurs(
+			HashMap<Integer, Utilisateur> lesUtilisateurs) {
+		Utilisateur.lesUtilisateurs = lesUtilisateurs;
+	}
+
 	public void ajouterCarteAcces(CarteAcces carteAcces, Role role)
 	{
 		this.lesCartesAccesUtilisateur.put(role, carteAcces);

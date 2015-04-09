@@ -27,4 +27,6 @@ public interface GestionStation extends java.rmi.Remote {
 	public void emprunterVeloClient(Client client, Velo velo, Station station) throws java.rmi.RemoteException;
 	
 	public void ramenerVeloClient(Client client, Velo velo, Station station) throws java.rmi.RemoteException;
+	
+	public boolean estUtilisateurIdentifie(int identifiant, String motDePasse) throws java.rmi.RemoteException;
 }
