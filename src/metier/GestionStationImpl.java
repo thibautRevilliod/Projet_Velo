@@ -2,7 +2,7 @@ package metier;
 
 import java.util.HashMap;
 
-public class GestionStationImpl {
+public class GestionStationImpl implements GestionStation {
 	
 	public void ajouterStation(Station station)
 	{
@@ -16,11 +16,13 @@ public class GestionStationImpl {
 	
 	public void ajouterVeloStation(Velo velo, Station station)
 	{
+		velo.setStation(station);
 		station.ajouterVelo(velo);
 	}
 	
 	public void supprimerVeloStation(Velo velo, Station station)
 	{
+		velo.setStation(null);
 		station.supprimerVelo(velo);
 	}
 	

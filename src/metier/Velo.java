@@ -22,10 +22,14 @@ public class Velo {
 	}
 
 
+	public Station getStation() {
+		return station;
+	}
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
+
+	public void setStation(Station station) {
+		this.station = station;
 	}
 
 }
