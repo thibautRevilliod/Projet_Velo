@@ -38,11 +38,11 @@ public class StationClient {
 		System.out.println("Veuillez entrer votre nom : ");
 		nom = sc.next();
 		System.out.println("Veuillez entrer votre prenom : ");
-		prenom = sc.next();
+		prenom = sc.nextLine();
 		System.out.println("Veuillez entrer votre telephone : ");
-		telephone = sc.next();
+		telephone = sc.nextLine();
 		System.out.println("Veuillez entrer votre email : ");
-		adresseMail = sc.next();
+		adresseMail = sc.nextLine();
 		System.out.println("Veuillez entrer votre adresse postale : ");
 		adressePostale = sc.nextLine();
 		System.out.println("Veuillez entrer votre mot de passe : ");
@@ -73,15 +73,22 @@ public class StationClient {
 		}	
 	}
 	
-	public static void menuIdentification()
+	public static void menuIdentification() throws RemoteException
 	{
-		String identifiant;
+		int identifiant;
 		String mdp;
 		System.out.println("Veuillez entrer votre identifiant : ");
-		identifiant = sc.next();
+		identifiant = sc.nextInt();
 		System.out.println("Veuillez entrer votre mot de passe : ");
 		mdp = sc.next();
-		boolean reponsOk = proxyGS.estUtilisateurIdentifier(identifiant, mdp);
+		boolean reponsOk = proxyGS.estUtilisateurIdentifie(identifiant, mdp);
+		if(reponsOk)
+		{
+			System.out.println("Connexion réussie");
+		}else
+		{
+			System.out.println("Connexion refusée");
+		}
 	}
 
 	public static void main(String[] args) throws Exception {
