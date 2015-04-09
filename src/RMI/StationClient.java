@@ -31,7 +31,8 @@ public class StationClient {
 		System.out.println("Veuillez choisir le type de compte : ");
 		System.out.println("--1) Client");
 		System.out.println("--2) Operateur");
-		System.out.println("--2) Administrateur");
+		System.out.println("--3) Administrateur");
+		System.out.println("--4) Quitter");
 		valeurChoix = sc.nextInt();
 		
 		System.out.println("Veuillez entrer votre nom : ");
@@ -51,12 +52,21 @@ public class StationClient {
 		{
 		case 1:
 			identifiantUtilisateur = proxyGS.creerClient(nom, prenom, mdp, telephone, adresseMail, adressePostale);
+			System.out.println("Utilisateur créé");
+			System.out.println("  Identifiant : " + identifiantUtilisateur);
+			System.out.println("  Mot de passe : " + mdp);		
 			break;
 		case 2:
 			identifiantUtilisateur = proxyGS.creerOperateur(nom, prenom, mdp, telephone, adresseMail, adressePostale);
+			System.out.println("Utilisateur créé");
+			System.out.println("  Identifiant : " + identifiantUtilisateur);
+			System.out.println("  Mot de passe : " + mdp);		
 			break;
 		case 3:
 			identifiantUtilisateur = proxyGS.creerAdministrateur(nom, prenom, mdp, telephone, adresseMail, adressePostale);
+			System.out.println("Utilisateur créé");
+			System.out.println("  Identifiant : " + identifiantUtilisateur);
+			System.out.println("  Mot de passe : " + mdp);		
 			break;
 		}	
 	}
@@ -95,10 +105,7 @@ public class StationClient {
 				case 1:
 					menuCreerCompte();
 				case 2:
-//					System.out.println("Veuillez entrer votre nom : ");
-//					nom = sc.next();
-//					System.out.println("Veuillez entrer votre prenom : ");
-//					prenom = sc.next();
+					menuIdentification();
 			}
 			
 			System.out.println("--2) Emprunter un vélo");
