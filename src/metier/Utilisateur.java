@@ -16,15 +16,65 @@ public abstract class Utilisateur {
 	public static HashMap<Integer, Utilisateur> lesUtilisateurs = new HashMap<Integer, Utilisateur>();
 	public static int idsUtilisateur = 0; 
 	
-	public Utilisateur(int pidUtilisateur, String pnom, String pprenom, int ptelephone){
-		idUtilisateur = pidUtilisateur;
+	public Utilisateur(String pnom, String pprenom, int ptelephone){
 		nom = pnom;
 		prenom = pprenom;
 		telephone = ptelephone;
 		idsUtilisateur++;
+		idUtilisateur=idsUtilisateur;
 		Utilisateur.lesUtilisateurs.put(idsUtilisateur,this);
 	}
 	
+	
+	
+	public int getIdUtilisateur() {
+		return idUtilisateur;
+	}
+
+
+
+	public void setIdUtilisateur(int idUtilisateur) {
+		this.idUtilisateur = idUtilisateur;
+	}
+
+
+
+	public String getNom() {
+		return nom;
+	}
+
+
+
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
+
+
+	public String getPrenom() {
+		return prenom;
+	}
+
+
+
+	public void setPrenom(String prenom) {
+		this.prenom = prenom;
+	}
+
+
+
+	public int getTelephone() {
+		return telephone;
+	}
+
+
+
+	public void setTelephone(int telephone) {
+		this.telephone = telephone;
+	}
+
+
+
 	public void ajouterCarteAcces(CarteAcces carteAcces)
 	{
 		this.lesCartesAccesUtilisateur.add(carteAcces);

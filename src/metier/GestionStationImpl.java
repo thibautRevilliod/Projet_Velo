@@ -4,12 +4,6 @@ import java.util.HashMap;
 
 public class GestionStationImpl {
 	
-	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-	
 	public void ajouterStation(Station station)
 	{
 		Station.lesStations.put(station.getIdStation(), station);
@@ -38,7 +32,24 @@ public class GestionStationImpl {
 	
 	public void ajouterUtilisateur (Utilisateur utilisateur)
 	{
-		utilisateur.lesUtilisateurs.put
+		utilisateur.lesUtilisateurs.put(utilisateur.getIdUtilisateur(), utilisateur);
+	}
+	
+	public void supprimerUtilisateur (Utilisateur utilisateur)
+	{
+		utilisateur.lesUtilisateurs.remove(utilisateur.getIdUtilisateur(), utilisateur);
+	}	
+	
+	public void emprunterVeloClient(Client client, Velo velo, Station station)
+	{
+		client.setVelo(velo);
+		station.lesVelos.remove(velo);
+	}
+	
+	public void ramenerVeloClient(Client client, Velo velo, Station station)
+	{
+		client.setVelo(null);
+		station.lesVelos.add(velo);
 	}
 
 }
