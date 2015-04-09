@@ -4,7 +4,7 @@ import java.rmi.registry.LocateRegistry;
 
 import metier.GestionStationImpl;
 
-public class GestionStationServer {
+public class GestionStationServerAnnuaire {
 
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub

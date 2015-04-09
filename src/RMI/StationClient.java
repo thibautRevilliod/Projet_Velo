@@ -63,6 +63,16 @@ public class StationClient {
 		System.out.println("  Identifiant : " + identifiantUtilisateur);
 		System.out.println("  Mot de passe : " + mdp);		
 	}
+	
+	public static void menuIdentification()
+	{
+		String identifiant;
+		String mdp;
+		System.out.println("Veuillez entrer votre identifiant : ");
+		identifiant = sc.next();
+		System.out.println("Veuillez entrer votre mot de passe : ");
+		mdp = sc.next();
+	}
 
 	public static void main(String[] args) throws Exception {
 		proxyGS = (GestionStation) Naming.lookup("rmi://localhost:1099/MaGestionStation");
@@ -80,6 +90,7 @@ public class StationClient {
 				case 1:
 					menuCreerCompte();
 				case 2:
+					menuIdentification();
 //					System.out.println("Veuillez entrer votre nom : ");
 //					nom = sc.next();
 //					System.out.println("Veuillez entrer votre prenom : ");
