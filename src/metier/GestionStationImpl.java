@@ -100,7 +100,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		if (Utilisateur.lesUtilisateurs.containsKey(identifiant))
 		{
 			utilisateur = Utilisateur.lesUtilisateurs.get(identifiant);
-			return utilisateur.getIdUtilisateur()==identifiant && utilisateur.getMotDePasse()==motDePasse;
+			return utilisateur.getIdUtilisateur()==identifiant && utilisateur.getMotDePasse().equals(motDePasse);
 		}
 		else
 		{
