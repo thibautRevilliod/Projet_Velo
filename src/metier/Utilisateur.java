@@ -3,7 +3,8 @@ package metier;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.sun.javafx.scene.accessibility.Role;
+import metier.CarteAcces.Statut;
+import metier.CarteAcces.Role;
 
 public abstract class Utilisateur {
 
@@ -12,7 +13,7 @@ public abstract class Utilisateur {
 	private String prenom;
 	private int telephone;
 	//un utilisateur peut avoir plusieurs cartes d'acces (ex : le gestionnaire peut être aussi client)
-	public ArrayList<CarteAcces> lesCartesAccesUtilisateur = new ArrayList<CarteAcces>(); 
+	public HashMap<Role,CarteAcces> lesCartesAccesUtilisateur = new HashMap<Role, CarteAcces>(); 
 	public static HashMap<Integer, Utilisateur> lesUtilisateurs = new HashMap<Integer, Utilisateur>();
 	public static int idsUtilisateur = 0; 
 	
@@ -21,68 +22,26 @@ public abstract class Utilisateur {
 		prenom = pprenom;
 		telephone = ptelephone;
 		idsUtilisateur++;
-		idUtilisateur=idsUtilisateur;
+		idUtilisateur = idsUtilisateur;
 		Utilisateur.lesUtilisateurs.put(idsUtilisateur,this);
 	}
-	
-	
 	
 	public int getIdUtilisateur() {
 		return idUtilisateur;
 	}
 
-
-
 	public void setIdUtilisateur(int idUtilisateur) {
 		this.idUtilisateur = idUtilisateur;
 	}
-
-
-
-	public String getNom() {
-		return nom;
-	}
-
-
-
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-
-
-
-	public String getPrenom() {
-		return prenom;
-	}
-
-
-
-	public void setPrenom(String prenom) {
-		this.prenom = prenom;
-	}
-
-
-
-	public int getTelephone() {
-		return telephone;
-	}
-
-
-
-	public void setTelephone(int telephone) {
-		this.telephone = telephone;
-	}
-
-
-
-	public void ajouterCarteAcces(CarteAcces carteAcces)
+	
+	public void ajouterCarteAcces(CarteAcces carteAcces, Role role)
 	{
-		this.lesCartesAccesUtilisateur.add(carteAcces);
+		this.lesCartesAccesUtilisateur.put(role, carteAcces);
 	}
 	
-	public void desactiverCarteAcces(CarteAcces carteAcces)
+	public void desactiverCarteAcces(Role role)
 	{
-		this.lesCartesAccesUtilisateur.get(carteAcces.getIdCarteAcces()).setRole(metier.CarteAcces.Role.Expire);
+		lesCartesAccesUtilisateur.get(role).setStatut(Statut.Inactive);
 	}
 
 }

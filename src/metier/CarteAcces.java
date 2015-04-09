@@ -5,13 +5,26 @@ import java.util.HashMap;
 
 public class CarteAcces {
 	
-	public enum Role{Administrateur, Operateur, Client, Expire};
-	private Role role;	
+	public enum Role{Administrateur, Operateur, Client};
+	public enum Statut{Active, Inactive};
 	
-	public CarteAcces(Role role) {
-		this.role = role;
+	private Role role;	
+	private Statut statut;
+	
+	public CarteAcces(Role prole) {
+		this.role = prole;
+		this.statut = Statut.Active;
 	}
 
+	
+	public Statut getStatut() {
+		return statut;
+	}
+
+
+	public void setStatut(Statut statut) {
+		this.statut = statut;
+	}
 
 	public Role getRole() {
 		return role;

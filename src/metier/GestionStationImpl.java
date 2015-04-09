@@ -37,7 +37,7 @@ public class GestionStationImpl {
 	
 	public void supprimerUtilisateur (Utilisateur utilisateur)
 	{
-		utilisateur.lesUtilisateurs.remove(utilisateur.getIdUtilisateur(), utilisateur);
+		utilisateur.lesUtilisateurs.remove(utilisateur.getIdUtilisateur());
 	}	
 	
 	public void emprunterVeloClient(Client client, Velo velo, Station station)

@@ -10,7 +10,7 @@ public class Client extends Utilisateur {
 			int ptelephone) {
 		super(pnom, pprenom, ptelephone);
 		CarteAcces carteAcces = new CarteAcces(Role.Client);
-		lesCartesAccesUtilisateur.add(carteAcces);
+		lesCartesAccesUtilisateur.put(carteAcces.getRole(),carteAcces);
 		// TODO Auto-generated constructor stub
 	}
 
