@@ -1,6 +1,7 @@
 package RMI;
 
 import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.util.Scanner;
 
 import metier.GestionStation;
@@ -18,7 +19,7 @@ public class StationClient {
 		valeurChoix = sc.nextInt();
 	}
 	
-	public static void menuCreerCompte(){
+	public static void menuCreerCompte() throws RemoteException{
 		String nom;
 		String prenom;
 		String telephone;
@@ -30,7 +31,8 @@ public class StationClient {
 		System.out.println("Veuillez choisir le type de compte : ");
 		System.out.println("--1) Client");
 		System.out.println("--2) Operateur");
-		System.out.println("--2) Administrateur");
+		System.out.println("--3) Administrateur");
+		System.out.println("--4) Quitter");
 		valeurChoix = sc.nextInt();
 		
 		System.out.println("Veuillez entrer votre nom : ");
@@ -42,26 +44,33 @@ public class StationClient {
 		System.out.println("Veuillez entrer votre email : ");
 		adresseMail = sc.next();
 		System.out.println("Veuillez entrer votre adresse postale : ");
-		adressePostale = sc.next();
+		adressePostale = sc.nextLine();
 		System.out.println("Veuillez entrer votre mot de passe : ");
-		mdp = sc.next();
+		mdp = sc.nextLine();
 		
 		switch(valeurChoix)
 		{
 		case 1:
 			identifiantUtilisateur = proxyGS.creerClient(nom, prenom, mdp, telephone, adresseMail, adressePostale);
+			System.out.println("Utilisateur créé");
+			System.out.println("  Identifiant : " + identifiantUtilisateur);
+			System.out.println("  Mot de passe : " + mdp);	
 			break;
 		case 2:
 			identifiantUtilisateur = proxyGS.creerOperateur(nom, prenom, mdp, telephone, adresseMail, adressePostale);
+			System.out.println("Utilisateur créé");
+			System.out.println("  Identifiant : " + identifiantUtilisateur);
+			System.out.println("  Mot de passe : " + mdp);	
 			break;
 		case 3:
 			identifiantUtilisateur = proxyGS.creerAdministrateur(nom, prenom, mdp, telephone, adresseMail, adressePostale);
+			System.out.println("Utilisateur créé");
+			System.out.println("  Identifiant : " + identifiantUtilisateur);
+			System.out.println("  Mot de passe : " + mdp);	
 			break;
-		}
-		
-		System.out.println("Utilisateur créé");
-		System.out.println("  Identifiant : " + identifiantUtilisateur);
-		System.out.println("  Mot de passe : " + mdp);		
+		case 4:
+			break;
+		}	
 	}
 	
 	public static void menuIdentification()
@@ -72,6 +81,7 @@ public class StationClient {
 		identifiant = sc.next();
 		System.out.println("Veuillez entrer votre mot de passe : ");
 		mdp = sc.next();
+		boolean reponsOk = proxyGS.estUtilisateurIdentifier(identifiant, mdp);
 	}
 
 	public static void main(String[] args) throws Exception {

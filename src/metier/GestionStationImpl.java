@@ -4,10 +4,14 @@ import java.rmi.Naming;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
-public class GestionStationImpl implements GestionStation {
-	
+public class GestionStationImpl extends UnicastRemoteObject implements GestionStation {
+	public GestionStationImpl() throws RemoteException {
+		super();
+	}
+
 	@Override
 	public synchronized void ajouterStation(Station station) throws RemoteException
 	{
@@ -91,7 +95,7 @@ public class GestionStationImpl implements GestionStation {
 	public synchronized static void main(String[] args) throws Exception {
 		LocateRegistry.createRegistry(1099);
 		Naming.rebind("MaGestionStation",new GestionStationImpl());
-		System. out.println("MaGestionStation est enregistrée");
+		System.out.println("MaGestionStation est enregistrée");
 	}
 
 }
