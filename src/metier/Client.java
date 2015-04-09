@@ -6,9 +6,9 @@ public class Client extends Utilisateur {
 	
 	public Velo velo;
 
-	public Client(int pidUtilisateur, String pnom, String pprenom,
-			int ptelephone) {
-		super(pnom, pprenom, ptelephone);
+	public Client(String pnom, String pprenom, String pmotdepasse,
+			String ptelephone, String padressemail, String padressepostale) {
+		super(pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);
 		CarteAcces carteAcces = new CarteAcces(Role.Client);
 		lesCartesAccesUtilisateur.put(carteAcces.getRole(),carteAcces);
 		// TODO Auto-generated constructor stub

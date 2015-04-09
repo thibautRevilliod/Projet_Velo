@@ -11,16 +11,22 @@ public abstract class Utilisateur {
 	private int idUtilisateur;
 	private String nom;
 	private String prenom;
-	private int telephone;
+	private String motDePasse;
+	private String telephone;
+	private String adresseMail;
+	private String adressePostale;
 	//un utilisateur peut avoir plusieurs cartes d'acces (ex : le gestionnaire peut être aussi client)
 	public HashMap<Role,CarteAcces> lesCartesAccesUtilisateur = new HashMap<Role, CarteAcces>(); 
 	public static HashMap<Integer, Utilisateur> lesUtilisateurs = new HashMap<Integer, Utilisateur>();
 	public static int idsUtilisateur = 0; 
 	
-	public Utilisateur(String pnom, String pprenom, int ptelephone){
+	public Utilisateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, String padressepostale){
 		nom = pnom;
 		prenom = pprenom;
+		motDePasse = pmotdepasse;
 		telephone = ptelephone;
+		adresseMail = padressemail;
+		adressePostale = padressepostale;
 		idsUtilisateur++;
 		idUtilisateur = idsUtilisateur;
 		Utilisateur.lesUtilisateurs.put(idsUtilisateur,this);

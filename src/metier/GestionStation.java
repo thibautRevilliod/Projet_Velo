@@ -5,6 +5,15 @@ public interface GestionStation {
 	
 	public void supprimerStation(Station station);
 	
+	public int creerOperateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, 
+			String padressepostale);
+
+	public int creerAdministrateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, 
+			String padressepostale);
+	
+	public int creerClient(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, 
+			String padressepostale);
+	
 	public void ajouterVeloStation(Velo velo, Station station);
 	
 	public void supprimerVeloStation(Velo velo, Station station);
