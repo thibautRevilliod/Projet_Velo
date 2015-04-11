@@ -2,6 +2,8 @@ package metier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class Station {
 	
@@ -67,6 +69,32 @@ public class Station {
 	public void supprimerVelo(Velo velo)
 	{
 		this.lesVelos.remove(velo);
+	}
+	
+	
+	public Station getStationLaPlusProche()
+	{
+		Station stationPlusProche = null;
+		double distanceMinimale = 10000; 
+		double distanceCalculee = 0; 
+		
+		Iterator it = lesStations.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Integer idStation = (Integer) pair.getKey();
+	        Station station = (Station) pair.getValue();
+	        
+	        distanceCalculee = Distance.distanceInKilometers(this.getPosition().getLatitude(), this.getPosition().getLongitude(), station.getPosition().getLatitude(), station.getPosition().getLongitude());
+	        if(distanceCalculee<distanceMinimale)
+	        {
+	        	distanceMinimale=distanceCalculee;
+	        	stationPlusProche=station;
+	        }	        
+	        
+	        it.remove(); // avoids a ConcurrentModificationException
+	    }
+		
+		return stationPlusProche;
 	}
 	
 

@@ -25,6 +25,30 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 	
 	@Override
+	public synchronized int creerUtilisateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, String padressepostale, String objectClass) throws RemoteException 
+	{
+		Class myClass;
+		int idUtilisateur = -1; // idUtilisateur non ok 
+		try {
+			myClass = Class.forName(objectClass);
+			if (myClass.isInstance(Administrateur.class)) {
+				idUtilisateur = creerAdministrateur(pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);
+		    }
+			else if(myClass.isInstance(Operateur.class)) {
+				idUtilisateur = creerOperateur(pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);		    
+			}
+			else if(myClass.isInstance(Client.class)) {
+				idUtilisateur = creerClient(pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);		    
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return idUtilisateur;
+	    
+	}
+	
+	@Override
 	public synchronized int creerOperateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, String padressepostale) throws RemoteException 
 	{
 		Operateur operateur = new Operateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
@@ -79,7 +103,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}	
 	
 	@Override
-	public synchronized void emprunterVeloClient(Client client, Velo velo, Station station) throws RemoteException
+	public synchronized void emprunterVeloUtilisateur(Client client, Velo velo, Station station) throws RemoteException
 	{
 		client.setVelo(velo);
 		station.lesVelos.remove(velo);
@@ -108,6 +132,12 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		}
 		
 	}
+	
+	public Station chercherStationLaPlusProche(Station stationActuelle) throws java.rmi.RemoteException
+	{
+		return stationActuelle.getStationLaPlusProche();
+	}
+	
 
 	public synchronized static void main(String[] args) throws Exception {
 		LocateRegistry.createRegistry(1099);

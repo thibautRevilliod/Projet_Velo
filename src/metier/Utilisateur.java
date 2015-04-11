@@ -49,6 +49,8 @@ public abstract class Utilisateur {
 	public void setMotDePasse(String motDePasse) {
 		this.motDePasse = motDePasse;
 	}
+	
+	
 
 	public static HashMap<Integer, Utilisateur> getLesUtilisateurs() {
 		return lesUtilisateurs;
