@@ -1,8 +1,5 @@
 package metier;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 public class CarteAcces {
 	
 	public enum Role{Administrateur, Operateur, Client};
