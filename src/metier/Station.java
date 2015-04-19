@@ -11,7 +11,7 @@ public class Station {
 	private String nomStation;
 	private Position position;
 	public static HashMap<Integer, Station> lesStations = new HashMap<Integer, Station>();
-	public static ArrayList<Velo> lesVelos = new ArrayList<Velo>();
+	public ArrayList<Velo> lesVelos = new ArrayList<Velo>();
 	public static int idsStation = 0; 
 	
 
@@ -69,6 +69,36 @@ public class Station {
 	public void supprimerVelo(Velo velo)
 	{
 		this.lesVelos.remove(velo);
+	}
+	
+	public static Station getStation(int idStation)
+	{
+		Iterator it = lesStations.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Station stationListe = (Station) pair.getValue();
+	        
+	        if(stationListe.getIdStation() == idStation)
+	        {
+	        	return stationListe;
+	        }
+	    }
+	    
+	    return null;
+	}
+	
+	public Velo getVeloStation(int idVelo)
+	{
+		for(int i = 0; i < lesVelos.size(); i++){
+		    Velo velo = lesVelos.get(i);
+		    
+		    if(velo.getIdVelo() == idVelo)
+		    {
+		    	return velo;
+		    }
+		}
+		
+		return null;
 	}
 	
 	

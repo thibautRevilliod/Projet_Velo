@@ -2,6 +2,7 @@ package metier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import metier.CarteAcces.Statut;
 import metier.CarteAcces.Role;
@@ -69,6 +70,21 @@ public abstract class Utilisateur {
 	public void desactiverCarteAcces(Role role)
 	{
 		lesCartesAccesUtilisateur.get(role).setStatut(Statut.Inactive);
+	}
+	
+	public String[] getRoles()
+	{
+		int numberOfRoles = CarteAcces.Role.values().length;
+		String[] lesRoles = new String[numberOfRoles];
+		
+		int i =0;
+		for(Map.Entry<Role, CarteAcces> lesCartes : lesCartesAccesUtilisateur.entrySet())
+		{
+			lesRoles[i] = lesCartes.getKey().toString();
+			i++;
+		}
+		
+		return lesRoles;
 	}
 
 }

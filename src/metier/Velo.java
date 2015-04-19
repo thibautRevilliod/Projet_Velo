@@ -18,8 +18,17 @@ public class Velo {
 		idsVelo++;
 		this.idVelo = idsVelo;
 		lesVelos.put(idsVelo,this);
-		Station.lesVelos.add(this);
+		station.lesVelos.add(this);
 	}
+	
+	
+
+
+	public int getIdVelo() {
+		return idVelo;
+	}
+
+
 
 
 	public Station getStation() {
@@ -31,5 +40,17 @@ public class Velo {
 	public void setStation(Station station) {
 		this.station = station;
 	}
+
+
+	public Etat getEtat() {
+		return etat;
+	}
+
+
+	public void setEtat(Etat etat) {
+		this.etat = etat;
+	}
+	
+	
 
 }

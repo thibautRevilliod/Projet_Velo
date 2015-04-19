@@ -7,6 +7,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
+import metier.Velo.Etat;
+
 public class GestionStationImpl extends UnicastRemoteObject implements GestionStation {
 	public GestionStationImpl() throws RemoteException {
 		super();
@@ -103,8 +105,9 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}	
 	
 	@Override
-	public synchronized void emprunterVeloUtilisateur(Client client, Velo velo, Station station) throws RemoteException
+	public synchronized void emprunterVeloClient(Client client, Velo velo, Station station) throws RemoteException
 	{
+		velo.setEtat(Etat.Emprunte);
 		client.setVelo(velo);
 		station.lesVelos.remove(velo);
 	}
@@ -133,10 +136,57 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		
 	}
 	
-	public Station chercherStationLaPlusProche(Station stationActuelle) throws java.rmi.RemoteException
+	public synchronized Station chercherStationLaPlusProche(Station stationActuelle) throws java.rmi.RemoteException
 	{
 		return stationActuelle.getStationLaPlusProche();
 	}
+	
+	public synchronized String[] getRoleUtilisateur(int identifiant) throws java.rmi.RemoteException
+	{
+		Utilisateur utilisateur;
+		
+		if (Utilisateur.lesUtilisateurs.containsKey(identifiant))
+		{
+			utilisateur = Utilisateur.lesUtilisateurs.get(identifiant);
+			return utilisateur.getRoles();
+		}
+		
+		return null;
+	}
+	
+	public int emprunterVeloAdministrateur(int identifiant, int idVelo, int idStation) throws java.rmi.RemoteException
+	{	
+		Station station = Station.getStation(idStation);
+		Velo velo = station.getVeloStation(idVelo);
+		if(velo != null)
+		{
+			velo.setEtat(Etat.EnReparation);
+			station.supprimerVelo(velo);
+			return velo.getIdVelo();
+		}
+		else
+		{
+			return -1;
+		}		
+	}
+	
+	public int deposerVeloAdministrateur(int identifiant, int idVelo, int idStation) throws java.rmi.RemoteException
+	{
+		Station station = Station.getStation(idStation);
+		Velo velo = station.getVeloStation(idVelo);
+		if(velo != null)
+		{
+			velo.setEtat(Etat.Libre);
+			station.ajouterVelo(velo);
+			return velo.getIdVelo();
+		}
+		else
+		{
+			return -1;
+		}		
+	}
+	
+	
 	
 
 	public synchronized static void main(String[] args) throws Exception {

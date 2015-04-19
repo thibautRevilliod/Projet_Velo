@@ -13,11 +13,12 @@ import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory.Default;
 import metier.CarteAcces.Role;
 import metier.GestionStation;
 import metier.Position;
+import metier.Station;
 
 public class StationClient {
 	public static GestionStation proxyGS;
 	public static String valeurChoix;
-	public static String idStation;
+	public static int idStation;
 	public static BufferedReader entree = new BufferedReader(new InputStreamReader(System.in)); 
 	
 	
@@ -162,10 +163,10 @@ public class StationClient {
 		}
 	}
 	
-	private static void menuAdministrateur(int identifiant, String mdp) {
+	private static void menuAdministrateur(int identifiant, String mdp) throws IOException, InterruptedException {
 		// TODO Auto-generated method stub	
 		int idVelo;
-		String veloADeposer[];
+		int veloADeposer;
 		
 		System.out.println("--------- Menu Administrateur ----------");
 		System.out.println("Que voulez-vous faire ?");
@@ -183,7 +184,7 @@ public class StationClient {
 				// retourne l'id du vélo sinon rien (null ??)
 				// mettre à jour le statut du vélo en réparation
 				veloADeposer = proxyGS.emprunterVeloAdministrateur(identifiant, idVelo, idStation);
-				if(veloADeposer.length == 0){ // ou null à voir
+				if(veloADeposer == -1){ // ou null à voir
 					System.out.println("Erreur 10600 : Le vélo n'est pas disponible.");
 				}else
 				{
@@ -198,16 +199,17 @@ public class StationClient {
 				idVelo = Integer.parseInt(entree.readLine());
 				// retourne si place disponible l'id vélo
 				// sinon retourne le nom de la station la plus proche, sa latitude et sa longitude
-				// mettre à jour le statut du vélo en réparation
+				// mettre à jour le statut du vélo disponible
 				veloADeposer = proxyGS.deposerVeloAdministrateur(identifiant, idVelo, idStation);
-				if (veloADeposer.length == 3){
+				if (veloADeposer == -1){
+					Station stationLaPlusProche = proxyGS.chercherStationLaPlusProche(Station.getStation(idStation));
 					System.out.println("Plus de place disponible dans cette station.");
-					System.out.println("Veuillez aller à la station " + veloADeposer[0] + " qui dispose de place : ");
-					System.out.println("  Latitude : " + veloADeposer[1]);
-					System.out.println("  longitude : " + veloADeposer[2]);
+					System.out.println("Veuillez aller à la station " + stationLaPlusProche.getIdStation() + " qui dispose de place : ");
+					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
+					System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
 				}else
 				{
-					System.out.println("Veuillez déposer le vélo " + veloADeposer[0]);
+					System.out.println("Veuillez déposer le vélo " + veloADeposer);
 				}
 				System.out.print("Déconnection");
 				pause(5);
