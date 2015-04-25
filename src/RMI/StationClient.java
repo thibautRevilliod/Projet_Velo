@@ -14,6 +14,7 @@ import metier.CarteAcces.Role;
 import metier.GestionStation;
 import metier.Position;
 import metier.Station;
+import metier.Velo;
 
 public class StationClient {
 	public static GestionStation proxyGS;
@@ -227,7 +228,7 @@ public class StationClient {
 	
 	private static void menuOperateur(int identifiant, String mdp) throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
-		String lesIdVelo[];
+		int[] lesIdVelo;
 		
 		System.out.println("--------- Menu Operateur ----------");
 		System.out.println("Que voulez-vous faire ?");
@@ -322,7 +323,9 @@ public class StationClient {
 	}
 
 	public static void menuClient(int pidUtilisateur, String pmdpUtilisateur) throws IOException, InterruptedException{
-		String result[];
+		int idVeloEmprunteClient;
+		int idVeloDeposeClient;
+		Station stationLaPlusProche;
 		
 		System.out.println("--------- Menu Client ----------");
 		System.out.println("Que voulez-vous faire ?");
@@ -338,17 +341,18 @@ public class StationClient {
 				// retourne l'id du vélo si disponible sinon retourne le nom de la station, 
 				// la latitude, et la longitude avec des vélos disponible
 				// ne pas oublier de stocker la date et heure de l'emprunt !
-				result = proxyGS.emprunterVeloUtilisateur(pidUtilisateur, idStation);
-				if (result.length == 1){
-					System.out.println("Veuillez prendre le vélo " + result[0]);
+				idVeloEmprunteClient = proxyGS.emprunterVeloClient(pidUtilisateur, idStation);
+				if (idVeloEmprunteClient != -1){
+					System.out.println("Veuillez prendre le vélo " + idVeloEmprunteClient);
 					System.out.print("Déconnection");
 					pause(10);
 					menuPrincipal();
 				}else{
+					stationLaPlusProche = proxyGS.chercherStationLaPlusProche(Station.getStation(idStation));
 					System.out.println("Plus de vélo disponible dans cette station.");
-					System.out.println("Veuillez aller à la station " + result[0] + " qui dispose de vélo : ");
-					System.out.println("  Latitude : " + result[1]);
-					System.out.println("  longitude : " + result[2]);
+					System.out.println("Veuillez aller à la station " + stationLaPlusProche.getIdStation() + " qui dispose de vélo : ");
+					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
+					System.out.println("  longitude : " + stationLaPlusProche.getPosition().getLongitude());
 					System.out.println("Déconnection");
 					pause(15);
 					menuPrincipal();
@@ -359,8 +363,8 @@ public class StationClient {
 				//de la station, la longitude, et la latitude de la plus proche station qui a 
 				//des places
 				// on doit pouvoir récupérer d'un id utilisateur le vélo qu'il a emprunté.
-				result = proxyGS.ramenerVeloClient(pidUtilisateur, idStation);
-				if (result.length == 1){
+				idVeloDeposeClient = proxyGS.ramenerVeloClient(pidUtilisateur, idStation);
+				if (idVeloDeposeClient.length != 1){
 					System.out.println("Vous pouvez déposer le vélo " + result[0]);
 					// a développer côter gestionStation ! (optionnel)
 						System.out.println("Voulez-vous un reçu ? ");
@@ -380,10 +384,11 @@ public class StationClient {
 					pause(10);
 					menuPrincipal();
 				}else{
+					stationLaPlusProche = proxyGS.chercherStationLaPlusProche(Station.getStation(idStation));
 					System.out.println("Plus de place disponible dans cette station.");
-					System.out.println("Veuillez aller à la station " + result[0] + " qui dispose de place : ");
-					System.out.println("  Latitude : " + result[1]);
-					System.out.println("  longitude : " + result[2]);
+					System.out.println("Veuillez aller à la station " + stationLaPlusProche.getIdStation() + " qui dispose de place : ");
+					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
+					System.out.println("  longitude : " + stationLaPlusProche.getPosition().getLongitude());
 					System.out.println("Déconnection");
 					pause(15);
 					menuPrincipal();
@@ -451,14 +456,15 @@ public class StationClient {
 		String nomStation = "Station1";
 		double longitude = 1.2222;
 		double latitude = 5.4444;
-		idStation = proxyGS.creerStation(nomStation, longitude, latitude);
+		int capacite = 30;
+		idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite);
 		
 		//creation de vélos 
 		//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
-		proxyGS.ajouterVeloStation(new Velo(), idStation);
-		proxyGS.ajouterVeloStation(new Velo(), idStation);
-		proxyGS.ajouterVeloStation(new Velo(), idStation);
-		proxyGS.ajouterVeloStation(new Velo(), idStation);
+		proxyGS.ajouterVeloStation(new Velo(), Station.getStation(idStation));
+		proxyGS.ajouterVeloStation(new Velo(), Station.getStation(idStation));
+		proxyGS.ajouterVeloStation(new Velo(), Station.getStation(idStation));
+		proxyGS.ajouterVeloStation(new Velo(), Station.getStation(idStation));
 		
 		// creation d'instances utilisateurs pour les tests
 		initialisationInstances();

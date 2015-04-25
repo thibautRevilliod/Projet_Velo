@@ -5,19 +5,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import metier.Velo.Etat;
+
 public class Station {
 	
 	private int idStation;
 	private String nomStation;
 	private Position position;
+	private int capacite;
 	public static HashMap<Integer, Station> lesStations = new HashMap<Integer, Station>();
 	public ArrayList<Velo> lesVelos = new ArrayList<Velo>();
 	public static int idsStation = 0; 
 	
 
-	public Station(int idStation, String nomStation, Position position) {		
+	public Station(String nomStation, double longitude, double latitude, int capacite) {		
 		this.nomStation = nomStation;
-		this.position = position;
+		this.position = new Position(longitude, latitude);
+		this.capacite = capacite;
 		idsStation++;
 		this.idStation = idsStation;
 		lesStations.put(idsStation,this);
@@ -68,7 +72,15 @@ public class Station {
 	
 	public void supprimerVelo(Velo velo)
 	{
-		this.lesVelos.remove(velo);
+		if(this.lesVelos.contains(velo))
+		{
+			this.lesVelos.remove(velo);
+		}
+	}
+	
+	public int getNombrePlacesDispos()
+	{
+		return this.capacite - this.lesVelos.size();
 	}
 	
 	public static Station getStation(int idStation)
@@ -99,6 +111,39 @@ public class Station {
 		}
 		
 		return null;
+	}
+	
+	public int[] getVelosLibresStation()
+	{
+		int[] listeIdsVelosLibres = new int[lesVelos.size()];
+		int j = 0;
+		
+		for(int i = 0; i < lesVelos.size(); i++){
+		    Velo velo = lesVelos.get(i);
+		    
+		    if(velo.getEtat() == Etat.Libre)
+		    {
+		    	listeIdsVelosLibres[j] = velo.getIdVelo();
+		    	j++;
+		    }
+		}
+		
+		return listeIdsVelosLibres;
+		
+	}
+	
+	public int chercherVeloLibreStation()
+	{
+		for(int i = 0; i < lesVelos.size(); i++){
+		    Velo velo = lesVelos.get(i);
+		    
+		    if(velo.getEtat() == Etat.Libre)
+		    {
+		    	return velo.getIdVelo();
+		    }
+		}
+		
+		return -1; // si aucun velo libre trouvé
 	}
 	
 	

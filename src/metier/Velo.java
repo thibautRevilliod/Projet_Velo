@@ -13,7 +13,7 @@ public class Velo {
 	
 	
 
-	public Velo(int idVelo) {
+	public Velo() {
 		this.etat = Etat.Libre;
 		idsVelo++;
 		this.idVelo = idsVelo;

@@ -105,18 +105,44 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}	
 	
 	@Override
-	public synchronized void emprunterVeloClient(Client client, Velo velo, Station station) throws RemoteException
+	public synchronized int emprunterVeloClient(int idClient, int idStation) throws RemoteException
 	{
-		velo.setEtat(Etat.Emprunte);
-		client.setVelo(velo);
-		station.lesVelos.remove(velo);
+		Client client = (Client) Utilisateur.getUtilisateur(idClient);
+		Station station = Station.getStation(idStation);
+		int idVeloEmprunte;
+		
+		if(client != null && station != null)
+		{
+			idVeloEmprunte = station.chercherVeloLibreStation();
+			if(idVeloEmprunte != -1)
+			{
+				client.emprunterVelo(idVeloEmprunte, idStation);
+				return idVeloEmprunte;
+			}
+		}
+		
+		return -1; // si aucun velo libre trouvé		
+		
 	}
 	
 	@Override
-	public synchronized void ramenerVeloClient(Client client, Velo velo, Station station) throws RemoteException
+	public synchronized int ramenerVeloClient(int idClient, int idStation) throws RemoteException
 	{
-		client.setVelo(null);
-		station.lesVelos.add(velo);
+		Client client = (Client) Utilisateur.getUtilisateur(idClient);
+		Station station = Station.getStation(idStation);
+		int idVeloDepose;
+		
+		if(client != null && station != null)
+		{
+			idVeloDepose = client.getVelo().getIdVelo();
+			if(station.getNombrePlacesDispos()>0)
+			{
+				client.deposerVelo(idVeloDepose, idStation);
+				return idVeloDepose;
+			}
+		}
+		
+		return -1;
 	}
 	
 	@Override
@@ -158,10 +184,11 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	{	
 		Station station = Station.getStation(idStation);
 		Velo velo = station.getVeloStation(idVelo);
-		if(velo != null)
+		Administrateur administrateur = (Administrateur) Utilisateur.getUtilisateur(identifiant);
+		if(station != null && velo != null && administrateur != null)
 		{
 			velo.setEtat(Etat.EnReparation);
-			station.supprimerVelo(velo);
+			administrateur.emprunterVelo(velo.getIdVelo(), station.getIdStation());
 			return velo.getIdVelo();
 		}
 		else
@@ -174,10 +201,11 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	{
 		Station station = Station.getStation(idStation);
 		Velo velo = station.getVeloStation(idVelo);
-		if(velo != null)
+		Administrateur administrateur = (Administrateur) Utilisateur.getUtilisateur(identifiant);
+		if(station != null && velo != null && administrateur != null)
 		{
 			velo.setEtat(Etat.Libre);
-			station.ajouterVelo(velo);
+			administrateur.deposerVelo(velo.getIdVelo(), station.getIdStation());
 			return velo.getIdVelo();
 		}
 		else
@@ -186,7 +214,32 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		}		
 	}
 	
+	public int[] emprunterVeloOperateur(int identifiant, int idStation) throws java.rmi.RemoteException
+	{
+		int[] listeVeloEmpruntes = new int[Station.getStation(idStation).lesVelos.size()];
+		Station station = Station.getStation(idStation);
+		Operateur operateur = (Operateur) Utilisateur.getUtilisateur(identifiant);
+		
+		if(station != null && operateur != null)
+		{
+			listeVeloEmpruntes = operateur.emprunterVelos(idStation);
+		}
+		
+		return listeVeloEmpruntes;
 	
+	}
+	
+	public int[] deposerVeloOperateur(int identifiant, int idStation) throws java.rmi.RemoteException
+	{
+		
+	}
+	
+	public int creerStation(String nomStation, double longitude, double latitude, int capacite) throws java.rmi.RemoteException
+	{
+		Station station = new Station(nomStation, longitude, latitude, capacite);
+		
+		return station.getIdStation();
+	}
 	
 
 	public synchronized static void main(String[] args) throws Exception {

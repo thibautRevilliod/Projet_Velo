@@ -27,9 +27,9 @@ public interface GestionStation extends java.rmi.Remote {
 	
 	public void supprimerUtilisateur (Utilisateur utilisateur) throws java.rmi.RemoteException;
 	
-	public void emprunterVeloClient(Client client, Velo velo, Station station) throws java.rmi.RemoteException;
+	public int emprunterVeloClient(int idClient, int idStation) throws java.rmi.RemoteException;
 	
-	public void ramenerVeloClient(Client client, Velo velo, Station station) throws java.rmi.RemoteException;
+	public int ramenerVeloClient(int idClient, int idStation) throws java.rmi.RemoteException;
 	
 	public boolean estUtilisateurIdentifie(int identifiant, String motDePasse) throws java.rmi.RemoteException;
 	
@@ -40,4 +40,10 @@ public interface GestionStation extends java.rmi.Remote {
 	public int emprunterVeloAdministrateur(int identifiant, int idVelo, int idStation) throws java.rmi.RemoteException;
 	
 	public int deposerVeloAdministrateur(int identifiant, int idVelo, int idStation) throws java.rmi.RemoteException;
+	
+	public int[] emprunterVeloOperateur(int identifiant, int idStation) throws java.rmi.RemoteException;
+	
+	public int[] deposerVeloOperateur(int identifiant, int idStation) throws java.rmi.RemoteException;
+	
+	public int creerStation(String nomStation, double longitude, double latitude, int capacite) throws java.rmi.RemoteException;
 }

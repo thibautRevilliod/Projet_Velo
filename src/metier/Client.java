@@ -1,6 +1,7 @@
 package metier;
 
 import metier.CarteAcces.Role;
+import metier.Velo.Etat;
 
 public class Client extends Utilisateur {
 	
@@ -22,6 +23,40 @@ public class Client extends Utilisateur {
 		this.velo = velo;
 	}
 	
+	public int emprunterVelo(int idVelo, int idStation) throws java.rmi.RemoteException
+	{	
+		Station station = Station.getStation(idStation);
+		Velo velo = station.getVeloStation(idVelo);
+		if(velo != null)
+		{
+			velo.setEtat(Etat.EnReparation);
+			this.setVelo(velo);
+			station.supprimerVelo(velo);
+			return velo.getIdVelo();
+		}
+		else
+		{
+			return -1;
+		}		
+	}
 	
+	public int deposerVelo(int idVelo, int idStation) throws java.rmi.RemoteException
+	{	
+		Station station = Station.getStation(idStation);
+		Velo velo = station.getVeloStation(idVelo);
+		if(velo != null)
+		{
+			if(station.getNombrePlacesDispos()>0)
+			{
+				velo.setEtat(Etat.Libre);
+				this.setVelo(null);
+				station.ajouterVelo(velo);
+				return velo.getIdVelo();
+			}
+		}
+		
+		return -1;
+				
+	}
 
 }

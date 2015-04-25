@@ -2,6 +2,7 @@ package metier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import metier.CarteAcces.Statut;
@@ -41,7 +42,21 @@ public abstract class Utilisateur {
 		this.idUtilisateur = idUtilisateur;
 	}
 	
-	
+	public static Utilisateur getUtilisateur(int idUtilisateur)
+	{
+		Iterator it = lesUtilisateurs.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Utilisateur utilisateurListe = (Utilisateur) pair.getValue();
+	        
+	        if(utilisateurListe.getIdUtilisateur() == idUtilisateur)
+	        {
+	        	return utilisateurListe;
+	        }
+	    }
+	    
+	    return null;
+	}
 	
 	public String getMotDePasse() {
 		return motDePasse;
