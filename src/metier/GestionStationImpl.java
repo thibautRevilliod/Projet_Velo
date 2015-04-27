@@ -5,25 +5,35 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import metier.Velo.Etat;
 
 public class GestionStationImpl extends UnicastRemoteObject implements GestionStation {
+	
+	private HashMap<Integer, Station> lesStations; //On gère ici la liste de toutes les stations, qui elles-mêmes gèrent les vélos
+	
 	public GestionStationImpl() throws RemoteException {
 		super();
+		lesStations = new HashMap<Integer, Station>();
 	}
 
 	@Override
-	public synchronized void ajouterStation(Station station) throws RemoteException
+	public synchronized int ajouterStation(String nomStation, double longitude, double latitude) throws RemoteException
 	{
-		Station.lesStations.put(station.getIdStation(), station);
+		Position position = new Position(longitude, latitude);
+		Station nouvelleStation = new Station(nomStation, position);
+		int idStation = nouvelleStation.getIdStation();
+		lesStations.put(idStation, nouvelleStation);
+		return idStation;
 	}
 	
 	@Override
-	public synchronized void supprimerStation(Station station) throws RemoteException
+	public synchronized void supprimerStation(int idStation) throws RemoteException
 	{
-		Station.lesStations.remove(station.getIdStation());
+		if(Station.supprimerStation(idStation))
+			lesStations.remove(idStation);
 	}
 	
 	@Override
@@ -72,36 +82,38 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 	
 	@Override
-	public synchronized void ajouterVeloStation(Velo velo, Station station) throws RemoteException
+	public synchronized void ajouterVeloStation(Velo velo, int idStation) throws RemoteException
 	{
+		Station station = lesStations.get(idStation);
 		velo.setStation(station);
 		station.ajouterVelo(velo);
 	}
 	
 	@Override
-	public synchronized void supprimerVeloStation(Velo velo, Station station) throws RemoteException
+	public synchronized void supprimerVeloStation(Velo velo, int idStation) throws RemoteException
 	{
+		Station station = lesStations.get(idStation);
 		velo.setStation(null);
 		station.supprimerVelo(velo);
 	}
 	
 	@Override
-	public synchronized void transfererVelo(Velo velo, Station stationOrigine, Station stationDestination) throws RemoteException
+	public synchronized void transfererVelo(Velo velo, int idStationOrigine, int idStationDestination) throws RemoteException
 	{
-		supprimerVeloStation(velo, stationOrigine);
-		ajouterVeloStation(velo, stationDestination);
+		supprimerVeloStation(velo, idStationOrigine);
+		ajouterVeloStation(velo, idStationDestination);
 	}
 	
 	@Override
 	public synchronized void ajouterUtilisateur (Utilisateur utilisateur) throws RemoteException
 	{
-		utilisateur.lesUtilisateurs.put(utilisateur.getIdUtilisateur(), utilisateur);
+		Utilisateur.ajouterUtilisateur(utilisateur);
 	}
 	
 	@Override
 	public synchronized void supprimerUtilisateur (Utilisateur utilisateur) throws RemoteException
 	{
-		utilisateur.lesUtilisateurs.remove(utilisateur.getIdUtilisateur());
+		Utilisateur.supprimerUtilisateur(utilisateur);
 	}	
 	
 	@Override
@@ -109,31 +121,20 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	{
 		velo.setEtat(Etat.Emprunte);
 		client.setVelo(velo);
-		station.lesVelos.remove(velo);
+		station.supprimerVelo(velo);
 	}
 	
 	@Override
 	public synchronized void ramenerVeloClient(Client client, Velo velo, Station station) throws RemoteException
 	{
 		client.setVelo(null);
-		station.lesVelos.add(velo);
+		station.ajouterVelo(velo);
 	}
 	
 	@Override
 	public synchronized boolean estUtilisateurIdentifie(int identifiant, String motDePasse) throws RemoteException
 	{
-		Utilisateur utilisateur;
-		
-		if (Utilisateur.lesUtilisateurs.containsKey(identifiant))
-		{
-			utilisateur = Utilisateur.lesUtilisateurs.get(identifiant);
-			return utilisateur.getIdUtilisateur()==identifiant && utilisateur.getMotDePasse().equals(motDePasse);
-		}
-		else
-		{
-			return false;
-		}
-		
+		return Utilisateur.estUtilisateurIdentifie(identifiant, motDePasse);
 	}
 	
 	public synchronized Station chercherStationLaPlusProche(Station stationActuelle) throws java.rmi.RemoteException
@@ -143,15 +144,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	
 	public synchronized String[] getRoleUtilisateur(int identifiant) throws java.rmi.RemoteException
 	{
-		Utilisateur utilisateur;
-		
-		if (Utilisateur.lesUtilisateurs.containsKey(identifiant))
-		{
-			utilisateur = Utilisateur.lesUtilisateurs.get(identifiant);
-			return utilisateur.getRoles();
-		}
-		
-		return null;
+		return Utilisateur.getRoles(identifiant);
 	}
 	
 	public int emprunterVeloAdministrateur(int identifiant, int idVelo, int idStation) throws java.rmi.RemoteException

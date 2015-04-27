@@ -4,21 +4,21 @@ import java.util.HashMap;
 
 public class Velo {
 	
-	private int idVelo;
-	public static HashMap<Integer, Velo> lesVelos = new HashMap<Integer, Velo>();
 	public enum Etat {Emprunte, Libre, EnReparation};
+	
+	private int idVelo;
+	private static HashMap<Integer, Velo> lesVelos = new HashMap<Integer, Velo>();
 	private Etat etat;
 	private Station station;
-	public static int idsVelo = 0; 
+	private static int idsVelo = 0; 
 	
 	
 
-	public Velo(int idVelo) {
+	public Velo() {
 		this.etat = Etat.Libre;
 		idsVelo++;
 		this.idVelo = idsVelo;
 		lesVelos.put(idsVelo,this);
-		station.lesVelos.add(this);
 	}
 	
 	
@@ -51,6 +51,15 @@ public class Velo {
 		this.etat = etat;
 	}
 	
-	
+	public static boolean supprimerVelo(int idVelo)
+	{
+		if(lesVelos.containsKey(idVelo))
+		{
+			lesVelos.remove(idVelo);
+			return true;
+		}
+		else
+			return false;
+	}
 
 }

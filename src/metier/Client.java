@@ -4,7 +4,7 @@ import metier.CarteAcces.Role;
 
 public class Client extends Utilisateur {
 	
-	public Velo velo;
+	private Velo velo;
 
 	public Client(String pnom, String pprenom, String pmotdepasse,
 			String ptelephone, String padressemail, String padressepostale) {

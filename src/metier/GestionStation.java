@@ -1,9 +1,12 @@
 package metier;
 
+import java.rmi.RemoteException;
+
 public interface GestionStation extends java.rmi.Remote {
-	public void ajouterStation (Station station) throws java.rmi.RemoteException;
 	
-	public void supprimerStation(Station station) throws java.rmi.RemoteException;
+	public int ajouterStation (String nomStation, double longitude, double latitude) throws java.rmi.RemoteException;
+	
+	public void supprimerStation(int idStation) throws java.rmi.RemoteException;
 	
 	public int creerUtilisateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, 
 			String padressepostale, String objectClass) throws java.rmi.RemoteException;
@@ -17,11 +20,11 @@ public interface GestionStation extends java.rmi.Remote {
 	public int creerClient(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, 
 			String padressepostale) throws java.rmi.RemoteException;
 	
-	public void ajouterVeloStation(Velo velo, Station station) throws java.rmi.RemoteException;
+	public void ajouterVeloStation(Velo velo, int idStation) throws java.rmi.RemoteException;
 	
-	public void supprimerVeloStation(Velo velo, Station station) throws java.rmi.RemoteException;
+	public void supprimerVeloStation(Velo velo, int idStation) throws java.rmi.RemoteException;
 	
-	public void transfererVelo(Velo velo, Station stationOrigine, Station stationDestination) throws java.rmi.RemoteException;
+	public void transfererVelo(Velo velo, int idStationOrigine, int idStationDestination) throws java.rmi.RemoteException;
 	
 	public void ajouterUtilisateur (Utilisateur utilisateur) throws java.rmi.RemoteException;
 	

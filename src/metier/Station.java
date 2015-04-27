@@ -10,17 +10,18 @@ public class Station {
 	private int idStation;
 	private String nomStation;
 	private Position position;
-	public static HashMap<Integer, Station> lesStations = new HashMap<Integer, Station>();
-	public ArrayList<Velo> lesVelos = new ArrayList<Velo>();
-	public static int idsStation = 0; 
+	private static HashMap<Integer, Station> lesStations = new HashMap<Integer, Station>();
+	private ArrayList<Velo> lesVelos ;
+	private static int idsStation = 0; 
 	
 
-	public Station(int idStation, String nomStation, Position position) {		
+	public Station(String nomStation, Position position) {		
 		this.nomStation = nomStation;
 		this.position = position;
 		idsStation++;
 		this.idStation = idsStation;
 		lesStations.put(idsStation,this);
+		this.lesVelos = new ArrayList<Velo>();
 	}
 	
 	
@@ -66,9 +67,9 @@ public class Station {
 		this.lesVelos.add(velo);
 	}
 	
-	public void supprimerVelo(Velo velo)
+	public boolean supprimerVelo(Velo velo)
 	{
-		this.lesVelos.remove(velo);
+		return this.lesVelos.remove(velo);
 	}
 	
 	public static Station getStation(int idStation)
@@ -125,6 +126,21 @@ public class Station {
 	    }
 		
 		return stationPlusProche;
+	}
+	
+	public static boolean supprimerStation(int idStation)
+	{
+		Station stationTemp = lesStations.get(idStation);
+		int idVeloTemp;
+		//Suppression de tous les vélos de cette station
+		for(int i = 0; i < stationTemp.lesVelos.size(); i++)
+		{
+			idVeloTemp = stationTemp.lesVelos.get(i).getIdVelo();
+			Velo.supprimerVelo(idVeloTemp);
+			stationTemp.lesVelos.remove(i);
+		}
+		lesStations.remove(stationTemp);
+		return true;
 	}
 	
 

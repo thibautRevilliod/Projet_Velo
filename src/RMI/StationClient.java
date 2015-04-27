@@ -14,6 +14,7 @@ import metier.CarteAcces.Role;
 import metier.GestionStation;
 import metier.Position;
 import metier.Station;
+import metier.Velo;
 
 public class StationClient {
 	public static GestionStation proxyGS;
@@ -451,14 +452,12 @@ public class StationClient {
 		String nomStation = "Station1";
 		double longitude = 1.2222;
 		double latitude = 5.4444;
-		idStation = proxyGS.creerStation(nomStation, longitude, latitude);
+		idStation = proxyGS.ajouterStation(nomStation, longitude, latitude);
 		
 		//creation de vélos 
 		//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
-		proxyGS.ajouterVeloStation(new Velo(), idStation);
-		proxyGS.ajouterVeloStation(new Velo(), idStation);
-		proxyGS.ajouterVeloStation(new Velo(), idStation);
-		proxyGS.ajouterVeloStation(new Velo(), idStation);
+		for(int i = 0; i < 20; i++)
+			proxyGS.ajouterVeloStation(new Velo(), idStation);
 		
 		// creation d'instances utilisateurs pour les tests
 		initialisationInstances();

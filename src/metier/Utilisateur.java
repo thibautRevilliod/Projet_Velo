@@ -1,6 +1,5 @@
 package metier;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,9 +16,9 @@ public abstract class Utilisateur {
 	private String adresseMail;
 	private String adressePostale;
 	//un utilisateur peut avoir plusieurs cartes d'acces (ex : le gestionnaire peut être aussi client)
-	public HashMap<Role,CarteAcces> lesCartesAccesUtilisateur = new HashMap<Role, CarteAcces>(); 
-	public static HashMap<Integer, Utilisateur> lesUtilisateurs = new HashMap<Integer, Utilisateur>();
-	public static int idsUtilisateur = 0; 
+	protected HashMap<Role,CarteAcces> lesCartesAccesUtilisateur ; 
+	private static HashMap<Integer, Utilisateur> lesUtilisateurs = new HashMap<Integer, Utilisateur>();
+	private static int idsUtilisateur = 0; 
 	
 	public Utilisateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, String padressepostale){
 		nom = pnom;
@@ -31,6 +30,15 @@ public abstract class Utilisateur {
 		idsUtilisateur++;
 		idUtilisateur = idsUtilisateur;
 		Utilisateur.lesUtilisateurs.put(idsUtilisateur,this);
+		lesCartesAccesUtilisateur = new HashMap<Role, CarteAcces>() ;
+	}
+	
+	private static Utilisateur getUtilisateur(int identifiant)
+	{
+		if(lesUtilisateurs.containsKey(identifiant))
+			return lesUtilisateurs.get(identifiant);
+		else
+			return null;
 	}
 	
 	public int getIdUtilisateur() {
@@ -61,6 +69,25 @@ public abstract class Utilisateur {
 			HashMap<Integer, Utilisateur> lesUtilisateurs) {
 		Utilisateur.lesUtilisateurs = lesUtilisateurs;
 	}
+	
+	public static void ajouterUtilisateur(Utilisateur utilisateur)
+	{
+		lesUtilisateurs.put(utilisateur.getIdUtilisateur(), utilisateur);
+	}
+	
+	public static Utilisateur supprimerUtilisateur(Utilisateur utilisateur)
+	{
+		return lesUtilisateurs.remove(utilisateur.getIdUtilisateur());
+	}
+	
+	public static boolean estUtilisateurIdentifie(int identifiant, String motDePasse)
+	{
+		Utilisateur utilisateur = getUtilisateur(identifiant);
+		if (utilisateur != null)
+			return utilisateur.getMotDePasse().equals(motDePasse);
+		else
+			return false;
+	}
 
 	public void ajouterCarteAcces(CarteAcces carteAcces, Role role)
 	{
@@ -72,19 +99,24 @@ public abstract class Utilisateur {
 		lesCartesAccesUtilisateur.get(role).setStatut(Statut.Inactive);
 	}
 	
-	public String[] getRoles()
+	public static String[] getRoles(int identifiant)
 	{
-		int numberOfRoles = CarteAcces.Role.values().length;
-		String[] lesRoles = new String[numberOfRoles];
-		
-		int i =0;
-		for(Map.Entry<Role, CarteAcces> lesCartes : lesCartesAccesUtilisateur.entrySet())
+		Utilisateur utilisateur = getUtilisateur(identifiant);
+		if (utilisateur != null)
 		{
-			lesRoles[i] = lesCartes.getKey().toString();
-			i++;
+			int numberOfRoles = CarteAcces.Role.values().length;
+			String[] lesRoles = new String[numberOfRoles];
+			
+			int i =0;
+			for(Map.Entry<Role, CarteAcces> lesCartes : utilisateur.lesCartesAccesUtilisateur.entrySet())
+			{
+				lesRoles[i] = lesCartes.getKey().toString();
+				i++;
+			}
+			return lesRoles;
 		}
-		
-		return lesRoles;
+		else
+			return null;
 	}
 
 }
