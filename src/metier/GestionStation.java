@@ -1,6 +1,13 @@
 package metier;
 
+import java.rmi.RemoteException;
+
 public interface GestionStation extends java.rmi.Remote {
+	
+	public GestionStationNotif getNotification() throws java.rmi.RemoteException;
+	
+	public void setNotification(GestionStationNotif notification) throws java.rmi.RemoteException;
+	
 	public void ajouterStation (Station station) throws java.rmi.RemoteException;
 	
 	public void supprimerStation(Station station) throws java.rmi.RemoteException;
@@ -22,6 +29,8 @@ public interface GestionStation extends java.rmi.Remote {
 	public void supprimerVeloStation(Velo velo, Station station) throws java.rmi.RemoteException;
 	
 	public void transfererVelo(Velo velo, Station stationOrigine, Station stationDestination) throws java.rmi.RemoteException;
+	
+	public void transfererVelo(int nombreVelos, Station stationOrigine, Station stationDestination) throws RemoteException;
 	
 	public void ajouterUtilisateur (Utilisateur utilisateur) throws java.rmi.RemoteException;
 	

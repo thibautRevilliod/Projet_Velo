@@ -7,14 +7,14 @@ public class Velo {
 	private int idVelo;
 	public static HashMap<Integer, Velo> lesVelos = new HashMap<Integer, Velo>();
 	public enum Etat {Emprunte, Libre, EnReparation};
-	private Etat etat;
+	private Etat etatVelo;
 	private Station station;
 	public static int idsVelo = 0; 
 	
 	
 
 	public Velo() {
-		this.etat = Etat.Libre;
+		this.etatVelo = Etat.Libre;
 		idsVelo++;
 		this.idVelo = idsVelo;
 		lesVelos.put(idsVelo,this);
@@ -43,12 +43,12 @@ public class Velo {
 
 
 	public Etat getEtat() {
-		return etat;
+		return etatVelo;
 	}
 
 
 	public void setEtat(Etat etat) {
-		this.etat = etat;
+		this.etatVelo = etat;
 	}
 	
 	

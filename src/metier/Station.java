@@ -172,6 +172,52 @@ public class Station {
 		return stationPlusProche;
 	}
 	
+	public static Station getStationSaturee()
+	{
+		Station stationSatureee = null;
+		Iterator it = lesStations.entrySet().iterator();
+		
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Integer idStation = (Integer) pair.getKey();
+	        Station stationListe = (Station) pair.getValue();
+	        stationSatureee = stationListe;
+	        
+	        if(stationListe.capacite > stationSatureee.capacite)
+	        {
+	        	stationSatureee = stationListe;
+	        }
+
+	        
+	        it.remove(); // avoids a ConcurrentModificationException
+	    }
+	    
+	    return stationSatureee;
+	}
+	
+	public static Station getStationEnPenurie()
+	{
+		Station stationEnPenurie = null;
+		Iterator it = lesStations.entrySet().iterator();
+		
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Integer idStation = (Integer) pair.getKey();
+	        Station stationListe = (Station) pair.getValue();
+	        stationEnPenurie = stationListe;
+	        
+	        if(stationListe.capacite == 0)
+	        {
+	        	stationEnPenurie = stationListe;
+	        }
+
+	        
+	        it.remove(); // avoids a ConcurrentModificationException
+	    }
+	    
+	    return stationEnPenurie;
+	}
+	
 
 
 

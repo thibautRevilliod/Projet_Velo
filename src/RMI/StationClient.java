@@ -12,6 +12,7 @@ import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory.Default;
 
 import metier.CarteAcces.Role;
 import metier.GestionStation;
+import metier.GestionStationNotifImpl;
 import metier.Position;
 import metier.Station;
 import metier.Velo;
@@ -366,12 +367,15 @@ public class StationClient {
 		}
 	}
 	
-	private static void menuOperateurNotification(int identifiant, String mdp) {
+	private static void menuOperateurNotification(int identifiant, String mdp) throws IOException, InterruptedException, RemoteException {
 		int notification = -1;
 		boolean continuer = true;
+		GestionStationNotifImpl notificationGestionStation = new GestionStationNotifImpl();
+		
+		proxyGS.setNotification(notificationGestionStation);
 		
 		System.out.println("En attente de notifications...");
-		notification = proxyGS.estnotificationStation();
+		notification = proxyGS.getNotification().estnotificationStation();
 		pause(3);
 		while((notification == -1) && (continuer))
 		{
@@ -384,7 +388,7 @@ public class StationClient {
 			{
 				System.out.println("En attente de notifications...");
 				//retourne false s'il y pas de notification et true s'il y en a.
-				notification = proxyGS.estnotificationStation();
+				notification = proxyGS.getNotification().estnotificationStation();
 				pause(3);
 			}
 		}
@@ -392,9 +396,13 @@ public class StationClient {
 		if(notification != -1)
 		{
 			// return [0] = nbreVelos; [1] = stationSaturée; [2] = stationPénurie
-			String detailNotification[] = proxyGS.detailNotificationStation(notification);
+			String detailNotification[] = proxyGS.getNotification().detailNotificationStation(notification);
 			
 			System.out.println("Veuillez transférer " + detailNotification[0] + " vélos de la station saturée " + detailNotification[1] + " à la station en pénurie " + detailNotification[2]);
+			int nombreVeloTransferes = Integer.parseInt(detailNotification[0]);
+			Station stationSaturee = Station.getStation(Integer.parseInt(detailNotification[1]));
+			Station stationEnPenurie = Station.getStation(Integer.parseInt(detailNotification[2]));
+			proxyGS.transfererVelo(nombreVeloTransferes, stationSaturee, stationEnPenurie);
 			System.out.println("Veuillez valider par 'ok' dès que l'action est terminée : ");
 			String actionOK = entree.readLine();
 			while (!actionOK.equals("ok"))
@@ -402,7 +410,7 @@ public class StationClient {
 				System.out.println("Veuillez valider par 'ok' dès que l'action est terminée : ");
 				actionOK = entree.readLine();
 			}
-			proxyGS.notificationOK(notification);
+			proxyGS.getNotification().notificationOK(notification);
 		}
 		
 		menuOperateur(identifiant,mdp);

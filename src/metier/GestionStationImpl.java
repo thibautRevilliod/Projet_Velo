@@ -9,9 +9,23 @@ import java.util.HashMap;
 
 import metier.Velo.Etat;
 
+
 public class GestionStationImpl extends UnicastRemoteObject implements GestionStation {
+	
+	public GestionStationNotif notification;
+	
 	public GestionStationImpl() throws RemoteException {
 		super();
+	}
+	
+	@Override
+	public GestionStationNotif getNotification() {
+		return this.notification;
+	}
+	
+	@Override
+	public void setNotification(GestionStationNotif notification) {
+		this.notification = notification;
 	}
 
 	@Override
@@ -85,11 +99,25 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		station.supprimerVelo(velo);
 	}
 	
+	// à modifier
 	@Override
 	public synchronized void transfererVelo(Velo velo, Station stationOrigine, Station stationDestination) throws RemoteException
 	{
 		supprimerVeloStation(velo, stationOrigine);
 		ajouterVeloStation(velo, stationDestination);
+	}
+	
+	@Override
+	public synchronized void transfererVelo(int nombreVelos, Station stationOrigine, Station stationDestination) throws RemoteException
+	{
+		int i=0;
+		while(i<nombreVelos && stationOrigine.getVelosLibresStation().length>0)
+		{
+			int idVeloLibreStationOrigine = stationOrigine.getVelosLibresStation()[i];
+			Velo veloLibreStationOrigine = stationOrigine.getVeloStation(idVeloLibreStationOrigine);
+			supprimerVeloStation(veloLibreStationOrigine, stationOrigine);
+			ajouterVeloStation(veloLibreStationOrigine, stationDestination);
+		}
 	}
 	
 	@Override
