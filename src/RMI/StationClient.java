@@ -399,7 +399,7 @@ public class StationClient {
 			while (!actionOK.equals("ok"))
 			{
 				System.out.println("Veuillez valider par 'ok' dès que l'action est terminée : ");
-				String actionOK = entree.readLine();
+				actionOK = entree.readLine();
 			}
 			proxyGS.notificationOK(detailNotification[3]);
 		}
