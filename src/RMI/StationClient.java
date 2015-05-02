@@ -313,13 +313,13 @@ public class StationClient {
 		System.out.println("Veuillez transférer " + detailNotification[0] + " vélos de la station saturée " + detailNotification[1] + " à la station en pénurie " + detailNotification[2]);
 		System.out.println("Veuillez valider par 'ok' dès que l'action est terminée : ");
 		String actionOK = entree.readLine();
-		while (!actionOK.equals("oui"))
+		while (!actionOK.equals("ok"))
 		{
 			System.out.println("Veuillez valider par 'ok' dès que l'action est terminée : ");
 			String actionOK = entree.readLine();
 		}
 		proxyGS.notificationOK();
-		menuOperateurNotification(identifiant,mdp);
+		menuOperateur(identifiant,mdp);
 	}
 
 	public static void menuClient(int pidUtilisateur, String pmdpUtilisateur) throws IOException, InterruptedException{
