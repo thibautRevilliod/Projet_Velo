@@ -51,7 +51,7 @@ public class StationClient {
 	}
 	
 	private static void menuDeposerVelo() {
-		String[] tabResultat;
+		int idVelo;
 		int idClient;
 		Station stationLaPlusProche;
 		// TODO Auto-generated method stub
@@ -61,9 +61,9 @@ public class StationClient {
 		// doit retourner un tableau de string !
 		System.out.println("Veuillez entrer votre identifiant (action déposer le vélo dans la borne) : ");
 		idClient = Integer.parseInt(entree.readLine());
-		tabResultat = proxyGS.ramenerVeloClient(idClient, idStation);
-		if (tabResultat.length != 1){
-			System.out.println("Vous pouvez déposer le vélo " + tabResultat[0]);
+		idVelo = proxyGS.ramenerVeloClient(idClient, idStation);
+		if (idVelo != -1){
+			System.out.println("Vous pouvez déposer le vélo " + idVelo);
 			// a développer côter gestionStation ! (optionnel)
 				System.out.println("Voulez-vous un reçu ? ");
 				System.out.println("--1) Oui");
@@ -367,13 +367,14 @@ public class StationClient {
 	}
 	
 	private static void menuOperateurNotification(int identifiant, String mdp) {
-		boolean notification = false;
+		int notification = -1;
 		boolean continuer = true;
 		
 		System.out.println("En attente de notifications...");
 		notification = proxyGS.estnotificationStation();
 		pause(3);
-		while(!notification && continuer){
+		while((notification == -1) && (continuer))
+		{
 			System.out.println("Voulez-vous continuer à attendre des notifications ? (o/n)");
 			String rep = entree.readLine();
 			if(rep.equals("n"))
@@ -388,10 +389,10 @@ public class StationClient {
 			}
 		}
 		
-		if(notification)
+		if(notification != -1)
 		{
-			// return [0] = nbreVelos; [1] = stationSaturée; [2] = stationPénurie; [3] idNotification;
-			String detailNotification[] = proxyGS.detailNotificationStation();
+			// return [0] = nbreVelos; [1] = stationSaturée; [2] = stationPénurie
+			String detailNotification[] = proxyGS.detailNotificationStation(notification);
 			
 			System.out.println("Veuillez transférer " + detailNotification[0] + " vélos de la station saturée " + detailNotification[1] + " à la station en pénurie " + detailNotification[2]);
 			System.out.println("Veuillez valider par 'ok' dès que l'action est terminée : ");
@@ -401,7 +402,7 @@ public class StationClient {
 				System.out.println("Veuillez valider par 'ok' dès que l'action est terminée : ");
 				actionOK = entree.readLine();
 			}
-			proxyGS.notificationOK(detailNotification[3]);
+			proxyGS.notificationOK(notification);
 		}
 		
 		menuOperateur(identifiant,mdp);
