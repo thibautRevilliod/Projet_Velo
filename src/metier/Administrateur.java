@@ -4,7 +4,7 @@ import metier.CarteAcces.Role;
 import metier.Velo.Etat;
 
 public class Administrateur extends Utilisateur {
-
+	
 	public Administrateur(String pnom, String pprenom, String pmotdepasse,
 			String ptelephone, String padressemail, String padressepostale) 
 	{
@@ -13,20 +13,41 @@ public class Administrateur extends Utilisateur {
 		lesCartesAccesUtilisateur.put(carteAcces.getRole(), carteAcces);
 	}
 	
-	
-	public int emprunterVelo(int identifiant, int idVelo, int idStation) throws java.rmi.RemoteException
-	{	
-		Station station = Station.getStation(idStation);
-		Velo velo = station.getVeloStation(idVelo);
-		if(velo != null)
+	public void emprunterVelos(int[] idVelos, Role roleEmprunt) throws java.rmi.RemoteException
+	{
+		Velo veloTemp; 
+		//int nbVelos = idVelos.length - 1; //La dernière occurence est l'idStation où se trouve le/les vélos
+		if(roleEmprunt.equals(Role.Client))
 		{
-			velo.setEtat(Etat.EnReparation);
-			station.supprimerVelo(velo);
-			return velo.getIdVelo();
+			veloTemp = Velo.getVelo(idVelos[0]);
+			if(veloTemp != null && lesVelos.size() < 1)
+			{
+				veloTemp.setEtat(Etat.Emprunte);
+				this.setVelo(veloTemp);
+			}
+		}
+		else if (roleEmprunt.equals(Role.Administrateur))
+		{
+			
+			veloTemp = Velo.getVelo(idVelos[0]);
+			if(veloTemp != null && lesVelos.size() < 1)
+			{
+				veloTemp.setEtat(Etat.EnReparation);
+				this.setVelo(veloTemp);
+			}	
+			
+		}
+	}
+	
+	@Override
+	public boolean ajouterCarteAcces(CarteAcces carteAcces, Role role)
+	{
+		if(role.equals(Role.Client) || role.equals(Role.Administrateur))
+		{
+			this.lesCartesAccesUtilisateur.put(role, carteAcces);
+			return true;
 		}
 		else
-		{
-			return -1;
-		}		
+			return false;
 	}
 }

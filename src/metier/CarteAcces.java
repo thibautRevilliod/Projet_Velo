@@ -14,24 +14,9 @@ public class CarteAcces {
 	}
 
 	
-	public Statut getStatut() {
-		return statut;
-	}
-
-
-	public void setStatut(Statut statut) {
-		this.statut = statut;
-	}
-
-	public Role getRole() {
-		return role;
-	}
-
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
+	public Statut getStatut() {return statut;}
+	public void setStatut(Statut statut) {this.statut = statut;}
+	public Role getRole() {return role;}
+	public void setRole(Role role) {this.role = role;}
 	
-	
-
 }

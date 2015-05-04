@@ -1,46 +1,34 @@
 package metier;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
+import metier.CarteAcces.Role;
 
-public interface GestionStation extends java.rmi.Remote {
+public interface GestionStation extends Remote {
 	
-	public int ajouterStation (String nomStation, double longitude, double latitude) throws java.rmi.RemoteException;
+	public int creerStation(String nomStation, double longitude, double latitude, int capacite) throws RemoteException;
 	
-	public void supprimerStation(int idStation) throws java.rmi.RemoteException;
+	public void supprimerStation(int idStation) throws RemoteException;
 	
 	public int creerUtilisateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, 
-			String padressepostale, String objectClass) throws java.rmi.RemoteException;
+			String padressepostale, String objectClass) throws RemoteException;
 	
-	public int creerOperateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, 
-			String padressepostale) throws java.rmi.RemoteException;
-
-	public int creerAdministrateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, 
-			String padressepostale) throws java.rmi.RemoteException;
+	public void supprimerUtilisateur (Utilisateur utilisateur) throws RemoteException;
 	
-	public int creerClient(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, 
-			String padressepostale) throws java.rmi.RemoteException;
+	public void ajouterVeloStation(Velo velo, int idStation) throws RemoteException;
 	
-	public void ajouterVeloStation(Velo velo, int idStation) throws java.rmi.RemoteException;
+	public void supprimerVeloStation(Velo velo, int idStation) throws RemoteException;
 	
-	public void supprimerVeloStation(Velo velo, int idStation) throws java.rmi.RemoteException;
+	public void transfererVelo(Velo velo, int idStationOrigine, int idStationDestination) throws RemoteException;
 	
-	public void transfererVelo(Velo velo, int idStationOrigine, int idStationDestination) throws java.rmi.RemoteException;
+	public int[] emprunterVelos(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws RemoteException;
 	
-	public void ajouterUtilisateur (Utilisateur utilisateur) throws java.rmi.RemoteException;
+	public int[] emprunterVelos(int idUtilisateur, int idStation, int idVelo) throws RemoteException;
 	
-	public void supprimerUtilisateur (Utilisateur utilisateur) throws java.rmi.RemoteException;
+	public int deposerVelos(int idUtilisateur, int idStation) throws RemoteException;
 	
-	public void emprunterVeloClient(Client client, Velo velo, Station station) throws java.rmi.RemoteException;
+	public boolean estUtilisateurIdentifie(int identifiant, String motDePasse) throws RemoteException;
 	
-	public void ramenerVeloClient(Client client, Velo velo, Station station) throws java.rmi.RemoteException;
+	public String[] getRoleUtilisateur(int identifiant) throws RemoteException;
 	
-	public boolean estUtilisateurIdentifie(int identifiant, String motDePasse) throws java.rmi.RemoteException;
-	
-	public Station chercherStationLaPlusProche(Station stationActuelle) throws java.rmi.RemoteException;
-	
-	public String[] getRoleUtilisateur(int identifiant) throws java.rmi.RemoteException;
-	
-	public int emprunterVeloAdministrateur(int identifiant, int idVelo, int idStation) throws java.rmi.RemoteException;
-	
-	public int deposerVeloAdministrateur(int identifiant, int idVelo, int idStation) throws java.rmi.RemoteException;
 }

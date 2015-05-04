@@ -8,22 +8,25 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import metier.CarteAcces.Role;
 import metier.Velo.Etat;
 
 public class GestionStationImpl extends UnicastRemoteObject implements GestionStation {
 	
 	private HashMap<Integer, Station> lesStations; //On gère ici la liste de toutes les stations, qui elles-mêmes gèrent les vélos
+	private HashMap<Integer, Utilisateur> lesUtilisateurs; //On gère ici la liste de tous les utilisateurs
 	
 	public GestionStationImpl() throws RemoteException {
 		super();
 		lesStations = new HashMap<Integer, Station>();
+		lesUtilisateurs = new HashMap<Integer, Utilisateur>();
 	}
 
 	@Override
-	public synchronized int ajouterStation(String nomStation, double longitude, double latitude) throws RemoteException
+	public int creerStation(String nomStation, double longitude, double latitude, int capacite) throws java.rmi.RemoteException
 	{
 		Position position = new Position(longitude, latitude);
-		Station nouvelleStation = new Station(nomStation, position);
+		Station nouvelleStation = new Station(nomStation, position, capacite);
 		int idStation = nouvelleStation.getIdStation();
 		lesStations.put(idStation, nouvelleStation);
 		return idStation;
@@ -44,13 +47,19 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		try {
 			myClass = Class.forName(objectClass);
 			if (myClass.isInstance(Administrateur.class)) {
-				idUtilisateur = creerAdministrateur(pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);
+				Administrateur administrateur = new Administrateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
+				idUtilisateur = administrateur.getIdUtilisateur();
+				lesUtilisateurs.put(idUtilisateur, administrateur);
 		    }
 			else if(myClass.isInstance(Operateur.class)) {
-				idUtilisateur = creerOperateur(pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);		    
+				Operateur operateur = new Operateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
+				idUtilisateur = operateur.getIdUtilisateur();
+				lesUtilisateurs.put(idUtilisateur, operateur);
 			}
-			else if(myClass.isInstance(Client.class)) {
-				idUtilisateur = creerClient(pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);		    
+			else if(myClass.isInstance(Client.class)) {	
+				Client client = new Client( pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);
+				idUtilisateur = client.getIdUtilisateur();
+				lesUtilisateurs.put(idUtilisateur, client);
 			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -61,31 +70,9 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 	
 	@Override
-	public synchronized int creerOperateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, String padressepostale) throws RemoteException 
-	{
-		Operateur operateur = new Operateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
-		return operateur.getIdUtilisateur();
-	}
-	
-	@Override
-	public synchronized int creerAdministrateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, String padressepostale) throws RemoteException 
-	{
-		Administrateur adminstrateur = new Administrateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
-		return adminstrateur.getIdUtilisateur();
-	}
-	
-	@Override
-	public synchronized int creerClient(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, String padressepostale) throws RemoteException 
-	{
-		Client client = new Client( pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);
-		return client.getIdUtilisateur();
-	}
-	
-	@Override
 	public synchronized void ajouterVeloStation(Velo velo, int idStation) throws RemoteException
 	{
 		Station station = lesStations.get(idStation);
-		velo.setStation(station);
 		station.ajouterVelo(velo);
 	}
 	
@@ -93,8 +80,111 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	public synchronized void supprimerVeloStation(Velo velo, int idStation) throws RemoteException
 	{
 		Station station = lesStations.get(idStation);
-		velo.setStation(null);
 		station.supprimerVelo(velo);
+	}
+	
+	@Override
+	public int[] emprunterVelos(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws RemoteException
+	{
+		Utilisateur utilisateur;
+		Station station;
+		int[] lesIdVelos = new int[nbVelos + 1]; //On rajoute un emplacement qui contiendra l'idStation des vélos
+		if(lesUtilisateurs.containsKey(idUtilisateur) && lesStations.containsKey(idStation))
+		{
+			utilisateur = lesUtilisateurs.get(idUtilisateur);
+			//On vérifie les droits de l'utilisateur
+			if(utilisateur.hasRole(roleEmprunt))
+			{
+				station = lesStations.get(idStation);
+				//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
+				lesIdVelos = station.getVelosLibresStation(nbVelos);
+				//On teste que la méthode précédente ne retourne pas un idStation différent
+				if(lesIdVelos[nbVelos] == idStation)
+				{
+					//On assigne les vélos à l'utilisateur, en spécifiant son rôle pour traitements spécifiques
+					utilisateur.emprunterVelos(lesIdVelos, roleEmprunt);
+					//Suppression des vélos de la station
+					station.supprimerVelos(lesIdVelos);
+				}
+			}
+			else
+			{
+				lesIdVelos[nbVelos] = -2; //Erreur : Utilisateur non Admin
+			}
+			
+		}
+		else
+		{
+			lesIdVelos[nbVelos] = -1; //Erreur : Utilisateur ou Station inexistant
+		}
+		return lesIdVelos;
+	}
+	
+	public int[] emprunterVelos(int idUtilisateur, int idStation, int idVelo) throws RemoteException
+	{
+		Utilisateur utilisateur;
+		Station station;
+		Velo velo;
+		int[] lesIdVelos = new int[2]; 
+		lesIdVelos[0] = idVelo;
+		if(lesUtilisateurs.containsKey(idUtilisateur) && lesStations.containsKey(idStation))
+		{
+			utilisateur = lesUtilisateurs.get(idUtilisateur);
+			//On vérifie les droits de l'utilisateur
+			if(utilisateur.hasRole(Role.Administrateur))
+			{
+				station = lesStations.get(idStation);
+				velo = station.getVeloStation(idVelo);
+				//On vérifie que le vélo choisi soit libre
+				if(velo != null && velo.getEtat().equals(Etat.Libre))
+				{
+					//On assigne les vélos à l'utilisateur, en spécifiant son rôle pour traitements spécifiques
+					utilisateur.emprunterVelos(lesIdVelos, Role.Administrateur);
+					//Suppression du vélo de la station
+					station.supprimerVelo(velo);
+					lesIdVelos[1] = 0;//Tout s'est bien passé : code 0
+				}
+				else
+				{
+					lesIdVelos[1] = -3; //Erreur : Vélo inexistant ou non libre
+				}
+			}
+			else
+			{
+				lesIdVelos[1] = -2; //Erreur : Utilisateur non Admin
+			}
+			
+		}
+		else
+		{
+			lesIdVelos[1] = -1; //Erreur : Utilisateur ou Station inexistant
+		}
+		return lesIdVelos;
+	}
+	
+	@Override
+	public int deposerVelos(int idUtilisateur, int idStation) throws RemoteException
+	{
+		Utilisateur utilisateur;
+		Station station;
+		int[] lesIdVelos;
+		int idStationDepot = idStation;
+		int nbVelos;
+		if(lesUtilisateurs.containsKey(idUtilisateur) && lesStations.containsKey(idStation))
+		{
+			utilisateur = lesUtilisateurs.get(idUtilisateur);
+			station = lesStations.get(idStation);
+			lesIdVelos = utilisateur.getIdVelos();
+			nbVelos = lesIdVelos.length;
+			if(station.getNombrePlacesDispos() >= nbVelos)
+			{
+				station.ajouterVelos(lesIdVelos);
+				utilisateur.deposerVelos();
+			}
+			else
+				idStationDepot = station.getStationLaPlusProche().getIdStation();
+		}
+		return idStationDepot;
 	}
 	
 	@Override
@@ -105,31 +195,10 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 	
 	@Override
-	public synchronized void ajouterUtilisateur (Utilisateur utilisateur) throws RemoteException
-	{
-		Utilisateur.ajouterUtilisateur(utilisateur);
-	}
-	
-	@Override
 	public synchronized void supprimerUtilisateur (Utilisateur utilisateur) throws RemoteException
 	{
 		Utilisateur.supprimerUtilisateur(utilisateur);
 	}	
-	
-	@Override
-	public synchronized void emprunterVeloClient(Client client, Velo velo, Station station) throws RemoteException
-	{
-		velo.setEtat(Etat.Emprunte);
-		client.setVelo(velo);
-		station.supprimerVelo(velo);
-	}
-	
-	@Override
-	public synchronized void ramenerVeloClient(Client client, Velo velo, Station station) throws RemoteException
-	{
-		client.setVelo(null);
-		station.ajouterVelo(velo);
-	}
 	
 	@Override
 	public synchronized boolean estUtilisateurIdentifie(int identifiant, String motDePasse) throws RemoteException
@@ -137,51 +206,11 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		return Utilisateur.estUtilisateurIdentifie(identifiant, motDePasse);
 	}
 	
-	public synchronized Station chercherStationLaPlusProche(Station stationActuelle) throws java.rmi.RemoteException
-	{
-		return stationActuelle.getStationLaPlusProche();
-	}
-	
 	public synchronized String[] getRoleUtilisateur(int identifiant) throws java.rmi.RemoteException
 	{
 		return Utilisateur.getRoles(identifiant);
 	}
 	
-	public int emprunterVeloAdministrateur(int identifiant, int idVelo, int idStation) throws java.rmi.RemoteException
-	{	
-		Station station = Station.getStation(idStation);
-		Velo velo = station.getVeloStation(idVelo);
-		if(velo != null)
-		{
-			velo.setEtat(Etat.EnReparation);
-			station.supprimerVelo(velo);
-			return velo.getIdVelo();
-		}
-		else
-		{
-			return -1;
-		}		
-	}
-	
-	public int deposerVeloAdministrateur(int identifiant, int idVelo, int idStation) throws java.rmi.RemoteException
-	{
-		Station station = Station.getStation(idStation);
-		Velo velo = station.getVeloStation(idVelo);
-		if(velo != null)
-		{
-			velo.setEtat(Etat.Libre);
-			station.ajouterVelo(velo);
-			return velo.getIdVelo();
-		}
-		else
-		{
-			return -1;
-		}		
-	}
-	
-	
-	
-
 	public synchronized static void main(String[] args) throws Exception {
 		LocateRegistry.createRegistry(1099);
 		Naming.rebind("MaGestionStation",new GestionStationImpl());

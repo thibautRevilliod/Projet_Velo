@@ -9,11 +9,8 @@ public class Velo {
 	private int idVelo;
 	private static HashMap<Integer, Velo> lesVelos = new HashMap<Integer, Velo>();
 	private Etat etat;
-	private Station station;
 	private static int idsVelo = 0; 
 	
-	
-
 	public Velo() {
 		this.etat = Etat.Libre;
 		idsVelo++;
@@ -21,39 +18,22 @@ public class Velo {
 		lesVelos.put(idsVelo,this);
 	}
 	
+	public int getIdVelo() {return idVelo;}
+	public Etat getEtat() {return etat;}
+	public void setEtat(Etat etat) {this.etat = etat;}
 	
-
-
-	public int getIdVelo() {
-		return idVelo;
-	}
-
-
-
-
-	public Station getStation() {
-		return station;
-	}
-
-
-
-	public void setStation(Station station) {
-		this.station = station;
-	}
-
-
-	public Etat getEtat() {
-		return etat;
-	}
-
-
-	public void setEtat(Etat etat) {
-		this.etat = etat;
+	public static Velo getVelo(int idVelo)
+	{
+		if(lesVelos.containsKey(idVelo))
+				return lesVelos.get(idVelo);
+		else
+			return null;
 	}
 	
 	public static boolean supprimerVelo(int idVelo)
 	{
-		if(lesVelos.containsKey(idVelo))
+		//Hypothèse : un vélo ne peut être supprimé que s'il est libre
+		if(lesVelos.containsKey(idVelo) && lesVelos.get(idVelo).getEtat() == Etat.Libre)
 		{
 			lesVelos.remove(idVelo);
 			return true;
@@ -61,5 +41,4 @@ public class Velo {
 		else
 			return false;
 	}
-
 }

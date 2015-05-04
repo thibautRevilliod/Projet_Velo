@@ -17,10 +17,10 @@ import metier.Station;
 import metier.Velo;
 
 public class StationClient {
-	public static GestionStation proxyGS;
-	public static String valeurChoix;
-	public static int idStation;
-	public static BufferedReader entree = new BufferedReader(new InputStreamReader(System.in)); 
+	private static GestionStation proxyGS;
+	private static String valeurChoix;
+	private static int idStation;
+	private static BufferedReader entree = new BufferedReader(new InputStreamReader(System.in)); 
 	
 	
 	public static void menuPrincipal() throws IOException, InterruptedException{
@@ -57,27 +57,23 @@ public class StationClient {
 		System.out.println("--4) Quitter");
 		System.out.println("----");
 		valeurChoix = entree.readLine();
-			
+		tab = demandeInfoCreeUtilisateur();	
 		switch(valeurChoix)
 		{
 		case "1":
-			tab = demandeInfoCreeUtilisateur();
-			identifiantUtilisateur = proxyGS.creerClient(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5]);
-			messageUtilisateurCree(identifiantUtilisateur, tab[5]);	
+			tab[6] = "Client";
 			break;
 		case "2":
-			tab = demandeInfoCreeUtilisateur();
-			identifiantUtilisateur = proxyGS.creerOperateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5]);
-			messageUtilisateurCree(identifiantUtilisateur, tab[5]);	
+			tab[6] = "Operateur";
 			break;
 		case "3":
-			tab = demandeInfoCreeUtilisateur();
-			identifiantUtilisateur = proxyGS.creerAdministrateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5]);
-			messageUtilisateurCree(identifiantUtilisateur, tab[5]);
+			tab[6] = "Administrateur";
 			break;
 		case "4":
 			menuPrincipal();
 		}	
+		identifiantUtilisateur = proxyGS.creerUtilisateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5], tab[6]);
+		messageUtilisateurCree(identifiantUtilisateur, tab[5]);	
 	}
 	
 	public static void messageUtilisateurCree(int pidentifiantUtilisateur, String pmdp) throws InterruptedException{
@@ -167,7 +163,8 @@ public class StationClient {
 	private static void menuAdministrateur(int identifiant, String mdp) throws IOException, InterruptedException {
 		// TODO Auto-generated method stub	
 		int idVelo;
-		int veloADeposer;
+		int[] resultats;
+		int stationDepot;
 		
 		System.out.println("--------- Menu Administrateur ----------");
 		System.out.println("Que voulez-vous faire ?");
@@ -184,14 +181,23 @@ public class StationClient {
 				idVelo = Integer.parseInt(entree.readLine());
 				// retourne l'id du vélo sinon rien (null ??)
 				// mettre à jour le statut du vélo en réparation
-				veloADeposer = proxyGS.emprunterVeloAdministrateur(identifiant, idVelo, idStation);
-				if(veloADeposer == -1){ // ou null à voir
-					System.out.println("Erreur 10600 : Le vélo n'est pas disponible.");
-				}else
+				resultats = proxyGS.emprunterVelos(identifiant, idStation, idVelo);
+				switch(resultats[1])
 				{
-					System.out.println("Veuillez prendre le vélo.");
+					case 0 :
+						System.out.println("Veuillez prendre le vélo.");
+						break;
+					case -1 :
+						System.err.println("Erreur 10600 : Utilisateur ou Station inexistants.");
+						break;
+					case -2 :
+						System.err.println("Erreur 10601 : Utilisateur non administrateur.");
+						break;
+					case -3 :
+						System.err.println("Erreur 10602 : Le vélo n'est pas disponible.");
+						break;
 				}
-				System.out.print("Déconnection");
+				System.out.print("Déconnexion");
 				pause(5);
 				menuPrincipal();
 				break;
@@ -201,23 +207,24 @@ public class StationClient {
 				// retourne si place disponible l'id vélo
 				// sinon retourne le nom de la station la plus proche, sa latitude et sa longitude
 				// mettre à jour le statut du vélo disponible
-				veloADeposer = proxyGS.deposerVeloAdministrateur(identifiant, idVelo, idStation);
-				if (veloADeposer == -1){
-					Station stationLaPlusProche = proxyGS.chercherStationLaPlusProche(Station.getStation(idStation));
+				stationDepot = proxyGS.deposerVelos(identifiant, idStation);
+				if (stationDepot != idStation)
+				{
+					Station stationLaPlusProche = Station.getStation(stationDepot);
 					System.out.println("Plus de place disponible dans cette station.");
-					System.out.println("Veuillez aller à la station " + stationLaPlusProche.getIdStation() + " qui dispose de place : ");
+					System.out.println("Veuillez aller à la station " + stationDepot + " qui dispose de place : ");
 					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 					System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
 				}else
 				{
-					System.out.println("Veuillez déposer le vélo " + veloADeposer);
+					System.out.println("Veuillez déposer le vélo " + idVelo);
 				}
-				System.out.print("Déconnection");
+				System.out.print("Déconnexion");
 				pause(5);
 				menuPrincipal();
 				break;
 			case "3":
-				System.out.print("Déconnection");
+				System.out.print("Déconnexion");
 				pause(3);
 				menuPrincipal();
 				break;
@@ -228,7 +235,9 @@ public class StationClient {
 	
 	private static void menuOperateur(int identifiant, String mdp) throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
-		String lesIdVelo[];
+		int[] lesIdVelo;
+		int nbVelos;
+		int stationDepot;
 		
 		System.out.println("--------- Menu Operateur ----------");
 		System.out.println("Que voulez-vous faire ?");
@@ -245,50 +254,62 @@ public class StationClient {
 				menuOperateurNotification(identifiant, mdp);
 				break;
 			case "2":
+				System.out.println("Veuillez entrer le nombre de vélos à retirer :");
+				nbVelos = Integer.parseInt(entree.readLine());
 				// retourne les ids de vélo si disponible
 				// sinon => la notification à planté
 				// ne pas oublier de stocker la date et heure de l'emprunt !
-				lesIdVelo = proxyGS.emprunterVeloOperateur(identifiant, idStation);
-				if (lesIdVelo.length == 0){ // ou null à voir
-					System.out.println("Erreur 10200 : Station source définit par la notification incorrecte.");
-					System.out.print("Déconnection");
-					pause(10);
-					menuPrincipal();
-				}else{
+				lesIdVelo = proxyGS.emprunterVelos(identifiant, idStation, nbVelos, Role.Operateur);
+				stationDepot = lesIdVelo[nbVelos];
+				if(stationDepot == -1)
+				{
+					System.err.println("Erreur 10600 : Utilisateur ou Station inexistants.");
+				}
+				else if(stationDepot == -2)
+				{
+					System.err.println("Erreur 10601 : Utilisateur non opérateur.");
+				}
+				else if(stationDepot == idStation)
+				{
 					System.out.println("Liste des vélos à retirer :");
-					for(int i = 0; i < lesIdVelo.length; i++){
+					for(int i = 0; i < nbVelos; i++)
+					{
 						System.out.println("  " + lesIdVelo[i]);
 						pause(3);
 					}
-					System.out.print("Déconnection");
-					pause(5);
-					menuPrincipal();
 				}
+				else
+				{
+					Station stationLaPlusProche = Station.getStation(stationDepot);
+					System.out.println("Plus de place disponible dans cette station.");
+					System.out.println("Veuillez aller à la station " + stationDepot + " qui dispose de place : ");
+					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
+					System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
+				}
+				System.out.print("Déconnexion");
+				pause(5);
+				menuPrincipal();
 				break;
 			case "3":
 				// retourne les ids de vélo à déposer si place disponible !
 				// sinon => la notification à planté 
 				//la méthode deposerVeloOperateur doit retourner aucun idVélo si pas place
 				// Il faut stocker la liste des vélo empruntés par personne à un instant T
-				lesIdVelo = proxyGS.deposerVeloOperateur(identifiant, idStation);
-				if(lesIdVelo.length == 0){
+				stationDepot = proxyGS.deposerVelos(identifiant, idStation);
+				if(stationDepot != idStation){
 					System.out.println("Erreur 10400 : Station destination définit par la notification incorrecte.");
-					System.out.print("Déconnection");
+					System.out.print("Déconnexion");
 					pause(10);
 					menuPrincipal();
 				}else{
-					System.out.println("Veuillez déposer les vélos : ");
-					for(int i = 0; i < lesIdVelo.length; i++){
-						System.out.println("  " + lesIdVelo[i]);
-						pause(3);
-					}
-					System.out.print("Déconnection");
+					System.out.println("Veuillez déposer les vélos");
+					System.out.print("Déconnexion");
 					pause(5);
 					menuPrincipal();
 				}
 				break;
 			case "4":
-				System.out.print("Déconnection");
+				System.out.print("Déconnexion");
 				pause(3);
 				menuPrincipal();
 				break;
@@ -323,7 +344,10 @@ public class StationClient {
 	}
 
 	public static void menuClient(int pidUtilisateur, String pmdpUtilisateur) throws IOException, InterruptedException{
-		String result[];
+		int[] idVeloEmprunteClient;
+		int idVeloDeposeClient;
+		int stationDepot;
+		Station stationLaPlusProche;
 		
 		System.out.println("--------- Menu Client ----------");
 		System.out.println("Que voulez-vous faire ?");
@@ -339,18 +363,29 @@ public class StationClient {
 				// retourne l'id du vélo si disponible sinon retourne le nom de la station, 
 				// la latitude, et la longitude avec des vélos disponible
 				// ne pas oublier de stocker la date et heure de l'emprunt !
-				result = proxyGS.emprunterVeloUtilisateur(pidUtilisateur, idStation);
-				if (result.length == 1){
-					System.out.println("Veuillez prendre le vélo " + result[0]);
-					System.out.print("Déconnection");
-					pause(10);
-					menuPrincipal();
-				}else{
+				idVeloEmprunteClient = proxyGS.emprunterVelos(pidUtilisateur, idStation, 1, Role.Client);
+				stationDepot = idVeloEmprunteClient[1];
+				if(stationDepot == -1)
+				{
+					System.err.println("Erreur 10600 : Utilisateur ou Station inexistants.");
+				}
+				else if(stationDepot == -2)
+				{
+					System.err.println("Erreur 10601 : Utilisateur non opérateur.");
+				}
+				else if(stationDepot == idStation)
+				{
+					System.out.println("Vélo à retirer : " + idVeloEmprunteClient[0]);
+					pause(3);
+				}
+				else
+				{
+					stationLaPlusProche = Station.getStation(stationDepot);
 					System.out.println("Plus de vélo disponible dans cette station.");
-					System.out.println("Veuillez aller à la station " + result[0] + " qui dispose de vélo : ");
-					System.out.println("  Latitude : " + result[1]);
-					System.out.println("  longitude : " + result[2]);
-					System.out.println("Déconnection");
+					System.out.println("Veuillez aller à la station " + stationLaPlusProche.getIdStation() + " qui dispose de vélo : ");
+					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
+					System.out.println("  longitude : " + stationLaPlusProche.getPosition().getLongitude());
+					System.out.println("Déconnexion");
 					pause(15);
 					menuPrincipal();
 				}
@@ -360,8 +395,17 @@ public class StationClient {
 				//de la station, la longitude, et la latitude de la plus proche station qui a 
 				//des places
 				// on doit pouvoir récupérer d'un id utilisateur le vélo qu'il a emprunté.
-				result = proxyGS.ramenerVeloClient(pidUtilisateur, idStation);
-				if (result.length == 1){
+				stationDepot = proxyGS.deposerVelos(identifiant, idStation);
+				if (stationDepot != idStation){
+					stationLaPlusProche = Station.getStation(stationDepot);
+					System.out.println("Plus de place disponible dans cette station.");
+					System.out.println("Veuillez aller à la station " + stationLaPlusProche.getIdStation() + " qui dispose de place : ");
+					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
+					System.out.println("  longitude : " + stationLaPlusProche.getPosition().getLongitude());
+					System.out.println("Déconnexion");
+					pause(15);
+					menuPrincipal();
+				}else{
 					System.out.println("Vous pouvez déposer le vélo " + result[0]);
 					// a développer côter gestionStation ! (optionnel)
 						System.out.println("Voulez-vous un reçu ? ");
@@ -377,21 +421,13 @@ public class StationClient {
 							System.out.println("  Prix : " + recuDureePrix[3]);
 						}
 					System.out.println("Merci d'avoir utilisé les services de VeloRMI.");
-					System.out.print("Déconnection");
+					System.out.print("Déconnexion");
 					pause(10);
-					menuPrincipal();
-				}else{
-					System.out.println("Plus de place disponible dans cette station.");
-					System.out.println("Veuillez aller à la station " + result[0] + " qui dispose de place : ");
-					System.out.println("  Latitude : " + result[1]);
-					System.out.println("  longitude : " + result[2]);
-					System.out.println("Déconnection");
-					pause(15);
 					menuPrincipal();
 				}
 				break;
 			case "3":
-				System.out.print("Déconnection");
+				System.out.print("Déconnexion");
 				pause(3);
 				menuPrincipal();
 				break;
@@ -419,8 +455,8 @@ public class StationClient {
 		tab[3] = "telClient";
 		tab[4] = "adrClient@email.com";
 		tab[5] = "adrClient";
-		
-		proxyGS.creerClient(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5]);
+		tab[6] = "Client";
+		proxyGS.creerUtilisateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5], tab[6]);
 		
 		//creation Operateur
 		tab = new String[6];
@@ -430,8 +466,8 @@ public class StationClient {
 		tab[3] = "telOperateur";
 		tab[4] = "adrOperateur@email.com";
 		tab[5] = "adrOperateur";
-		
-		proxyGS.creerClient(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5]);
+		tab[6] = "Operateur";
+		proxyGS.creerUtilisateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5], tab[6]);
 		
 		//creation Administrateur
 		tab = new String[6];
@@ -441,8 +477,8 @@ public class StationClient {
 		tab[3] = "telAdministrateur";
 		tab[4] = "adrAdministrateur@email.com";
 		tab[5] = "adrAdministrateur";
-		
-		proxyGS.creerClient(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5]);
+		tab[6] = "Administrateur";
+		proxyGS.creerUtilisateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5], tab[6]);
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -452,12 +488,14 @@ public class StationClient {
 		String nomStation = "Station1";
 		double longitude = 1.2222;
 		double latitude = 5.4444;
-		idStation = proxyGS.ajouterStation(nomStation, longitude, latitude);
+		int capacite = 30;
+		idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite);
 		
 		//creation de vélos 
 		//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
-		for(int i = 0; i < 20; i++)
+		for(int i = 0; i < capacite; i++)
 			proxyGS.ajouterVeloStation(new Velo(), idStation);
+		
 		
 		// creation d'instances utilisateurs pour les tests
 		initialisationInstances();
