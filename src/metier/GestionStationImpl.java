@@ -11,15 +11,29 @@ import java.util.HashMap;
 import metier.CarteAcces.Role;
 import metier.Velo.Etat;
 
+
 public class GestionStationImpl extends UnicastRemoteObject implements GestionStation {
 	
 	private HashMap<Integer, Station> lesStations; //On gère ici la liste de toutes les stations, qui elles-mêmes gèrent les vélos
 	private HashMap<Integer, Utilisateur> lesUtilisateurs; //On gère ici la liste de tous les utilisateurs
+
+	public GestionStationNotif notification;
+
 	
 	public GestionStationImpl() throws RemoteException {
 		super();
 		lesStations = new HashMap<Integer, Station>();
 		lesUtilisateurs = new HashMap<Integer, Utilisateur>();
+	}
+	
+	@Override
+	public GestionStationNotif getNotification() {
+		return this.notification;
+	}
+	
+	@Override
+	public void setNotification(GestionStationNotif notification) {
+		this.notification = notification;
 	}
 
 	@Override
@@ -83,6 +97,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		station.supprimerVelo(velo);
 	}
 	
+	// à modifier
 	@Override
 	public int[] emprunterVelos(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws RemoteException
 	{
@@ -120,6 +135,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		return lesIdVelos;
 	}
 	
+	@Override
 	public int[] emprunterVelos(int idUtilisateur, int idStation, int idVelo) throws RemoteException
 	{
 		Utilisateur utilisateur;

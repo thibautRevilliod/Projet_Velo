@@ -6,6 +6,10 @@ import metier.CarteAcces.Role;
 
 public interface GestionStation extends Remote {
 	
+	public GestionStationNotif getNotification() throws RemoteException;
+	
+	public void setNotification(GestionStationNotif notification) throws RemoteException;
+	
 	public int creerStation(String nomStation, double longitude, double latitude, int capacite) throws RemoteException;
 	
 	public void supprimerStation(int idStation) throws RemoteException;
