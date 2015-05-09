@@ -104,7 +104,7 @@ implements GestionStationNotif {
 		String infosNotification[] = new String[3];
 		notification.stationSaturee = Station.getStationSaturee();
 		notification.stationEnPenurie = Station.getStationEnPenurie();
-		int nombreVeloTransferes = notification.stationSaturee.lesVelos.size()/2;
+		int nombreVeloTransferes = notification.stationSaturee.getLesVelos().size()/2;
 		infosNotification[0] = String.valueOf(nombreVeloTransferes);
 		infosNotification[1] = String.valueOf(notification.stationSaturee.getIdStation());
 		infosNotification[2] = String.valueOf(notification.stationEnPenurie.getIdStation());

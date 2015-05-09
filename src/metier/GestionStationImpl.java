@@ -76,7 +76,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 				lesUtilisateurs.put(idUtilisateur, client);
 			}
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return idUtilisateur;
@@ -206,8 +205,16 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	@Override
 	public synchronized void transfererVelo(Velo velo, int idStationOrigine, int idStationDestination) throws RemoteException
 	{
-		supprimerVeloStation(velo, idStationOrigine);
-		ajouterVeloStation(velo, idStationDestination);
+		Station stationDestination = Station.getStation(idStationDestination);
+		if(stationDestination.getNombrePlacesDispos()==0)
+		{
+			System.out.println("La station de destination " + stationDestination.getIdStation() + "n'a plus de places disponibles");
+		}
+		else
+		{
+			supprimerVeloStation(velo, idStationOrigine);
+			ajouterVeloStation(velo, idStationDestination);
+		}		
 	}
 	
 	@Override
@@ -231,6 +238,12 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		LocateRegistry.createRegistry(1099);
 		Naming.rebind("MaGestionStation",new GestionStationImpl());
 		System.out.println("MaGestionStation est enregistrée");
+	}
+
+	@Override
+	public int[] dureePrixEmpruntVeloClient(int idUtilisateur, int idStation) throws RemoteException {
+		// TODO code dureePrixEmpruntVeloClient method
+		return null;
 	}
 
 }

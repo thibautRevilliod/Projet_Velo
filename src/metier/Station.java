@@ -37,6 +37,9 @@ public class Station {
 	public void setPosition(Position position) {this.position = position;}
 	public int getCapacite() {return capacite;}
 	public void setCapacite(int capacite) {this.capacite = capacite;}
+	public ArrayList<Velo> getLesVelos() {return lesVelos;}
+	public void setLesVelos(ArrayList<Velo> lesVelos) {this.lesVelos = lesVelos;}
+
 
 	public int getNombrePlacesDispos()
 	{

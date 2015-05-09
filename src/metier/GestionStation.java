@@ -34,5 +34,7 @@ public interface GestionStation extends Remote {
 	public boolean estUtilisateurIdentifie(int identifiant, String motDePasse) throws RemoteException;
 	
 	public String[] getRoleUtilisateur(int identifiant) throws RemoteException;
+
+	public int[] dureePrixEmpruntVeloClient(int idUtilisateur, int idStation) throws RemoteException;
 	
 }

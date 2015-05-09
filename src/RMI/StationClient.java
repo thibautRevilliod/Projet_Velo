@@ -51,11 +51,10 @@ public class StationClient {
 		}
 	}
 	
-	private static void menuDeposerVelo() {
+	private static void menuDeposerVelo() throws IOException, RemoteException, InterruptedException {
 		int stationDepot;
 		int idUtilisateur;
 		Station stationLaPlusProche;
-		// TODO Auto-generated method stub
 		// retourne l'id du vélo s'il y a de la place dans la station, sinon retourne le nom 
 		//de la station, la longitude, et la latitude de la plus proche station qui a 
 		//des places
@@ -208,7 +207,6 @@ public class StationClient {
 	}
 	
 	private static void menuAdministrateur(int identifiant, String mdp) throws IOException, InterruptedException {
-		// TODO Auto-generated method stub	
 		int idVelo;
 		int[] resultats;
 		int stationDepot;
@@ -282,7 +280,6 @@ public class StationClient {
 	}
 	
 	private static void menuOperateur(int identifiant, String mdp) throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
 		int[] lesIdVelo;
 		int nbVelos;
 		int stationDepot;
@@ -452,7 +449,15 @@ public class StationClient {
 			int nombreVeloTransferes = Integer.parseInt(detailNotification[0]);
 			Station stationSaturee = Station.getStation(Integer.parseInt(detailNotification[1]));
 			Station stationEnPenurie = Station.getStation(Integer.parseInt(detailNotification[2]));
-			proxyGS.transfererVelo(nombreVeloTransferes, stationSaturee, stationEnPenurie);
+			
+			int[] listeIdsVeloATRansferer = stationSaturee.getVelosLibresStation(nombreVeloTransferes);
+
+			for(int i=0; i<listeIdsVeloATRansferer.length;i++)
+			{
+				Velo velosATransferer = Velo.getVelo(listeIdsVeloATRansferer[i]);
+				proxyGS.transfererVelo(velosATransferer,stationSaturee.getIdStation(), stationEnPenurie.getIdStation());
+			}
+			
 			System.out.println("Veuillez valider par 'ok' dès que l'action est terminée : ");
 			String actionOK = entree.readLine();
 			while (!actionOK.equals("ok"))
@@ -531,7 +536,6 @@ public class StationClient {
 	}
 
 	private static void initialisationInstances() throws RemoteException {
-		// TODO Auto-generated method stub
 		
 		//creation Client
 		String tab[] = new String[6];
