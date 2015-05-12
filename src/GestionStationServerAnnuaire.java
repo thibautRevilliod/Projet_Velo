@@ -1,4 +1,4 @@
-package RMI;
+
 
 import java.rmi.registry.LocateRegistry;
 

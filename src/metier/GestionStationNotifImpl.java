@@ -7,14 +7,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import metier.Velo.Etat;
-
 public class GestionStationNotifImpl extends UnicastRemoteObject
 implements GestionStationNotif {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4235438163194240184L;
 	public static int idsNotification = 0;
 	public enum Etat {Ouverte, Cloturee};
 	private int idNotification;
+	@SuppressWarnings("unused")
 	private Date dateNotification;
 	private Station stationEnPenurie;
 	private Station stationSaturee;

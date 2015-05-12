@@ -5,15 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.util.Date;
-import java.util.Scanner;
-
-import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory.Default;
-
 import metier.CarteAcces.Role;
 import metier.GestionStation;
 import metier.GestionStationNotifImpl;
-import metier.Position;
 import metier.Station;
 import metier.Velo;
 
@@ -210,7 +204,6 @@ public class StationClient {
 	private static void menuAdministrateur(int identifiant, String mdp) throws IOException, InterruptedException {
 		int idVelo;
 		int[] resultats;
-		int stationDepot;
 		
 		System.out.println("--------- Menu Administrateur ----------");
 		System.out.println("Que voulez-vous faire ?");
@@ -483,7 +476,6 @@ public class StationClient {
 
 	public static void menuClient(int pidUtilisateur, String pmdpUtilisateur) throws IOException, InterruptedException{
 		int[] idVeloEmprunteClient;
-		int idVeloDeposeClient;
 		int stationDepot;
 		Station stationLaPlusProche;
 		
@@ -592,7 +584,7 @@ public class StationClient {
 		int capacite = 30;
 		
 		//méthode pour vérifier s'il y a une station maître
-		stationMaitre = proxyGS.estStationMaitre();
+		stationMaitre = proxyGS.gestionStationHasMaitre();
 		
 		idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite, stationMaitre);
 		

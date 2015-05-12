@@ -1,8 +1,11 @@
 package metier;
 import java.io.Serializable;
-import java.util.Date;
 
 public class Position implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6134668026214568399L;
 	private double longitude;
 	private double latitude;
 

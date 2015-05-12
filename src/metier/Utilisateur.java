@@ -12,11 +12,16 @@ import metier.Velo.Etat;
 public abstract class Utilisateur {
 
 	private int idUtilisateur;
+	@SuppressWarnings("unused")
 	private String nom;
+	@SuppressWarnings("unused")
 	private String prenom;
 	private String motDePasse;
+	@SuppressWarnings("unused")
 	private String telephone;
+	@SuppressWarnings("unused")
 	private String adresseMail;
+	@SuppressWarnings("unused")
 	private String adressePostale;
 	//un utilisateur peut avoir plusieurs cartes d'acces (ex : le gestionnaire peut être aussi client)
 	protected HashMap<Role,CarteAcces> lesCartesAccesUtilisateur ;

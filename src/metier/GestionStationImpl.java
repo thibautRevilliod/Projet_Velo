@@ -1,11 +1,9 @@
 package metier;
 
 import java.rmi.Naming;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import metier.CarteAcces.Role;
@@ -14,6 +12,10 @@ import metier.Velo.Etat;
 
 public class GestionStationImpl extends UnicastRemoteObject implements GestionStation {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2573185254495289156L;
 	private HashMap<Integer, Station> lesStations; //On gère ici la liste de toutes les stations, qui elles-mêmes gèrent les vélos
 	private HashMap<Integer, Utilisateur> lesUtilisateurs; //On gère ici la liste de tous les utilisateurs
 
@@ -56,6 +58,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	@Override
 	public synchronized int creerUtilisateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, String padressepostale, String objectClass) throws RemoteException 
 	{
+		@SuppressWarnings("rawtypes")
 		Class myClass;
 		int idUtilisateur = -1; // idUtilisateur non ok 
 		try {
