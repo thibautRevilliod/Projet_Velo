@@ -575,15 +575,20 @@ public class StationClient {
 		proxyGS = (GestionStation) Naming.lookup("rmi://localhost:1099/MaGestionStation");
 			
 		//creation de la station
-		String nomStation = "Station1";
-		double longitude = 1.2222;
-		double latitude = 5.4444;
+		int numStation = (int) (Math.random()*100000);
+		String nomStation = "Station" + numStation;
+		double longitude = Math.random()*10;
+		double latitude = Math.random()*10;
 		int capacite = 30;
-		idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite);
+		
+		//méthode pour vérifier s'il y a une station maître
+		boolean estStationMaitre = proxyGS.estStationMaitre();
+		
+		idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite, estStationMaitre);
 		
 		//creation de vélos 
 		//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
-		for(int i = 0; i < capacite; i++)
+		for(int i = 0; i < capacite-5; i++)
 			proxyGS.ajouterVeloStation(new Velo(), idStation);
 		
 		
