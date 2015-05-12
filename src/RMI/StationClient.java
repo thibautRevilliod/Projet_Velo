@@ -21,6 +21,7 @@ public class StationClient {
 	private static GestionStation proxyGS;
 	private static String valeurChoix;
 	private static int idStation;
+	private static boolean stationMaitre;
 	private static BufferedReader entree = new BufferedReader(new InputStreamReader(System.in)); 
 	
 	
@@ -213,30 +214,16 @@ public class StationClient {
 		
 		System.out.println("--------- Menu Administrateur ----------");
 		System.out.println("Que voulez-vous faire ?");
-		System.out.println("--1) Créer une station");
-		System.out.println("--2) Enregistrer un nouveau vélo");
-		System.out.println("--3) Mettre un vélo en atelier de réparation");
-		System.out.println("--4) Se déconnecter");
+		System.out.println("--1) Enregistrer un nouveau vélo");
+		System.out.println("--2) Mettre un vélo en atelier de réparation");
+//		System.out.println("--3) Créer une station");
+		System.out.println("--3) Se déconnecter");
 		System.out.println("----");
 		valeurChoix = entree.readLine();
 		
 		switch(valeurChoix)
 		{
 			case "1":
-				//creation de la station
-				System.out.print("Veuillez renseigner le nom de la station :");
-				String nomStation = entree.readLine();
-				System.out.print("Veuillez renseigner sa latitude :");
-				double latitude = Double.parseDouble(entree.readLine());
-				System.out.print("Veuillez renseigner sa longitude :");
-				double longitude = Double.parseDouble(entree.readLine());
-				System.out.print("Veuillez renseigner sa capacité :");
-				int capacite = Integer.parseInt(entree.readLine());
-				idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite);
-				System.out.print("Station n°" + idStation + " créée");
-				menuAdministrateur(identifiant, mdp);
-				break;	
-			case "2":
 				//creation de vélos 
 				//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
 				System.out.print("Veuillez entrer l'id de la station où vous souhaitez créer le vélo : ");
@@ -244,7 +231,7 @@ public class StationClient {
 				proxyGS.ajouterVeloStation(new Velo(), idStationVelo);
 				menuAdministrateur(identifiant, mdp);
 				break;	
-			case "3":
+			case "2":
 				System.out.println("Veuillez entrer l'id du vélo à retirer pour l'atelier :");
 				idVelo = Integer.parseInt(entree.readLine());
 				// retourne l'id du vélo sinon rien (null ??)
@@ -269,11 +256,25 @@ public class StationClient {
 				pause(5);
 				menuPrincipal();
 				break;
-			case "4":
+			case "3":
 				System.out.print("Déconnexion");
 				pause(3);
 				menuPrincipal();
 				break;
+//			case "4":
+				//creation de la station
+//				System.out.print("Veuillez renseigner le nom de la station :");
+//				String nomStation = entree.readLine();
+//				System.out.print("Veuillez renseigner sa latitude :");
+//				double latitude = Double.parseDouble(entree.readLine());
+//				System.out.print("Veuillez renseigner sa longitude :");
+//				double longitude = Double.parseDouble(entree.readLine());
+//				System.out.print("Veuillez renseigner sa capacité :");
+//				int capacite = Integer.parseInt(entree.readLine());
+//				idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite, false);
+//				System.out.print("Station n°" + idStation + " créée");
+//				menuAdministrateur(identifiant, mdp);
+//				break;	
 			default :
 				menuAdministrateur(identifiant, mdp);
 		}
@@ -286,7 +287,11 @@ public class StationClient {
 
 		System.out.println("--------- Menu Operateur ----------");
 		System.out.println("Que voulez-vous faire ?");
-		System.out.println("--1) Gérer les notifications");
+		if(stationMaitre)
+		{
+			System.out.println("--1) Gérer les notifications");
+			
+		}
 		System.out.println("--2) Emprunter des Vélos");
 		//System.out.println("--3) Déposer des vélos");
 		//System.out.println("--4) Mettre un vélo en atelier de réparation");
@@ -298,7 +303,12 @@ public class StationClient {
 		switch(valeurChoix)
 		{
 			case "1":
-				menuOperateurNotification(identifiant, mdp);
+				if(stationMaitre)
+				{
+					menuOperateurNotification(identifiant, mdp);
+				}else{
+					menuOperateur(identifiant, mdp);
+				}
 				break;
 			case "2":
 				System.out.println("Veuillez entrer le nombre de vélos à retirer :");
@@ -582,9 +592,9 @@ public class StationClient {
 		int capacite = 30;
 		
 		//méthode pour vérifier s'il y a une station maître
-		boolean estStationMaitre = proxyGS.estStationMaitre();
+		stationMaitre = proxyGS.estStationMaitre();
 		
-		idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite, estStationMaitre);
+		idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite, stationMaitre);
 		
 		//creation de vélos 
 		//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
