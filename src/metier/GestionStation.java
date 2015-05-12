@@ -10,7 +10,7 @@ public interface GestionStation extends Remote {
 	
 	public void setNotification(GestionStationNotif notification) throws RemoteException;
 	
-	public int creerStation(String nomStation, double longitude, double latitude, int capacite) throws RemoteException;
+	public int creerStation(String nomStation, double longitude, double latitude, int capacite, boolean estMaitre) throws RemoteException;
 	
 	public void supprimerStation(int idStation) throws RemoteException;
 	

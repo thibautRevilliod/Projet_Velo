@@ -16,6 +16,7 @@ public class Station {
 	private static HashMap<Integer, Station> lesStations = new HashMap<Integer, Station>();
 	private ArrayList<Velo> lesVelos ;
 	private static int idsStation = 0; 
+	private boolean estMaitre;
 	
 	public Station(String nomStation, Position position, int capacite) 
 	{		
@@ -26,6 +27,7 @@ public class Station {
 		this.idStation = idsStation;
 		lesStations.put(idsStation,this);
 		this.lesVelos = new ArrayList<Velo>();
+		this.estMaitre = false;
 	}
 	
 	
@@ -39,6 +41,8 @@ public class Station {
 	public void setCapacite(int capacite) {this.capacite = capacite;}
 	public ArrayList<Velo> getLesVelos() {return lesVelos;}
 	public void setLesVelos(ArrayList<Velo> lesVelos) {this.lesVelos = lesVelos;}
+	public boolean EstMaitre() {return estMaitre;}
+	public void setEstMaitre(boolean estMaitre) {this.estMaitre = estMaitre;}
 
 
 	public int getNombrePlacesDispos()
