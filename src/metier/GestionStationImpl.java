@@ -246,4 +246,9 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		return null;
 	}
 
+	@Override
+	public boolean gestionStationHasMaitre() throws RemoteException {
+		return Station.hasMaitre();
+	}
+
 }

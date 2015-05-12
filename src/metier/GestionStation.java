@@ -37,6 +37,5 @@ public interface GestionStation extends Remote {
 
 	public int[] dureePrixEmpruntVeloClient(int idUtilisateur, int idStation) throws RemoteException;
 	
-	public boolean estStationMaitre() throws RemoteException;
-	
+	public boolean gestionStationHasMaitre() throws RemoteException;
 }

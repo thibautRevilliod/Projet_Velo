@@ -247,4 +247,25 @@ public class Station {
 	    return stationEnPenurie;
 	}
 	
+	public static boolean hasMaitre()
+	{
+		Iterator it = lesStations.entrySet().iterator();
+		
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Integer idStation = (Integer) pair.getKey();
+	        Station stationListe = (Station) pair.getValue();
+	        
+	        if(stationListe.EstMaitre())
+	        {
+	        	return true;
+	        }
+
+	        
+	        it.remove(); // avoids a ConcurrentModificationException
+	    }
+	    
+	    return false;
+	}
+	
 }
