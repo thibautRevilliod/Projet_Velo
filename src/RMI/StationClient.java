@@ -32,7 +32,7 @@ public class StationClient {
 		switch(valeurChoix)
 		{
 			case "1":
-				menuCreerCompte();
+				menuCreerComptePrincipal();
 				menuPrincipal();
 				break;
 			case "2":
@@ -98,7 +98,59 @@ public class StationClient {
 		}
 	}
 
-	public static void menuCreerCompte() throws IOException, InterruptedException{
+	public static void menuCreerComptePrincipal() throws IOException, InterruptedException{
+		String tab[];
+		int identifiantUtilisateur = 0;
+		boolean verificationFormat;
+		String mdp;
+		Integer identifiant = null;
+		boolean reponsOk;
+		
+		System.out.println("--------- Creation compte ----------");
+		System.out.println("Avez-vous déjà un compte administrateur ou opérateur ? (o/n)");
+		valeurChoix = entree.readLine();
+		
+		switch (valeurChoix) {
+			case "o":
+				do{
+					verificationFormat = true;
+					try{
+						System.out.println("Veuillez entrer votre identifiant : ");
+						identifiant = Integer.valueOf(entree.readLine());
+					}catch(Exception e){
+						System.out.println("Saisie incorrecte");
+						verificationFormat = false;
+					}
+				}while(!verificationFormat);
+				
+				System.out.println("Veuillez entrer votre mot de passe : ");
+				mdp = entree.readLine();
+				System.out.println("---");
+				
+				reponsOk = proxyGS.estUtilisateurIdentifie(identifiant, mdp);
+				
+				if(reponsOk)
+				{
+					proxyGS.ajouterRoleUtilisateur(identifiant, Role.Client);
+					System.out.println("Rôle ajouté");
+					pause(3);
+				}
+				
+				menuPrincipal();
+				break;
+			case "n":
+				tab = demandeInfoCreeUtilisateur();	
+				tab[6] = "Client";
+				identifiantUtilisateur = proxyGS.creerUtilisateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5], tab[6]);
+				messageUtilisateurCree(identifiantUtilisateur, tab[5]);	
+				break;
+			default:
+				menuCreerComptePrincipal();
+				
+		}
+	}
+	
+	public static void menuCreerCompteAdministrateur() throws IOException, InterruptedException{
 		String tab[];
 		int identifiantUtilisateur = 0;
 		
@@ -246,13 +298,15 @@ public class StationClient {
 		int[] resultats;
 		int idStationVelo = 0;
 		boolean verificationFormat = true;
+		int idUtilisateur = 0;
 		
 		System.out.println("--------- Menu Administrateur ----------");
 		System.out.println("Que voulez-vous faire ?");
 		System.out.println("--1) Enregistrer un nouveau vélo");
 		System.out.println("--2) Mettre un vélo en atelier de réparation");
-//		System.out.println("--3) Créer une station");
-		System.out.println("--3) Se déconnecter");
+		System.out.println("--3) Créer compte (Administrateur / Opérateur / Client)");
+//		System.out.println("--4) Créer une station");
+		System.out.println("--5) Se déconnecter");
 		System.out.println("----");
 		valeurChoix = entree.readLine();
 		
@@ -311,6 +365,66 @@ public class StationClient {
 				menuPrincipal();
 				break;
 			case "3":
+				System.out.println("--------- Menu creer Compte ----------");
+				System.out.println("--1) Ajout de rôle d'un compte existant");
+				System.out.println("--2) Créer un nouveau compte");
+				System.out.println("--3) Quitter");
+				System.out.println("----");
+				valeurChoix = entree.readLine();
+				switch(valeurChoix)
+				{
+					case "1":
+						do{
+							verificationFormat = true;
+							try{
+								System.out.println("Veuillez renseigner l'identifiant de la personne :");
+								idUtilisateur = Integer.parseInt(entree.readLine());
+							}catch(Exception e){
+								System.out.println("Saisie incorrecte");
+								verificationFormat = false;
+							}
+						}while(!verificationFormat);
+						
+						System.out.println("Veuillez choisir le type de rôle : ");
+						System.out.println("--1) Client");
+						System.out.println("--2) Operateur");
+						System.out.println("--3) Administrateur");
+						System.out.println("----");
+						valeurChoix = entree.readLine();
+						Role typeRole = null;
+						switch(valeurChoix)
+						{
+							case "1":
+								typeRole = Role.Client;
+								break;
+							case "2":
+								typeRole = Role.Operateur;
+								break;
+							case "3":
+								typeRole = Role.Administrateur;
+								break;
+							default:
+								menuAdministrateur(identifiant, mdp);
+								break;
+						}
+						// a créer !
+						proxyGS.ajouterRoleUtilisateur(idUtilisateur, typeRole);
+						System.out.println("Rôle ajouté");
+						menuAdministrateur(identifiant, mdp);
+						break;
+					case "2":
+						menuCreerCompteAdministrateur();
+						menuAdministrateur(identifiant, mdp);
+						break;
+					case "3":
+						menuAdministrateur(identifiant, mdp);
+						break;
+					default:
+						menuAdministrateur(identifiant, mdp);
+						break;
+				}
+				break;
+			case "5":
 				System.out.print("Déconnexion");
 				pause(3);
 				menuPrincipal();

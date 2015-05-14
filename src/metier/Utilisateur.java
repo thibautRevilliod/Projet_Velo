@@ -160,4 +160,12 @@ public abstract class Utilisateur {
 			supprimerVelo(veloTemp);
 		}	
 	}
+	
+	public void ajouterRoleUtilisateur(Role r) {
+		CarteAcces carteAcces = new CarteAcces(r);
+		if(!this.lesCartesAccesUtilisateur.containsKey(r))
+		{
+			lesCartesAccesUtilisateur.put(carteAcces.getRole(), carteAcces);
+		}
+	}
 }

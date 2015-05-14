@@ -253,5 +253,11 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	public boolean gestionStationHasMaitre() throws RemoteException {
 		return Station.hasMaitre();
 	}
+	
+	public synchronized void ajouterRoleUtilisateur(int idUtilisateur, Role role) throws RemoteException
+	{
+		Utilisateur user = lesUtilisateurs.get(idUtilisateur);
+		user.ajouterRoleUtilisateur(role);
+	}
 
 }
