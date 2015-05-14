@@ -1,8 +1,9 @@
 package metier;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Velo {
+public class Velo implements Serializable{
 	
 	public enum Etat {Emprunte, Libre, EnReparation};
 	

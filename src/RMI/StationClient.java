@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+
 import metier.CarteAcces.Role;
 import metier.GestionStation;
 import metier.GestionStationNotifImpl;
@@ -48,14 +49,25 @@ public class StationClient {
 	
 	private static void menuDeposerVelo() throws IOException, RemoteException, InterruptedException {
 		int stationDepot;
-		int idUtilisateur;
+		int idUtilisateur = 0;
 		Station stationLaPlusProche;
+		boolean verificationFormat = true;
+		
 		// retourne l'id du vélo s'il y a de la place dans la station, sinon retourne le nom 
 		//de la station, la longitude, et la latitude de la plus proche station qui a 
 		//des places
 		// doit retourner un tableau de string !
-		System.out.println("Veuillez entrer votre identifiant (action déposer le vélo dans la borne) : ");
-		idUtilisateur = Integer.parseInt(entree.readLine());
+		do{
+			verificationFormat = true;
+			try{
+				System.out.println("Veuillez entrer votre identifiant (action déposer le vélo dans la borne) : ");
+				idUtilisateur = Integer.parseInt(entree.readLine());
+			}catch(Exception e){
+				System.out.println("Saisie incorrecte");
+				verificationFormat = false;
+			}
+		}while(!verificationFormat);
+		
 		stationDepot = proxyGS.deposerVelos(idUtilisateur, idStation);
 		if ((stationDepot  == idStation)){
 			System.out.println("Vous pouvez déposer le(s) vélo(s) ");
@@ -98,23 +110,31 @@ public class StationClient {
 		System.out.println("--4) Quitter");
 		System.out.println("----");
 		valeurChoix = entree.readLine();
-		tab = demandeInfoCreeUtilisateur();	
 		switch(valeurChoix)
 		{
-		case "1":
-			tab[6] = "Client";
-			break;
-		case "2":
-			tab[6] = "Operateur";
-			break;
-		case "3":
-			tab[6] = "Administrateur";
+		case "1": case "2": case "3":
+			tab = demandeInfoCreeUtilisateur();	
+			switch (valeurChoix) {
+			case "1":
+				tab[6] = "Client";
+				break;
+			case "2":
+				tab[6] = "Operateur";
+				break;
+			case "3":
+				tab[6] = "Administrateur";
+				break;
+			}
+			identifiantUtilisateur = proxyGS.creerUtilisateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5], tab[6]);
+			messageUtilisateurCree(identifiantUtilisateur, tab[5]);	
 			break;
 		case "4":
 			menuPrincipal();
-		}	
-		identifiantUtilisateur = proxyGS.creerUtilisateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5], tab[6]);
-		messageUtilisateurCree(identifiantUtilisateur, tab[5]);	
+			break;
+		default:
+			menuPrincipal();
+			break;
+		}
 	}
 	
 	public static void messageUtilisateurCree(int pidentifiantUtilisateur, String pmdp) throws InterruptedException{
@@ -147,15 +167,27 @@ public class StationClient {
 	
 	public static void menuIdentification() throws NumberFormatException, IOException, InterruptedException
 	{
-		int identifiant;
+		int identifiant = 0;
 		String mdp;
 		String role[];
 		String choixRole;
-		String currentRole;
+		String currentRole = null;
+
+		boolean verificationFormat = true;
 		
 		System.out.println("----------- Identification ----------");
-		System.out.println("Veuillez entrer votre identifiant : ");
-		identifiant = Integer.valueOf(entree.readLine());
+		
+		do{
+			verificationFormat = true;
+			try{
+				System.out.println("Veuillez entrer votre identifiant : ");
+				identifiant = Integer.valueOf(entree.readLine());
+			}catch(Exception e){
+				System.out.println("Saisie incorrecte");
+				verificationFormat = false;
+			}
+		}while(!verificationFormat);
+		
 		System.out.println("Veuillez entrer votre mot de passe : ");
 		mdp = entree.readLine();
 		System.out.println("-------------------------------------");
@@ -167,13 +199,21 @@ public class StationClient {
 			System.out.println("Connexion réussie");
 			role = proxyGS.getRoleUtilisateur(identifiant); // retourne un tableau de string de role
 			if(role.length > 1){
-				System.out.println("Veuillez selectionner votre role  : ");
-				for(int i = 0; i < role.length; i++){
-					System.out.println("--" + i + ") " + role[i]);
-				}
-				System.out.println("----");
-				choixRole = entree.readLine();
-				currentRole = role[Integer.parseInt(choixRole)];
+				do{
+					verificationFormat = true;
+					try{
+						System.out.println("Veuillez selectionner votre role  : ");
+						for(int i = 0; i < role.length; i++){
+							System.out.println("--" + i + ") " + role[i]);
+						}
+						System.out.println("----");
+						choixRole = entree.readLine();
+						currentRole = role[Integer.parseInt(choixRole)];
+					}catch(Exception e){
+						System.out.println("Saisie incorrecte");
+						verificationFormat = false;
+					}
+				}while(!verificationFormat);
 			}else{
 				currentRole = role[0];
 			}
@@ -202,8 +242,10 @@ public class StationClient {
 	}
 	
 	private static void menuAdministrateur(int identifiant, String mdp) throws IOException, InterruptedException {
-		int idVelo;
+		int idVelo = 0;
 		int[] resultats;
+		int idStationVelo = 0;
+		boolean verificationFormat = true;
 		
 		System.out.println("--------- Menu Administrateur ----------");
 		System.out.println("Que voulez-vous faire ?");
@@ -219,14 +261,33 @@ public class StationClient {
 			case "1":
 				//creation de vélos 
 				//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
-				System.out.print("Veuillez entrer l'id de la station où vous souhaitez créer le vélo : ");
-				int idStationVelo = Integer.parseInt(entree.readLine());
+				
+				do{
+					verificationFormat = true;
+					try{
+						System.out.print("Veuillez entrer l'id de la station où vous souhaitez créer le vélo : ");
+						idStationVelo = Integer.valueOf(entree.readLine());
+					}catch(Exception e){
+						System.out.println("Saisie incorrecte");
+						verificationFormat  = false;
+					}
+				}while(!verificationFormat);
+				
 				proxyGS.ajouterVeloStation(new Velo(), idStationVelo);
 				menuAdministrateur(identifiant, mdp);
 				break;	
-			case "2":
-				System.out.println("Veuillez entrer l'id du vélo à retirer pour l'atelier :");
-				idVelo = Integer.parseInt(entree.readLine());
+			case "2":				
+				do{
+					verificationFormat = true;
+					try{
+						System.out.println("Veuillez entrer l'id du vélo à retirer pour l'atelier :");
+						idVelo = Integer.valueOf(entree.readLine());
+					}catch(Exception e){
+						System.out.println("Saisie incorrecte");
+						verificationFormat  = false;
+					}
+				}while(!verificationFormat);
+				
 				// retourne l'id du vélo sinon rien (null ??)
 				// mettre à jour le statut du vélo en réparation
 				resultats = proxyGS.emprunterVelos(identifiant, idStation, idVelo);
@@ -254,16 +315,48 @@ public class StationClient {
 				pause(3);
 				menuPrincipal();
 				break;
-//			case "4":
-				//creation de la station
+			case "4":
+//				creation de la station
 //				System.out.print("Veuillez renseigner le nom de la station :");
 //				String nomStation = entree.readLine();
-//				System.out.print("Veuillez renseigner sa latitude :");
-//				double latitude = Double.parseDouble(entree.readLine());
-//				System.out.print("Veuillez renseigner sa longitude :");
-//				double longitude = Double.parseDouble(entree.readLine());
-//				System.out.print("Veuillez renseigner sa capacité :");
-//				int capacite = Integer.parseInt(entree.readLine());
+//				double latitude = 0;
+//				double longitude = 0;
+//				int capacite = 0;
+//				boolean verificationFormat = true;
+//				
+//				do{
+//					verificationFormat = true;
+//					try{
+//						System.out.print("Veuillez renseigner sa latitude :");
+//						latitude = Double.parseDouble(entree.readLine());
+//					}catch(Exception e){
+//						System.out.println("Saisie incorrecte");
+//						verificationFormat = false;
+//					}
+//				}while(!verificationFormat);
+//				
+//				do{
+//					verificationFormat = true;
+//					try{
+//						System.out.print("Veuillez renseigner sa longitude :");
+//						longitude = Double.parseDouble(entree.readLine());
+//					}catch(Exception e){
+//						System.out.println("Saisie incorrecte");
+//						verificationFormat = false;
+//					}
+//				}while(!verificationFormat);
+//				
+//				do{
+//					verificationFormat = true;
+//					try{
+//						System.out.print("Veuillez renseigner sa capacité :");
+//						capacite = Integer.parseInt(entree.readLine());
+//					}catch(Exception e){
+//						System.out.println("Saisie incorrecte");
+//						verificationFormat = false;
+//					}
+//				}while(!verificationFormat);
+//				
 //				idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite, false);
 //				System.out.print("Station n°" + idStation + " créée");
 //				menuAdministrateur(identifiant, mdp);
@@ -275,8 +368,9 @@ public class StationClient {
 	
 	private static void menuOperateur(int identifiant, String mdp) throws IOException, InterruptedException {
 		int[] lesIdVelo;
-		int nbVelos;
+		int nbVelos = 0;
 		int stationDepot;
+		boolean verificationFormat = true;
 
 		System.out.println("--------- Menu Operateur ----------");
 		System.out.println("Que voulez-vous faire ?");
@@ -304,8 +398,17 @@ public class StationClient {
 				}
 				break;
 			case "2":
-				System.out.println("Veuillez entrer le nombre de vélos à retirer :");
-				nbVelos = Integer.parseInt(entree.readLine());
+				do{
+					verificationFormat = true;
+					try{
+						System.out.println("Veuillez entrer le nombre de vélos à retirer :");
+						nbVelos = Integer.parseInt(entree.readLine());
+					}catch(Exception e){
+						System.out.println("Saisie incorrecte");
+						verificationFormat  = false;
+					}
+				}while(!verificationFormat);
+				
 				// retourne les ids de vélo si disponible
 				// sinon => la notification à planté
 				// ne pas oublier de stocker la date et heure de l'emprunt !
@@ -360,8 +463,16 @@ public class StationClient {
 				break;
 			*/
 			/*case "4":
-				System.out.println("Veuillez entrer l'id du vélo à retirer pour l'atelier :");
-				idVelo = Integer.parseInt(entree.readLine());
+			 	do{
+					verificationFormat = true;
+					try{
+						System.out.println("Veuillez entrer l'id du vélo à retirer pour l'atelier :");
+						idVelo = Integer.parseInt(entree.readLine());
+					}catch(Exception e){
+						System.out.println("Saisie incorrecte");
+						verificationFormat  = false;
+					}
+				}while(!verificationFormat);
 				// retourne l'id du vélo sinon rien (null ??)
 				// mettre à jour le statut du vélo en réparation
 				resultats = proxyGS.emprunterVelos(identifiant, idStation, idVelo);
@@ -386,8 +497,16 @@ public class StationClient {
 				break;
 				*/
 			/*case "5":
-				System.out.println("Veuillez entrer l'id du vélo réparé à déposer :");
-				idVelo = Integer.parseInt(entree.readLine());
+				do{
+					verificationFormat = true;
+					try{
+						System.out.println("Veuillez entrer l'id du vélo réparé à déposer :");
+						idVelo = Integer.parseInt(entree.readLine());
+					}catch(Exception e){
+						System.out.println("Saisie incorrecte");
+						verificationFormat  = false;
+					}
+				}while(!verificationFormat);
 				// retourne si place disponible l'id vélo
 				// sinon retourne le nom de la station la plus proche, sa latitude et sa longitude
 				// mettre à jour le statut du vélo disponible
@@ -540,7 +659,7 @@ public class StationClient {
 	private static void initialisationInstances() throws RemoteException {
 		
 		//creation Client
-		String tab[] = new String[6];
+		String tab[] = new String[7];
 		tab[0] = "nomClient";
 		tab[1] = "prenomClient";
 		tab[2] = "mdpClient";
@@ -551,7 +670,7 @@ public class StationClient {
 		proxyGS.creerUtilisateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5], tab[6]);
 		
 		//creation Operateur
-		tab = new String[6];
+		tab = new String[7];
 		tab[0] = "nomOperateur";
 		tab[1] = "prenomOperateur";
 		tab[2] = "mdpOperateur";
@@ -562,7 +681,7 @@ public class StationClient {
 		proxyGS.creerUtilisateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5], tab[6]);
 		
 		//creation Administrateur
-		tab = new String[6];
+		tab = new String[7];
 		tab[0] = "nomAdministrateur";
 		tab[1] = "prenomAdministrateur";
 		tab[2] = "mdpAdministrateur";
@@ -587,11 +706,11 @@ public class StationClient {
 		stationMaitre = proxyGS.gestionStationHasMaitre();
 		
 		idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite, stationMaitre);
-		
+
 		//creation de vélos 
 		//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
 		for(int i = 0; i < capacite-5; i++)
-			proxyGS.ajouterVeloStation(new Velo(), idStation);
+			proxyGS.ajouterVeloStation(new Velo(),idStation);
 		
 		
 		// creation d'instances utilisateurs pour les tests
