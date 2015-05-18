@@ -57,7 +57,8 @@ public abstract class Utilisateur {
 	public void setMotDePasse(String motDePasse) {this.motDePasse = motDePasse;}
 	public Velo getVelo() {return this.lesVelos.get(0);}
 	public void setVelo(Velo velo) {this.lesVelos.set(0, velo);}
-	
+	public static HashMap<Integer, Utilisateur> getLesUtilisateurs() {return lesUtilisateurs;}
+
 	public int[] getIdVelos()
 	{
 		int nbVelos = lesVelos.size();

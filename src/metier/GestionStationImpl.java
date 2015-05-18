@@ -16,16 +16,12 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	 * 
 	 */
 	private static final long serialVersionUID = -2573185254495289156L;
-	private HashMap<Integer, Station> lesStations; //On gère ici la liste de toutes les stations, qui elles-mêmes gèrent les vélos
-	private HashMap<Integer, Utilisateur> lesUtilisateurs; //On gère ici la liste de tous les utilisateurs
-
+	
 	public GestionStationNotif notification;
 
 	
 	public GestionStationImpl() throws RemoteException {
 		super();
-		lesStations = new HashMap<Integer, Station>();
-		lesUtilisateurs = new HashMap<Integer, Utilisateur>();
 	}
 	
 	@Override
@@ -44,7 +40,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		Position position = new Position(longitude, latitude);
 		Station nouvelleStation = new Station(nomStation, position, capacite);
 		int idStation = nouvelleStation.getIdStation();
-		lesStations.put(idStation, nouvelleStation);
+		Station.getLesStations().put(idStation, nouvelleStation);
 		return idStation;
 	}
 	
@@ -52,7 +48,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	public synchronized void supprimerStation(int idStation) throws RemoteException
 	{
 		if(Station.supprimerStation(idStation))
-			lesStations.remove(idStation);
+			Station.getLesStations().remove(idStation);
 	}
 	
 	@Override
@@ -63,22 +59,28 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		int idUtilisateur = -1; // idUtilisateur non ok 
 		try {
 			myClass = Class.forName(objectClass);
-			if (myClass.isInstance(Administrateur.class)) {
+		
+		
+		Administrateur admin = null;
+		Operateur ope = null;
+		Client cli = null;
+			if (myClass.isInstance(admin)) {
 				Administrateur administrateur = new Administrateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
 				idUtilisateur = administrateur.getIdUtilisateur();
-				lesUtilisateurs.put(idUtilisateur, administrateur);
+//				Utilisateur.getLesUtilisateurs().put(idUtilisateur, administrateur);
 		    }
-			else if(myClass.isInstance(Operateur.class)) {
+			else if(myClass.isInstance(ope)) {
 				Operateur operateur = new Operateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
 				idUtilisateur = operateur.getIdUtilisateur();
-				lesUtilisateurs.put(idUtilisateur, operateur);
+//				Utilisateur.getLesUtilisateurs().put(idUtilisateur, operateur);
 			}
-			else if(myClass.isInstance(Client.class)) {	
+			else if(myClass.isInstance(cli)) {	
 				Client client = new Client( pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);
 				idUtilisateur = client.getIdUtilisateur();
-				lesUtilisateurs.put(idUtilisateur, client);
+//				Utilisateur.getLesUtilisateurs().put(idUtilisateur, client);
 			}
 		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return idUtilisateur;
@@ -88,14 +90,14 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	@Override
 	public synchronized void ajouterVeloStation(Velo velo, int idStation) throws RemoteException
 	{
-		Station station = lesStations.get(idStation);
+		Station station = Station.getLesStations().get(idStation);
 		station.ajouterVelo(velo);
 	}
 	
 	@Override
 	public synchronized void supprimerVeloStation(Velo velo, int idStation) throws RemoteException
 	{
-		Station station = lesStations.get(idStation);
+		Station station = Station.getLesStations().get(idStation);
 		station.supprimerVelo(velo);
 	}
 	
@@ -106,13 +108,13 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		Utilisateur utilisateur;
 		Station station;
 		int[] lesIdVelos = new int[nbVelos + 1]; //On rajoute un emplacement qui contiendra l'idStation des vélos
-		if(lesUtilisateurs.containsKey(idUtilisateur) && lesStations.containsKey(idStation))
+		if(Utilisateur.getLesUtilisateurs().containsKey(idUtilisateur) && Station.getLesStations().containsKey(idStation))
 		{
-			utilisateur = lesUtilisateurs.get(idUtilisateur);
+			utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
 			//On vérifie les droits de l'utilisateur
 			if(utilisateur.hasRole(roleEmprunt))
 			{
-				station = lesStations.get(idStation);
+				station = Station.getLesStations().get(idStation);
 				//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
 				lesIdVelos = station.getVelosLibresStation(nbVelos);
 				//On teste que la méthode précédente ne retourne pas un idStation différent
@@ -145,13 +147,13 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		Velo velo;
 		int[] lesIdVelos = new int[2]; 
 		lesIdVelos[0] = idVelo;
-		if(lesUtilisateurs.containsKey(idUtilisateur) && lesStations.containsKey(idStation))
+		if(Utilisateur.getLesUtilisateurs().containsKey(idUtilisateur) && Station.getLesStations().containsKey(idStation))
 		{
-			utilisateur = lesUtilisateurs.get(idUtilisateur);
+			utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
 			//On vérifie les droits de l'utilisateur
 			if(utilisateur.hasRole(Role.Administrateur))
 			{
-				station = lesStations.get(idStation);
+				station = Station.getLesStations().get(idStation);
 				velo = station.getVeloStation(idVelo);
 				//On vérifie que le vélo choisi soit libre
 				if(velo != null && velo.getEtat().equals(Etat.Libre))
@@ -188,10 +190,10 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		int[] lesIdVelos;
 		int idStationDepot = idStation;
 		int nbVelos;
-		if(lesUtilisateurs.containsKey(idUtilisateur) && lesStations.containsKey(idStation))
+		if(Utilisateur.getLesUtilisateurs().containsKey(idUtilisateur) && Station.getLesStations().containsKey(idStation))
 		{
-			utilisateur = lesUtilisateurs.get(idUtilisateur);
-			station = lesStations.get(idStation);
+			utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
+			station = Station.getLesStations().get(idStation);
 			lesIdVelos = utilisateur.getIdVelos();
 			nbVelos = lesIdVelos.length;
 			if(station.getNombrePlacesDispos() >= nbVelos)
@@ -256,7 +258,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	
 	public synchronized void ajouterRoleUtilisateur(int idUtilisateur, Role role) throws RemoteException
 	{
-		Utilisateur user = lesUtilisateurs.get(idUtilisateur);
+		Utilisateur user = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
 		user.ajouterRoleUtilisateur(role);
 	}
 

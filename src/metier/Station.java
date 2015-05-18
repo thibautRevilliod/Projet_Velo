@@ -43,6 +43,7 @@ public class Station {
 	public void setLesVelos(ArrayList<Velo> lesVelos) {this.lesVelos = lesVelos;}
 	public boolean EstMaitre() {return estMaitre;}
 	public void setEstMaitre(boolean estMaitre) {this.estMaitre = estMaitre;}
+	public static HashMap<Integer, Station> getLesStations() {return lesStations;}
 
 
 	public int getNombrePlacesDispos()

@@ -7,9 +7,13 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 
 import metier.CarteAcces.Role;
+import metier.Administrateur;
+import metier.Client;
 import metier.GestionStation;
 import metier.GestionStationNotifImpl;
+import metier.Operateur;
 import metier.Station;
+import metier.Utilisateur;
 import metier.Velo;
 
 public class StationClient {
@@ -140,9 +144,9 @@ public class StationClient {
 				break;
 			case "n":
 				tab = demandeInfoCreeUtilisateur();	
-				tab[6] = "Client";
+				//tab[6] = "Client";
 				identifiantUtilisateur = proxyGS.creerUtilisateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5], tab[6]);
-				messageUtilisateurCree(identifiantUtilisateur, tab[5]);	
+				messageUtilisateurCree(identifiantUtilisateur, tab[2]);	
 				break;
 			default:
 				menuCreerComptePrincipal();
@@ -199,7 +203,7 @@ public class StationClient {
 	}
 	
 	public static String[] demandeInfoCreeUtilisateur() throws IOException{	
-		String result[] = new String[6];
+		String result[] = new String[7];
 		
 		System.out.println("Veuillez entrer votre nom : ");
 		result[0] = entree.readLine();
