@@ -40,7 +40,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		Position position = new Position(longitude, latitude);
 		Station nouvelleStation = new Station(nomStation, position, capacite);
 		int idStation = nouvelleStation.getIdStation();
-		Station.getLesStations().put(idStation, nouvelleStation);
 		return idStation;
 	}
 	
@@ -67,17 +66,14 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 			if (myClass.isInstance(admin)) {
 				Administrateur administrateur = new Administrateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
 				idUtilisateur = administrateur.getIdUtilisateur();
-//				Utilisateur.getLesUtilisateurs().put(idUtilisateur, administrateur);
 		    }
 			else if(myClass.isInstance(ope)) {
 				Operateur operateur = new Operateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
 				idUtilisateur = operateur.getIdUtilisateur();
-//				Utilisateur.getLesUtilisateurs().put(idUtilisateur, operateur);
 			}
 			else if(myClass.isInstance(cli)) {	
 				Client client = new Client( pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);
 				idUtilisateur = client.getIdUtilisateur();
-//				Utilisateur.getLesUtilisateurs().put(idUtilisateur, client);
 			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
