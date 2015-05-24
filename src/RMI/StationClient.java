@@ -144,7 +144,7 @@ public class StationClient {
 				break;
 			case "n":
 				tab = demandeInfoCreeUtilisateur();	
-				//tab[6] = "Client";
+				tab[6] = "Client";
 				identifiantUtilisateur = proxyGS.creerUtilisateur(tab[0], tab[1], tab[2], tab[3], tab[4], tab[5], tab[6]);
 				messageUtilisateurCree(identifiantUtilisateur, tab[2]);	
 				break;

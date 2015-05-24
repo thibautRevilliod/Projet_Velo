@@ -53,31 +53,24 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	@Override
 	public synchronized int creerUtilisateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, String padressepostale, String objectClass) throws RemoteException 
 	{
-		@SuppressWarnings("rawtypes")
-		Class myClass;
-		int idUtilisateur = -1; // idUtilisateur non ok 
-		try {
-			myClass = Class.forName(objectClass);
-		
-		
-		Administrateur admin = null;
-		Operateur ope = null;
-		Client cli = null;
-			if (myClass.isInstance(admin)) {
-				Administrateur administrateur = new Administrateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
-				idUtilisateur = administrateur.getIdUtilisateur();
-		    }
-			else if(myClass.isInstance(ope)) {
-				Operateur operateur = new Operateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
-				idUtilisateur = operateur.getIdUtilisateur();
-			}
-			else if(myClass.isInstance(cli)) {	
+		int idUtilisateur;
+		switch(objectClass)
+		{
+			case "Client" :
 				Client client = new Client( pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);
 				idUtilisateur = client.getIdUtilisateur();
-			}
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+				break;
+			case "Operateur" :
+				Operateur operateur = new Operateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
+				idUtilisateur = operateur.getIdUtilisateur();
+				break;
+			case "Administrateur" :
+				Administrateur administrateur = new Administrateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
+				idUtilisateur = administrateur.getIdUtilisateur();
+				break;
+			default:
+				idUtilisateur = -1; // idUtilisateur non ok 
+				break;
 		}
 		return idUtilisateur;
 	    
