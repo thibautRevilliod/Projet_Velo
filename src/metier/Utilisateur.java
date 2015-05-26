@@ -133,7 +133,7 @@ public abstract class Utilisateur {
 		Utilisateur utilisateur = getUtilisateur(identifiant);
 		if (utilisateur != null)
 		{
-			int numberOfRoles = CarteAcces.Role.values().length;
+			int numberOfRoles = utilisateur.lesCartesAccesUtilisateur.size();
 			String[] lesRoles = new String[numberOfRoles];
 			
 			int i =0;
