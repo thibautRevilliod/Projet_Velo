@@ -39,7 +39,7 @@ public abstract class Utilisateur {
 		adressePostale = padressepostale;
 		idsUtilisateur++;
 		idUtilisateur = idsUtilisateur;
-		Utilisateur.lesUtilisateurs.put(idsUtilisateur,this);
+		Utilisateur.lesUtilisateurs.put(Integer.valueOf(idsUtilisateur),this);
 		lesCartesAccesUtilisateur = new HashMap<Role, CarteAcces>();
 		lesVelos = new ArrayList<Velo>();
 	}

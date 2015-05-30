@@ -90,6 +90,60 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		station.supprimerVelo(velo);
 	}
 	
+	@Override
+	public int isEmprunterVelosPossible(int idUtilisateur, int idStation,
+			int nbVelos, Role roleEmprunt) throws RemoteException {
+		int resultat;
+		Utilisateur utilisateur;
+		Station station;
+		int[] lesIdVelos = new int[nbVelos + 1]; //On rajoute un emplacement qui contiendra l'idStation des vélos
+		if(Utilisateur.getLesUtilisateurs().containsKey(idUtilisateur))
+		{
+			if(Station.getLesStations().containsKey(idStation))
+			{
+				station = Station.getLesStations().get(idStation);
+				if(station.getCapacite()>=nbVelos)
+				{
+					utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
+					//On vérifie les droits de l'utilisateur
+					if(utilisateur.hasRole(roleEmprunt))
+					{
+						
+						//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
+						lesIdVelos = station.getVelosLibresStation(nbVelos);
+						//On teste que la méthode précédente ne retourne pas un idStation différent
+						if(lesIdVelos[nbVelos] == idStation)
+						{
+							resultat = 0; // pas d'erreur : l'emprunt est possible
+						}
+						else
+						{
+							resultat = lesIdVelos[nbVelos]; // idSTation de la station la plus proche
+						}
+					}
+					else
+					{
+						resultat = -2; //Erreur : Utilisateur non Admin
+					}
+				}
+				else
+				{
+					resultat = -4; //Erreur : la capacité de la station est inférieur au nombre de vélos souhaités
+				}
+			}
+			else
+			{
+				resultat = -3; //Erreur : Station inexistante
+			}
+			
+		}
+		else
+		{
+			resultat = -1; //Erreur : Utilisateur inexistant
+		}
+		return resultat;
+	}
+	
 	// à modifier
 	@Override
 	public int[] emprunterVelos(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws RemoteException
@@ -97,34 +151,21 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		Utilisateur utilisateur;
 		Station station;
 		int[] lesIdVelos = new int[nbVelos + 1]; //On rajoute un emplacement qui contiendra l'idStation des vélos
-		if(Utilisateur.getLesUtilisateurs().containsKey(idUtilisateur) && Station.getLesStations().containsKey(idStation))
-		{
-			utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
-			//On vérifie les droits de l'utilisateur
-			if(utilisateur.hasRole(roleEmprunt))
-			{
-				station = Station.getLesStations().get(idStation);
-				//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
-				lesIdVelos = station.getVelosLibresStation(nbVelos);
-				//On teste que la méthode précédente ne retourne pas un idStation différent
-				if(lesIdVelos[nbVelos] == idStation)
-				{
-					//On assigne les vélos à l'utilisateur, en spécifiant son rôle pour traitements spécifiques
-					utilisateur.emprunterVelos(lesIdVelos, roleEmprunt);
-					//Suppression des vélos de la station
-					station.supprimerVelos(lesIdVelos);
-				}
-			}
-			else
-			{
-				lesIdVelos[nbVelos] = -2; //Erreur : Utilisateur non Admin
-			}
+		
+		utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
+		
+		station = Station.getLesStations().get(idStation);
+		//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
+		lesIdVelos = station.getVelosLibresStation(nbVelos);
+		//On teste que la méthode précédente ne retourne pas un idStation différent
+		
+		//On assigne les vélos à l'utilisateur, en spécifiant son rôle pour traitements spécifiques
+		utilisateur.emprunterVelos(lesIdVelos, roleEmprunt);
+		//Suppression des vélos de la station
+		station.supprimerVelos(lesIdVelos);
+				
 			
-		}
-		else
-		{
-			lesIdVelos[nbVelos] = -1; //Erreur : Utilisateur ou Station inexistant
-		}
+
 		return lesIdVelos;
 	}
 	
@@ -250,5 +291,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		Utilisateur user = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
 		user.ajouterRoleUtilisateur(role);
 	}
+
+	
 
 }

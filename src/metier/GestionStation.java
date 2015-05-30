@@ -25,6 +25,8 @@ public interface GestionStation extends Remote {
 	
 	public void transfererVelo(Velo velo, int idStationOrigine, int idStationDestination) throws RemoteException;
 	
+	public int isEmprunterVelosPossible(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws RemoteException;
+	
 	public int[] emprunterVelos(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws RemoteException;
 	
 	public int[] emprunterVelos(int idUtilisateur, int idStation, int idVelo) throws RemoteException;

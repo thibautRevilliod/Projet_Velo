@@ -25,7 +25,7 @@ public class Station {
 		this.capacite = capacite;
 		idsStation++;
 		this.idStation = idsStation;
-		lesStations.put(idsStation,this);
+		Station.lesStations.put(Integer.valueOf(idsStation),this);
 		this.lesVelos = new ArrayList<Velo>();
 		this.estMaitre = false;
 	}
@@ -53,7 +53,17 @@ public class Station {
 	
 	public int getNombreVelosLibres()
 	{
-		return this.capacite - this.getNombrePlacesDispos();
+		int nombreVelosLibres = 0;
+		for(int i = 0; i < lesVelos.size(); i++)
+		{
+		    Velo velo = lesVelos.get(i);
+		    if(velo.getEtat() == Etat.Libre)
+		    {
+		    	nombreVelosLibres++;
+		    }
+		}
+		
+		return nombreVelosLibres;
 	}
 	
 	public boolean ajouterVelo(Velo velo)
