@@ -17,6 +17,7 @@ import metier.Utilisateur;
 import metier.Velo;
 
 public class StationClient {
+	private static final int TEMPS_PAUSE = 2;
 	private static GestionStation proxyGS;
 	private static String valeurChoix;
 	private static int idStation;
@@ -27,6 +28,7 @@ public class StationClient {
 	public static void menuPrincipal() throws IOException, InterruptedException{
 		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		System.out.println("------------ Bienvenue ------------");
+		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNbrVelo(idStation) +" ");
 		System.out.println("--1) Créer compte");
 		System.out.println("--2) S'identifier");
 		System.out.println("--3) Déposer un vélo");
@@ -60,7 +62,6 @@ public class StationClient {
 		// retourne l'id du vélo s'il y a de la place dans la station, sinon retourne le nom 
 		//de la station, la longitude, et la latitude de la plus proche station qui a 
 		//des places
-		// doit retourner un tableau de string !
 		do{
 			verificationFormat = true;
 			try{
@@ -90,7 +91,7 @@ public class StationClient {
 				}
 			System.out.println("Merci d'avoir utilisé les services de VeloRMI.");
 			System.out.print("Déconnection");
-			pause(10);
+			pause(TEMPS_PAUSE);
 		}else{
 			stationLaPlusProche = Station.getStation(stationDepot);
 			System.out.println("Plus de place disponible dans cette station.");
@@ -98,7 +99,7 @@ public class StationClient {
 			System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 			System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
 			System.out.println("Déconnexion");
-			pause(15);
+			pause(TEMPS_PAUSE);
 		}
 	}
 
@@ -137,7 +138,7 @@ public class StationClient {
 				{
 					proxyGS.ajouterRoleUtilisateur(identifiant, Role.Client);
 					System.out.println("Rôle ajouté");
-					pause(3);
+					pause(TEMPS_PAUSE);
 				}
 				
 				menuPrincipal();
@@ -199,7 +200,7 @@ public class StationClient {
 		System.out.println("  Identifiant : " + pidentifiantUtilisateur);
 		System.out.println("  Mot de passe : " + pmdp);	
 		System.out.println("-------------------------------------");
-		pause(10);
+		pause(TEMPS_PAUSE);
 	}
 	
 	public static String[] demandeInfoCreeUtilisateur() throws IOException{	
@@ -288,11 +289,11 @@ public class StationClient {
 			}
 			
 			mdp = entree.readLine();
-			pause(3);
+			pause(TEMPS_PAUSE);
 		}else
 		{
 			System.out.println("Connexion refusée");
-			pause(3);
+			pause(TEMPS_PAUSE);
 			menuPrincipal();
 		}
 	}
@@ -305,6 +306,7 @@ public class StationClient {
 		int idUtilisateur = 0;
 		
 		System.out.println("--------- Menu Administrateur ----------");
+		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNbrVelo(idStation) +" ");
 		System.out.println("Que voulez-vous faire ?");
 		System.out.println("--1) Enregistrer un nouveau vélo");
 		System.out.println("--2) Mettre un vélo en atelier de réparation");
@@ -331,41 +333,63 @@ public class StationClient {
 					}
 				}while(!verificationFormat);
 				
-				proxyGS.ajouterVeloStation(new Velo(), idStationVelo);
+				boolean resultat = proxyGS.ajouterVeloStation(new Velo(), idStationVelo);
+				if(!resultat)
+				{
+					System.out.println("Plus de place disponible");
+					Station stationLaPlusProche = Station.getStation(idStation);
+					System.out.println("Veuillez aller à la station " + stationLaPlusProche.getIdStation() + " qui dispose de vélo : ");
+					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
+					System.out.println("  longitude : " + stationLaPlusProche.getPosition().getLongitude());
+					System.out.println("Déconnexion");
+					pause(TEMPS_PAUSE);
+				}
 				menuAdministrateur(identifiant, mdp);
 				break;	
-			case "2":				
-				do{
-					verificationFormat = true;
-					try{
-						System.out.println("Veuillez entrer l'id du vélo à retirer pour l'atelier :");
-						idVelo = Integer.valueOf(entree.readLine());
-					}catch(Exception e){
-						System.out.println("Saisie incorrecte");
-						verificationFormat  = false;
-					}
-				}while(!verificationFormat);
-				
-				// retourne l'id du vélo sinon rien (null ??)
-				// mettre à jour le statut du vélo en réparation
-				resultats = proxyGS.emprunterVelos(identifiant, idStation, idVelo);
-				switch(resultats[1])
+			case "2":		
+				int[] lesVelos = proxyGS.getLesVelos(idStation);
+				if(lesVelos.length != 0)
 				{
-					case 0 :
-						System.out.println("Veuillez prendre le vélo.");
-						break;
-					case -1 :
-						System.err.println("Erreur 10600 : Utilisateur ou Station inexistants.");
-						break;
-					case -2 :
-						System.err.println("Erreur 10601 : Utilisateur non administrateur.");
-						break;
-					case -3 :
-						System.err.println("Erreur 10602 : Le vélo n'est pas disponible.");
-						break;
+					System.out.println("***** Les vélos de la station *****");
+					for(int i = 0; i < lesVelos.length; i++ )
+					{
+						System.out.println("**Vélo n° " + lesVelos[i]);
+					}
+					System.out.println("***************");
+				
+					do{
+						verificationFormat = true;
+						try{
+							System.out.println("Veuillez entrer l'id du vélo à retirer pour l'atelier :");
+							idVelo = Integer.valueOf(entree.readLine());
+						}catch(Exception e){
+							System.out.println("Saisie incorrecte");
+							verificationFormat  = false;
+						}
+					}while(!verificationFormat);
+					
+					resultats = proxyGS.emprunterVelos(identifiant, idStation, idVelo);
+					switch(resultats[1])
+					{
+						case 0 :
+							System.out.println("Veuillez prendre le vélo.");
+							break;
+						case -1 :
+							System.err.println("Erreur 10600 : Utilisateur ou Station inexistants.");
+							break;
+						case -2 :
+							System.err.println("Erreur 10601 : Utilisateur non administrateur.");
+							break;
+						case -3 :
+							System.err.println("Erreur 10602 : Le vélo n'est pas disponible.");
+							break;
+					}
+				}else
+				{
+					System.out.println("Aucun vélo de disponible dans cette station");
 				}
 				System.out.print("Déconnexion");
-				pause(5);
+				pause(TEMPS_PAUSE);
 				menuPrincipal();
 				break;
 			case "3":
@@ -411,7 +435,7 @@ public class StationClient {
 								menuAdministrateur(identifiant, mdp);
 								break;
 						}
-						// a créer !
+						
 						proxyGS.ajouterRoleUtilisateur(idUtilisateur, typeRole);
 						System.out.println("Rôle ajouté");
 						menuAdministrateur(identifiant, mdp);
@@ -430,7 +454,7 @@ public class StationClient {
 				break;
 			case "5":
 				System.out.print("Déconnexion");
-				pause(3);
+				pause(TEMPS_PAUSE);
 				menuPrincipal();
 				break;
 			case "4":
@@ -491,6 +515,7 @@ public class StationClient {
 		boolean verificationFormat = true;
 
 		System.out.println("--------- Menu Operateur ----------");
+		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNbrVelo(idStation) +" ");
 		System.out.println("Que voulez-vous faire ?");
 		if(stationMaitre)
 		{
@@ -527,9 +552,6 @@ public class StationClient {
 					}
 				}while(!verificationFormat);
 				
-				// retourne les ids de vélo si disponible
-				// sinon => la notification à planté
-				// ne pas oublier de stocker la date et heure de l'emprunt !
 				lesIdVelo = proxyGS.emprunterVelos(identifiant, idStation, nbVelos, Role.Operateur);
 				stationDepot = lesIdVelo[nbVelos];
 				if(stationDepot == -1)
@@ -540,13 +562,17 @@ public class StationClient {
 				{
 					System.err.println("Erreur 10601 : Utilisateur non opérateur.");
 				}
+				else if(stationDepot == -3)
+				{
+					System.err.println("Erreur 10602 : Nombre de velo disponible inférieur au nombre de vélo à emprunter.");
+				}
 				else if(stationDepot == idStation)
 				{
 					System.out.println("Liste des vélos à retirer :");
 					for(int i = 0; i < nbVelos; i++)
 					{
 						System.out.println("  " + lesIdVelo[i]);
-						pause(3);
+						pause(TEMPS_PAUSE);
 					}
 				}
 				else
@@ -558,7 +584,7 @@ public class StationClient {
 					System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
 				}
 				System.out.print("Déconnexion");
-				pause(5);
+				pause(TEMPS_PAUSE);
 				menuPrincipal();
 				break;
 			/*case "3":
@@ -570,12 +596,12 @@ public class StationClient {
 				if(stationDepot != idStation){
 					System.out.println("Erreur 10400 : Station destination définit par la notification incorrecte.");
 					System.out.print("Déconnexion");
-					pause(10);
+					pause(TEMPS_PAUSE);
 					menuPrincipal();
 				}else{
 					System.out.println("Veuillez déposer les vélos");
 					System.out.print("Déconnexion");
-					pause(5);
+					pause(TEMPS_PAUSE);
 					menuPrincipal();
 				}
 				break;
@@ -610,7 +636,7 @@ public class StationClient {
 						break;
 				}
 				System.out.print("Déconnexion");
-				pause(5);
+				pause(TEMPS_PAUSE);
 				menuPrincipal();
 				break;
 				*/
@@ -640,13 +666,13 @@ public class StationClient {
 					System.out.println("Veuillez déposer le vélo " + veloADeposer);
 				}
 				System.out.print("Déconnection");
-				pause(5);
+				pause(TEMPS_PAUSE);
 				menuPrincipal();
 				break;
 			*/
 			case "6":
 				System.out.print("Déconnexion");
-				pause(3);
+				pause(TEMPS_PAUSE);
 				menuPrincipal();
 				break;
 			default :
@@ -663,7 +689,7 @@ public class StationClient {
 		
 		System.out.println("En attente de notifications...");
 		notification = proxyGS.getNotification().estnotificationStation();
-		pause(3);
+		pause(TEMPS_PAUSE);
 		while((notification == -1) && (continuer))
 		{
 			System.out.println("Voulez-vous continuer à attendre des notifications ? (o/n)");
@@ -674,15 +700,14 @@ public class StationClient {
 			}else
 			{
 				System.out.println("En attente de notifications...");
-				//retourne false s'il y pas de notification et true s'il y en a.
+				//retourne s'il y des notifications.
 				notification = proxyGS.getNotification().estnotificationStation();
-				pause(3);
+				pause(TEMPS_PAUSE);
 			}
 		}
 		
 		if(notification != -1)
 		{
-			// return [0] = nbreVelos; [1] = stationSaturée; [2] = stationPénurie
 			String detailNotification[] = proxyGS.getNotification().detailNotificationStation(notification);
 			
 			System.out.println("Veuillez transférer " + detailNotification[0] + " vélos de la station saturée " + detailNotification[1] + " à la station en pénurie " + detailNotification[2]);
@@ -717,6 +742,7 @@ public class StationClient {
 		Station stationLaPlusProche;
 		
 		System.out.println("--------- Menu Client ----------");
+		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNbrVelo(idStation) +" ");
 		System.out.println("Que voulez-vous faire ?");
 		System.out.println("--1) Emprunter un vélo");
 		System.out.println("--2) Se déconnecter");
@@ -726,9 +752,7 @@ public class StationClient {
 		switch(valeurChoix)
 		{
 			case "1":
-				// retourne l'id du vélo si disponible sinon retourne le nom de la station, 
-				// la latitude, et la longitude avec des vélos disponible
-				// ne pas oublier de stocker la date et heure de l'emprunt !
+				// retourne l'id du vélo si disponible
 				idVeloEmprunteClient = proxyGS.emprunterVelos(pidUtilisateur, idStation, 1, Role.Client);
 				stationDepot = idVeloEmprunteClient[1];
 				if(stationDepot == -1)
@@ -742,7 +766,7 @@ public class StationClient {
 				else if(stationDepot == idStation)
 				{
 					System.out.println("Vélo à retirer : " + idVeloEmprunteClient[0]);
-					pause(3);
+					pause(TEMPS_PAUSE);
 				}
 				else
 				{
@@ -752,13 +776,13 @@ public class StationClient {
 					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 					System.out.println("  longitude : " + stationLaPlusProche.getPosition().getLongitude());
 					System.out.println("Déconnexion");
-					pause(15);
+					pause(TEMPS_PAUSE);
 					menuPrincipal();
 				}
 				break;
 			case "2":
 				System.out.print("Déconnexion");
-				pause(3);
+				pause(TEMPS_PAUSE);
 				menuPrincipal();
 				break;
 			default :
@@ -827,12 +851,13 @@ public class StationClient {
 
 		//creation de vélos 
 		//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
-		for(int i = 0; i < capacite-5; i++)
-			proxyGS.ajouterVeloStation(new Velo(),idStation);
-		
-		
-		// creation d'instances utilisateurs pour les tests
-		initialisationInstances();
+		if(!stationMaitre){
+			for(int i = 0; i < capacite-5; i++)
+				proxyGS.ajouterVeloStation(new Velo(),idStation);
+		}else{
+			// creation d'instances utilisateurs pour les tests
+			initialisationInstances();
+		}
 		
 		menuPrincipal();
 	}
