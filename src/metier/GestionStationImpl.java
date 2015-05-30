@@ -77,10 +77,12 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 	
 	@Override
-	public synchronized void ajouterVeloStation(Velo velo, int idStation) throws RemoteException
+	public synchronized boolean ajouterVeloStation(Velo velo, int idStation) throws RemoteException
 	{
+		boolean result;
 		Station station = Station.getLesStations().get(idStation);
-		station.ajouterVelo(velo);
+		result = station.ajouterVelo(velo);
+		return result;
 	}
 	
 	@Override
@@ -290,6 +292,18 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	{
 		Utilisateur user = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
 		user.ajouterRoleUtilisateur(role);
+	}
+
+	@Override
+	public String getNbrVelo(int idStation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int[] getLesVelos(int idStation) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

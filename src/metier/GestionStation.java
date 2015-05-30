@@ -2,6 +2,7 @@ package metier;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+
 import metier.CarteAcces.Role;
 
 public interface GestionStation extends Remote {
@@ -19,7 +20,7 @@ public interface GestionStation extends Remote {
 	
 	public void supprimerUtilisateur (Utilisateur utilisateur) throws RemoteException;
 	
-	public void ajouterVeloStation(Velo velo, int idStation) throws RemoteException;
+	public boolean ajouterVeloStation(Velo velo, int idStation) throws RemoteException;
 	
 	public void supprimerVeloStation(Velo velo, int idStation) throws RemoteException;
 	
@@ -42,4 +43,8 @@ public interface GestionStation extends Remote {
 	public boolean gestionStationHasMaitre() throws RemoteException;
 	
 	public void ajouterRoleUtilisateur(int idUtilisateur, Role role) throws RemoteException;
+
+	public String getNbrVelo(int idStation);
+
+	public int[] getLesVelos(int idStation);
 }
