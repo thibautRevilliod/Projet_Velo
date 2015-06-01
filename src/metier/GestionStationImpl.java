@@ -113,7 +113,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	@Override
 	public int isEmprunterVelosPossible(int idUtilisateur, int idStation,
 			int nbVelos, Role roleEmprunt) throws RemoteException {
-		int resultat;
+		int resultat = 0;
 		Utilisateur utilisateur;
 		Station station;
 		int[] lesIdVelos = new int[nbVelos + 1]; //On rajoute un emplacement qui contiendra l'idStation des vélos
@@ -126,24 +126,27 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 				{
 					utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
 					//On vérifie les droits de l'utilisateur
+					
 					if(utilisateur.hasRole(roleEmprunt))
 					{
-						
-						//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
-						lesIdVelos = station.getVelosLibresStation(nbVelos);
-						//On teste que la méthode précédente ne retourne pas un idStation différent
-						if(lesIdVelos[nbVelos] == idStation)
+						if((nbVelos > 1 && roleEmprunt == Role.Operateur) || (nbVelos == 1))
 						{
-							resultat = 0; // pas d'erreur : l'emprunt est possible
+							//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
+							lesIdVelos = station.getVelosLibresStation(nbVelos);
+							//On teste que la méthode précédente ne retourne pas un idStation différent
+							if(lesIdVelos[nbVelos] == idStation)
+							{
+								resultat = 0; // pas d'erreur : l'emprunt est possible
+							}
+							else
+							{
+								resultat = lesIdVelos[nbVelos]; // idSTation de la station la plus proche
+							}
 						}
 						else
 						{
-							resultat = lesIdVelos[nbVelos]; // idSTation de la station la plus proche
+							resultat = -2; //Erreur : l'utilisateur n'a pas le bon rôle
 						}
-					}
-					else
-					{
-						resultat = -2; //Erreur : Utilisateur non Admin
 					}
 				}
 				else

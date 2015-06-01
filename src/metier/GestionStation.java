@@ -50,4 +50,5 @@ public interface GestionStation extends Remote {
 	public HashMap<Integer, Station> getLesStationsGS() throws RemoteException;
 	
 	public HashMap<Integer, Utilisateur> getLesUtilisateursGS() throws RemoteException;
+
 }
