@@ -58,7 +58,8 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	@Override
 	public synchronized void supprimerStation(int idStation) throws RemoteException
 	{
-		if(Station.supprimerStation(idStation))
+		Station station = lesStations.get(idStation);
+		if(station.supprimerStation())
 		{
 			Station.getLesStations().remove(idStation);
 			lesStations.remove(idStation);
@@ -264,7 +265,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	@Override
 	public synchronized void transfererVelo(Velo velo, int idStationOrigine, int idStationDestination) throws RemoteException
 	{
-		Station stationDestination = Station.getStation(idStationDestination);
+		Station stationDestination = lesStations.get(idStationDestination);
 		if(stationDestination.getNombrePlacesDispos()==0)
 		{
 			System.out.println("La station de destination " + stationDestination.getIdStation() + "n'a plus de places disponibles");
@@ -307,7 +308,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 
 	@Override
 	public boolean gestionStationHasMaitre(int idStation) throws RemoteException {
-		return Station.getStation(idStation).isEstMaitre();
+		return lesStations.get(idStation).isEstMaitre();
 	}
 	
 	public synchronized void ajouterRoleUtilisateur(int idUtilisateur, Role role) throws RemoteException
@@ -319,7 +320,8 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	@Override
 	public int[] getVelosLibresStation(int idStation) throws RemoteException 
 	{
-		Station station = Station.getStation(idStation);
+		Station station = lesStations.get(idStation);
+		station.getNombreVelosLibres();
 		return station.getVelosLibresStation(station.getNombreVelosLibres());
 	}
 
@@ -333,5 +335,14 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		return Utilisateur.getLesUtilisateurs();
 	}
 	
-
+	public Station getStation(int idStation) throws RemoteException
+	{
+		return lesStations.get(idStation);
+	}
+	
+	public Velo getVelo(int idVelo) throws RemoteException
+	{
+		return Velo.getVelo(idVelo);
+	}
+	
 }

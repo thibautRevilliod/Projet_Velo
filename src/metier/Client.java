@@ -15,14 +15,14 @@ public class Client extends Utilisateur {
 	
 	public void emprunterVelos(int[] idVelos, Role roleEmprunt, int idStation) throws java.rmi.RemoteException
 	{
-		Station station = Station.getStation(idStation);
-		System.out.println("idvelo : "+idVelos[0]);
-		Velo veloTemp = station.getLesVelos().get(idVelos[0]);
-		System.out.println("this velo : "+this.getVelo().getIdVelo());
+		Station stationTemp = Station.getLesStations().get(idStation);
+		Velo veloTemp = stationTemp.getLesVelos().get(idVelos[0]);
+//		Velo veloTemp = Velo.getVelo(idVelos[0]);
 		if(veloTemp != null && lesVelos.size() < 1)
 		{
 			veloTemp.setEtat(Etat.Emprunte);
-			this.setVelo(veloTemp);
+//			this.setVelo(veloTemp);
+			lesVelos.add(veloTemp);
 		}	
 	}
 	

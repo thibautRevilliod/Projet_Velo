@@ -30,16 +30,16 @@ public class Velo implements Serializable{
 		else
 			return null;
 	}
-	
-	public static boolean supprimerVelo(int idVelo)
-	{
-		//Hypothèse : un vélo ne peut être supprimé que s'il est libre
-		if(lesVelos.containsKey(idVelo) && lesVelos.get(idVelo).getEtat() == Etat.Libre)
-		{
-			lesVelos.remove(idVelo);
-			return true;
-		}
-		else
-			return false;
-	}
+//	
+//	public static boolean supprimerVelo(int idVelo)
+//	{
+//		//Hypothèse : un vélo ne peut être supprimé que s'il est libre
+//		if(lesVelos.containsKey(idVelo) && lesVelos.get(idVelo).getEtat() == Etat.Libre)
+//		{
+//			lesVelos.remove(idVelo);
+//			return true;
+//		}
+//		else
+//			return false;
+//	}
 }

@@ -28,6 +28,9 @@ public class StationClient {
 	public static void menuPrincipal() throws IOException, InterruptedException{
 		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		System.out.println("------------ Bienvenue ------------");
+		System.out.println("*Nombre de velo disponible : "+ 
+				proxyGS.getVelosLibresStation(idStation).length
+				+" ");
 //		if(stationMaitre)
 //		{
 //			System.out.println("*Nombre de velo disponible : "+ 
@@ -38,14 +41,14 @@ public class StationClient {
 //			(proxyGS.getVelosLibresStation(idStation).length-1)
 //			+" ");
 //		}
-		if(proxyGS.getVelosLibresStation(idStation) != null)
-		{
+//		if(proxyGS.getVelosLibresStation(idStation) != null)
+//		{
 		//System.out.println("*Nombre de velo disponible : "+ 
 				
 					//proxyGS.getVelosLibresStation(idStation).length
 				
 				//+" ");
-		}
+//		}
 		System.out.println("--1) Créer compte");
 		System.out.println("--2) S'identifier");
 		System.out.println("--3) Déposer un vélo");
@@ -110,7 +113,7 @@ public class StationClient {
 			System.out.print("Déconnection");
 			pause(TEMPS_PAUSE);
 		}else{
-			stationLaPlusProche = Station.getStation(stationDepot);
+			stationLaPlusProche = proxyGS.getStation(stationDepot);
 			System.out.println("Plus de place disponible dans cette station.");
 			System.out.println("Veuillez aller à la station " + stationDepot + " qui dispose de place : ");
 			System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
@@ -356,7 +359,7 @@ public class StationClient {
 				if(!resultat)
 				{
 					System.out.println("Plus de place disponible");
-					Station stationLaPlusProche = Station.getStation(idStation);
+					Station stationLaPlusProche = proxyGS.getStation(idStation);
 					System.out.println("Veuillez aller à la station " + stationLaPlusProche.getIdStation() + " qui dispose de vélo : ");
 					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 					System.out.println("  longitude : " + stationLaPlusProche.getPosition().getLongitude());
@@ -370,7 +373,7 @@ public class StationClient {
 				if(lesVelos.length != 0)
 				{
 					System.out.println("***** Les vélos de la station *****");
-					for(int i = 0; i < lesVelos.length; i++ )
+					for(int i = 0; i < lesVelos.length-1; i++ )
 					{
 						System.out.println("**Vélo n° " + lesVelos[i]);
 					}
@@ -613,7 +616,7 @@ public class StationClient {
 					}
 					else
 					{
-						Station stationLaPlusProche = Station.getStation(stationDepot);
+						Station stationLaPlusProche = proxyGS.getStation(stationDepot);
 						System.out.println("Plus de place disponible dans cette station.");
 						System.out.println("Veuillez aller à la station " + stationDepot + " qui dispose de place : ");
 						System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
@@ -752,14 +755,14 @@ public class StationClient {
 			
 			System.out.println("Veuillez transférer " + detailNotification[0] + " vélos de la station saturée " + detailNotification[1] + " à la station en pénurie " + detailNotification[2]);
 			int nombreVeloTransferes = Integer.parseInt(detailNotification[0]);
-			Station stationSaturee = Station.getStation(Integer.parseInt(detailNotification[1]));
-			Station stationEnPenurie = Station.getStation(Integer.parseInt(detailNotification[2]));
+			Station stationSaturee = proxyGS.getStation(Integer.parseInt(detailNotification[1]));
+			Station stationEnPenurie = proxyGS.getStation(Integer.parseInt(detailNotification[2]));
 			
 			int[] listeIdsVeloATRansferer = stationSaturee.getVelosLibresStation(nombreVeloTransferes);
 
 			for(int i=0; i<listeIdsVeloATRansferer.length;i++)
 			{
-				Velo velosATransferer = Velo.getVelo(listeIdsVeloATRansferer[i]);
+				Velo velosATransferer = proxyGS.getVelo(listeIdsVeloATRansferer[i]);
 				proxyGS.transfererVelo(velosATransferer,stationSaturee.getIdStation(), stationEnPenurie.getIdStation());
 			}
 			
@@ -784,8 +787,8 @@ public class StationClient {
 		
 		System.out.println("--------- Menu Client ----------");
 		System.out.println("*Nombre de velo disponible : "+ 
-		proxyGS.getVelosLibresStation(idStation).length 
-		+" ");
+				proxyGS.getVelosLibresStation(idStation).length
+				+" ");
 		System.out.println("Que voulez-vous faire ?");
 		System.out.println("--1) Emprunter un vélo");
 		System.out.println("--2) Se déconnecter");
@@ -829,7 +832,7 @@ public class StationClient {
 						}
 						else
 						{
-							stationLaPlusProche = Station.getStation(stationDepot);
+							stationLaPlusProche = proxyGS.getStation(stationDepot);
 							System.out.println("Plus de place disponible dans cette station.");
 							System.out.println("Veuillez aller à la station " + stationDepot + " qui dispose de place : ");
 							System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());

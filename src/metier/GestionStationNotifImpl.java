@@ -89,7 +89,7 @@ implements GestionStationNotif {
 	}
 
 	@Override
-	public int estnotificationStation() {
+	public int estnotificationStation() throws RemoteException {
 		GestionStationNotifImpl openNotification = GestionStationNotifImpl.getFirstOpenNotification();
 		if(openNotification != null)
 		{
@@ -102,7 +102,7 @@ implements GestionStationNotif {
 	}
 
 	@Override
-	public String[] detailNotificationStation(int idNotification) {
+	public String[] detailNotificationStation(int idNotification) throws RemoteException {
 		GestionStationNotifImpl notification = GestionStationNotifImpl.getNotification(idNotification);
 		String infosNotification[] = new String[3];
 		notification.stationSaturee = Station.getStationSaturee();
@@ -115,7 +115,7 @@ implements GestionStationNotif {
 	}
 
 	@Override
-	public void notificationOK(int idNotification) {
+	public void notificationOK(int idNotification) throws RemoteException {
 		GestionStationNotifImpl notification = GestionStationNotifImpl.getNotification(idNotification);
 		notification.setEtat(Etat.Cloturee);		
 	}

@@ -19,7 +19,9 @@ public class Administrateur extends Utilisateur {
 		//int nbVelos = idVelos.length - 1; //La dernière occurence est l'idStation où se trouve le/les vélos
 		if(roleEmprunt.equals(Role.Client))
 		{
-			veloTemp = Velo.getVelo(idVelos[0]);
+			Station stationTemp = Station.getLesStations().get(idStation);
+			 veloTemp = stationTemp.getLesVelos().get(idVelos[0]);
+//			veloTemp = Velo.getVelo(idVelos[0]);
 			if(veloTemp != null && lesVelos.size() < 1)
 			{
 				veloTemp.setEtat(Etat.Emprunte);
@@ -28,12 +30,15 @@ public class Administrateur extends Utilisateur {
 		}
 		else if (roleEmprunt.equals(Role.Administrateur))
 		{
-			
-			veloTemp = Velo.getVelo(idVelos[0]);
+			Station stationTemp = Station.getLesStations().get(idStation);
+			 veloTemp = stationTemp.getLesVelos().get(idVelos[0]);
+//			veloTemp = Velo.getVelo(idVelos[0]);
 			if(veloTemp != null && lesVelos.size() < 1)
 			{
 				veloTemp.setEtat(Etat.EnReparation);
-				this.setVelo(veloTemp);
+				System.out.println("test");
+//				this.setVelo(veloTemp);
+				lesVelos.add(veloTemp);
 			}	
 			
 		}

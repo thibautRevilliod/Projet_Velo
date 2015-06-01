@@ -18,7 +18,7 @@ public class Station {
 	private static int idsStation = 0; 
 	private static boolean estMaitre = true;
 	
-	public static boolean isEstMaitre() {
+	public boolean isEstMaitre() {
 		return estMaitre;
 	}
 
@@ -93,7 +93,7 @@ public class Station {
 		int i = 0, nbVelos = idsVelos.length;
 		while(i < nbVelos)
 		{
-			veloTemp = Velo.getVelo(idsVelos[i]);
+			veloTemp = lesVelos.get(idsVelos[i]);
 			ajouterVelo(veloTemp);
 			i++;
 		}
@@ -114,7 +114,7 @@ public class Station {
 		int i = 0, nbVelos = idsVelos.length -1;//La dernière occurence est l'idStation où se trouve le/les vélos
 		while(i < nbVelos && suppOk)
 		{
-			veloTemp = Velo.getVelo(idsVelos[i]);
+			veloTemp = lesVelos.get(idsVelos[i]);
 			if(!supprimerVelo(veloTemp))
 				suppOk = false;
 			i++;
@@ -122,13 +122,13 @@ public class Station {
 		return suppOk;
 	}
 	
-	public static Station getStation(int idStation)
-	{
-		if(lesStations.containsKey(idStation))
-			return lesStations.get(idStation);
-		else
-			return null;
-	}
+//	public static Station getStation(int idStation)
+//	{
+//		if(lesStations.containsKey(idStation))
+//			return lesStations.get(idStation);
+//		else
+//			return null;
+//	}
 	
 	public Velo getVeloStation(int idVelo)
 	{
@@ -150,7 +150,7 @@ public class Station {
 		int[] listeIdsVelosLibres = new int[nbVelos + 1];
 		int j = 0;
 		
-		for(int i = 0; i < nbVelosNecessaires-1; i++)
+		for(int i = 0; i < nbVelosNecessaires; i++)
 		{
 		    Velo velo = lesVelos.get(i);
 		    if(velo.getEtat() == Etat.Libre)
@@ -205,7 +205,7 @@ public class Station {
 		return stationPlusProche;
 	}
 	
-	public static boolean supprimerStation(int idStation)
+	public boolean supprimerStation()
 	{
 		if(lesStations.containsKey(idStation))
 		{
@@ -215,7 +215,7 @@ public class Station {
 			for(int i = 0; i < stationTemp.lesVelos.size(); i++)
 			{
 				idVeloTemp = stationTemp.lesVelos.get(i).getIdVelo();
-				if(Velo.supprimerVelo(idVeloTemp))
+				if(supprimerVelo(idVeloTemp))
 					stationTemp.lesVelos.remove(i);
 			}
 			lesStations.remove(stationTemp);
@@ -290,6 +290,18 @@ public class Station {
 	    }
 	    
 	    return false;
+	}
+	
+	public boolean supprimerVelo(int idVelo)
+	{
+		//Hypothèse : un vélo ne peut être supprimé que s'il est libre
+		if(lesVelos.contains(idVelo) && lesVelos.get(idVelo).getEtat() == Etat.Libre)
+		{
+			lesVelos.remove(idVelo);
+			return true;
+		}
+		else
+			return false;
 	}
 	
 }
