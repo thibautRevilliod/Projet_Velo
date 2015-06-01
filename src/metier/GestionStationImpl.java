@@ -51,7 +51,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		Position position = new Position(longitude, latitude);
 		Station nouvelleStation = new Station(nomStation, position, capacite);
 		int idStation = nouvelleStation.getIdStation();
-		lesStations.put(Integer.valueOf(idStation), nouvelleStation);
+		lesStations.put(new Integer(idStation), nouvelleStation);
 		return idStation;
 	}
 	
@@ -74,17 +74,17 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 			case "Client" :
 				Client client = new Client( pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);
 				idUtilisateur = client.getIdUtilisateur();
-				lesUtilisateurs.put(Integer.valueOf(idUtilisateur), client);
+				lesUtilisateurs.put(new Integer(idUtilisateur), client);
 				break;
 			case "Operateur" :
 				Operateur operateur = new Operateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
 				idUtilisateur = operateur.getIdUtilisateur();
-				lesUtilisateurs.put(Integer.valueOf(idUtilisateur), operateur);
+				lesUtilisateurs.put(new Integer(idUtilisateur), operateur);
 				break;
 			case "Administrateur" :
 				Administrateur administrateur = new Administrateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
 				idUtilisateur = administrateur.getIdUtilisateur();
-				lesUtilisateurs.put(Integer.valueOf(idUtilisateur), administrateur);
+				lesUtilisateurs.put(new Integer(idUtilisateur), administrateur);
 				break;
 			default:
 				idUtilisateur = -1; // idUtilisateur non ok 
@@ -183,7 +183,8 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		//On teste que la méthode précédente ne retourne pas un idStation différent
 		
 		//On assigne les vélos à l'utilisateur, en spécifiant son rôle pour traitements spécifiques
-		utilisateur.emprunterVelos(lesIdVelos, roleEmprunt);
+		System.out.println("utlis nom : "+utilisateur.getIdUtilisateur());
+		utilisateur.emprunterVelos(lesIdVelos, roleEmprunt, idStation);
 		//Suppression des vélos de la station
 		station.supprimerVelos(lesIdVelos);
 				
@@ -212,7 +213,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 				if(velo != null && velo.getEtat().equals(Etat.Libre))
 				{
 					//On assigne les vélos à l'utilisateur, en spécifiant son rôle pour traitements spécifiques
-					utilisateur.emprunterVelos(lesIdVelos, Role.Administrateur);
+					utilisateur.emprunterVelos(lesIdVelos, Role.Administrateur, idStation);
 					//Suppression du vélo de la station
 					station.supprimerVelo(velo);
 					lesIdVelos[1] = 0;//Tout s'est bien passé : code 0

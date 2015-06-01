@@ -39,7 +39,7 @@ public abstract class Utilisateur {
 		adressePostale = padressepostale;
 		idsUtilisateur++;
 		idUtilisateur = idsUtilisateur;
-		Utilisateur.lesUtilisateurs.put(Integer.valueOf(idsUtilisateur),this);
+		Utilisateur.lesUtilisateurs.put(new Integer(idsUtilisateur),this);
 		lesCartesAccesUtilisateur = new HashMap<Role, CarteAcces>();
 		lesVelos = new ArrayList<Velo>();
 	}
@@ -148,7 +148,7 @@ public abstract class Utilisateur {
 			return null;
 	}
 	//La méthode emprunter va dépendre du type d'utilisateur et de son rôle
-	public abstract void emprunterVelos(int[] idVelos, Role roleEmprunt) throws java.rmi.RemoteException;
+	public abstract void emprunterVelos(int[] idVelos, Role roleEmprunt, int idStation) throws java.rmi.RemoteException;
 	
 	//La méthode déposer ne dépend pas des droits de l'utilisateur (pas d'authentification)
 	public void deposerVelos() throws java.rmi.RemoteException

@@ -25,18 +25,22 @@ public class Station {
 
 	public Station(String nomStation, Position position, int capacite) 
 	{		
+		
+		if(Station.hasMaitre())
+		{
+			System.out.println("dans hasMaitre");
+			estMaitre=false;
+		}
+		
 		this.nomStation = nomStation;
 		this.position = position;
 		this.capacite = capacite;
 		idsStation++;
 		this.idStation = idsStation;
-		Station.lesStations.put(Integer.valueOf(idsStation),this);
+		Station.lesStations.put(new Integer(idsStation),this);
 		this.lesVelos = new ArrayList<Velo>();
+
 		
-		if(Station.hasMaitre())
-		{
-			estMaitre=false;
-		}
 	}
 	
 	
@@ -146,7 +150,7 @@ public class Station {
 		int[] listeIdsVelosLibres = new int[nbVelos + 1];
 		int j = 0;
 		
-		for(int i = 0; i < nbVelosNecessaires; i++)
+		for(int i = 0; i < nbVelosNecessaires-1; i++)
 		{
 		    Velo velo = lesVelos.get(i);
 		    if(velo.getEtat() == Etat.Libre)

@@ -16,7 +16,7 @@ public class Velo implements Serializable{
 		this.etat = Etat.Libre;
 		idsVelo++;
 		this.idVelo = idsVelo;
-		lesVelos.put(Integer.valueOf(idsVelo),this);
+		lesVelos.put(new Integer(idsVelo),this);
 	}
 	
 	public int getIdVelo() {return idVelo;}

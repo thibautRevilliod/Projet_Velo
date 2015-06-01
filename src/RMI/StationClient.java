@@ -38,10 +38,14 @@ public class StationClient {
 //			(proxyGS.getVelosLibresStation(idStation).length-1)
 //			+" ");
 //		}
-		
-		System.out.println("*Nombre de velo disponible : "+ 
-				proxyGS.getVelosLibresStation(idStation).length
-				+" ");
+		if(proxyGS.getVelosLibresStation(idStation) != null)
+		{
+		//System.out.println("*Nombre de velo disponible : "+ 
+				
+					//proxyGS.getVelosLibresStation(idStation).length
+				
+				//+" ");
+		}
 		System.out.println("--1) Créer compte");
 		System.out.println("--2) S'identifier");
 		System.out.println("--3) Déposer un vélo");
@@ -822,7 +826,6 @@ public class StationClient {
 						if(stationDepot == idStation)
 						{
 							System.out.println("Vélo à retirer : " + idVeloEmprunteClient[0]);
-							pause(TEMPS_PAUSE);
 						}
 						else
 						{
@@ -832,9 +835,9 @@ public class StationClient {
 							System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 							System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
 							System.out.println("Déconnexion");
-							pause(TEMPS_PAUSE);
-							menuPrincipal();
 						}
+						pause(TEMPS_PAUSE);
+						menuPrincipal();
 						break;
 				}
 				break;
@@ -910,6 +913,7 @@ public class StationClient {
 
 		//creation de vélos 
 		//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
+		System.out.println("id station : "+idStation);
 		if(!stationMaitre){
 			for(int i = 0; i < capacite-6; i++)
 				proxyGS.ajouterVeloStation(new Velo(),idStation);

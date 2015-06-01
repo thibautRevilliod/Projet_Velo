@@ -13,7 +13,7 @@ public class Operateur extends Utilisateur {
 		lesCartesAccesUtilisateur.put(carteAcces.getRole(),carteAcces);
 	}
 	
-	public void emprunterVelos(int[] idVelos, Role roleEmprunt) throws java.rmi.RemoteException
+	public void emprunterVelos(int[] idVelos, Role roleEmprunt, int idStation) throws java.rmi.RemoteException
 	{
 		Velo veloTemp; 
 		int nbVelos = idVelos.length - 1; //La dernière occurence est l'idStation où se trouve le/les vélos
