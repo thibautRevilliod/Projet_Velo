@@ -2,6 +2,7 @@ package metier;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 
 import metier.CarteAcces.Role;
 
@@ -44,7 +45,9 @@ public interface GestionStation extends Remote {
 	
 	public void ajouterRoleUtilisateur(int idUtilisateur, Role role) throws RemoteException;
 
-	public String getNbrVelo(int idStation);
-
-	public int[] getLesVelos(int idStation);
+	public int[] getVelosLibresStation(int idStation) throws RemoteException;
+	
+	public HashMap<Integer, Station> getLesStationsGS() throws RemoteException;
+	
+	public HashMap<Integer, Utilisateur> getLesUtilisateursGS() throws RemoteException;
 }

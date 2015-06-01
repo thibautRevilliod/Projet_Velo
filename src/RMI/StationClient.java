@@ -28,7 +28,20 @@ public class StationClient {
 	public static void menuPrincipal() throws IOException, InterruptedException{
 		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		System.out.println("------------ Bienvenue ------------");
-		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNbrVelo(idStation) +" ");
+//		if(stationMaitre)
+//		{
+//			System.out.println("*Nombre de velo disponible : "+ 
+//					proxyGS.getVelosLibresStation(idStation).length
+//					+" ");
+//		}else{
+//			System.out.println("*Nombre de velo disponible : "+ 
+//			(proxyGS.getVelosLibresStation(idStation).length-1)
+//			+" ");
+//		}
+		
+		System.out.println("*Nombre de velo disponible : "+ 
+				proxyGS.getVelosLibresStation(idStation).length
+				+" ");
 		System.out.println("--1) Créer compte");
 		System.out.println("--2) S'identifier");
 		System.out.println("--3) Déposer un vélo");
@@ -306,7 +319,9 @@ public class StationClient {
 		int idUtilisateur = 0;
 		
 		System.out.println("--------- Menu Administrateur ----------");
-		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNbrVelo(idStation) +" ");
+		System.out.println("*Nombre de velo disponible : "+ 
+		proxyGS.getVelosLibresStation(idStation).length
+		+" ");
 		System.out.println("Que voulez-vous faire ?");
 		System.out.println("--1) Enregistrer un nouveau vélo");
 		System.out.println("--2) Mettre un vélo en atelier de réparation");
@@ -347,7 +362,7 @@ public class StationClient {
 				menuAdministrateur(identifiant, mdp);
 				break;	
 			case "2":		
-				int[] lesVelos = proxyGS.getLesVelos(idStation);
+				int[] lesVelos = proxyGS.getVelosLibresStation(idStation);
 				if(lesVelos.length != 0)
 				{
 					System.out.println("***** Les vélos de la station *****");
@@ -516,7 +531,9 @@ public class StationClient {
 		boolean verificationFormat = true;
 
 		System.out.println("--------- Menu Operateur ----------");
-		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNbrVelo(idStation) +" ");
+		System.out.println("*Nombre de velo disponible : "+ 
+		proxyGS.getVelosLibresStation(idStation).length 
+		+" ");
 		System.out.println("Que voulez-vous faire ?");
 		if(stationMaitre)
 		{
@@ -761,7 +778,9 @@ public class StationClient {
 		Station stationLaPlusProche;
 		
 		System.out.println("--------- Menu Client ----------");
-		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNbrVelo(idStation) +" ");
+		System.out.println("*Nombre de velo disponible : "+ 
+		proxyGS.getVelosLibresStation(idStation).length 
+		+" ");
 		System.out.println("Que voulez-vous faire ?");
 		System.out.println("--1) Emprunter un vélo");
 		System.out.println("--2) Se déconnecter");
@@ -885,12 +904,12 @@ public class StationClient {
 		//méthode pour vérifier s'il y a une station maître
 		stationMaitre = proxyGS.gestionStationHasMaitre();
 		
-		idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite, stationMaitre);
+		idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite, !stationMaitre);
 
 		//creation de vélos 
 		//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
-		if(!stationMaitre){
-			for(int i = 0; i < capacite-5; i++)
+		if(stationMaitre){
+			for(int i = 0; i < capacite-6; i++)
 				proxyGS.ajouterVeloStation(new Velo(),idStation);
 		}else{
 			// creation d'instances utilisateurs pour les tests

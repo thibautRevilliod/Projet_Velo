@@ -6,6 +6,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+
 import metier.CarteAcces.Role;
 import metier.Velo.Etat;
 
@@ -16,6 +18,8 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	 * 
 	 */
 	private static final long serialVersionUID = -2573185254495289156L;
+	private HashMap<Integer, Station> lesStations = new HashMap<Integer, Station>(); //On gère ici la liste de toutes les stations, qui elles-même gèrent les vélos
+	private HashMap<Integer, Utilisateur> lesUtilisateurs= new HashMap<Integer, Utilisateur>(); //On gère ici la liste de tous les utilisateurs
 	
 	public GestionStationNotif notification;
 
@@ -24,6 +28,13 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		super();
 	}
 	
+	
+	public HashMap<Integer, Station> getLesStations() {return lesStations;}
+
+	public HashMap<Integer, Utilisateur> getLesUtilisateurs() {return lesUtilisateurs;}
+
+
+
 	@Override
 	public GestionStationNotif getNotification() {
 		return this.notification;
@@ -40,6 +51,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		Position position = new Position(longitude, latitude);
 		Station nouvelleStation = new Station(nomStation, position, capacite);
 		int idStation = nouvelleStation.getIdStation();
+		lesStations.put(Integer.valueOf(idStation), nouvelleStation);
 		return idStation;
 	}
 	
@@ -47,7 +59,10 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	public synchronized void supprimerStation(int idStation) throws RemoteException
 	{
 		if(Station.supprimerStation(idStation))
+		{
 			Station.getLesStations().remove(idStation);
+			lesStations.remove(idStation);
+		}
 	}
 	
 	@Override
@@ -59,14 +74,17 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 			case "Client" :
 				Client client = new Client( pnom, pprenom, pmotdepasse, ptelephone, padressemail, padressepostale);
 				idUtilisateur = client.getIdUtilisateur();
+				lesUtilisateurs.put(Integer.valueOf(idUtilisateur), client);
 				break;
 			case "Operateur" :
 				Operateur operateur = new Operateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
 				idUtilisateur = operateur.getIdUtilisateur();
+				lesUtilisateurs.put(Integer.valueOf(idUtilisateur), operateur);
 				break;
 			case "Administrateur" :
 				Administrateur administrateur = new Administrateur( pnom,  pprenom, pmotdepasse, ptelephone,  padressemail, padressepostale);
 				idUtilisateur = administrateur.getIdUtilisateur();
+				lesUtilisateurs.put(Integer.valueOf(idUtilisateur), administrateur);
 				break;
 			default:
 				idUtilisateur = -1; // idUtilisateur non ok 
@@ -295,17 +313,21 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 
 	@Override
-	public String getNbrVelo(int idStation) {
-		// TODO Auto-generated method stub
-		return null;
+	public int[] getVelosLibresStation(int idStation) throws RemoteException 
+	{
+		Station station = Station.getStation(idStation);
+		return station.getVelosLibresStation(station.getNombreVelosLibres());
 	}
 
-	@Override
-	public int[] getLesVelos(int idStation) {
-		// TODO Auto-generated method stub
-		return null;
+	public HashMap<Integer, Station> getLesStationsGS() throws RemoteException
+	{
+		return Station.getLesStations();
 	}
-
+	
+	public HashMap<Integer, Utilisateur> getLesUtilisateursGS() throws RemoteException
+	{
+		return Utilisateur.getLesUtilisateurs();
+	}
 	
 
 }
