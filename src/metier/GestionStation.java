@@ -44,7 +44,7 @@ public interface GestionStation extends Remote {
 	
 	public void ajouterRoleUtilisateur(int idUtilisateur, Role role) throws RemoteException;
 
-	public String getNbrVelo(int idStation);
+	public int getNombreVelosLibresGS(int idStation);
 
 	public int[] getLesVelos(int idStation);
 }

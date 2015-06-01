@@ -28,7 +28,7 @@ public class StationClient {
 	public static void menuPrincipal() throws IOException, InterruptedException{
 		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		System.out.println("------------ Bienvenue ------------");
-		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNbrVelo(idStation) +" ");
+		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNombreVelosLibresGS(idStation) +" ");
 		System.out.println("--1) Créer compte");
 		System.out.println("--2) S'identifier");
 		System.out.println("--3) Déposer un vélo");
@@ -306,7 +306,7 @@ public class StationClient {
 		int idUtilisateur = 0;
 		
 		System.out.println("--------- Menu Administrateur ----------");
-		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNbrVelo(idStation) +" ");
+		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNombreVelosLibresGS(idStation) +" ");
 		System.out.println("Que voulez-vous faire ?");
 		System.out.println("--1) Enregistrer un nouveau vélo");
 		System.out.println("--2) Mettre un vélo en atelier de réparation");
@@ -368,7 +368,7 @@ public class StationClient {
 						}
 					}while(!verificationFormat);
 					
-					resultats = proxyGS.emprunterVelos(identifiant, idStation, idVelo);
+					resultats = proxyGS.emprunterVelos(identifiant, idStation, idVelo, 1, Role.Administrateur);
 					switch(resultats[1])
 					{
 						case 0 :
@@ -516,7 +516,7 @@ public class StationClient {
 		boolean verificationFormat = true;
 
 		System.out.println("--------- Menu Operateur ----------");
-		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNbrVelo(idStation) +" ");
+		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNombreVelosLibresGS(idStation) +" ");
 		System.out.println("Que voulez-vous faire ?");
 		if(stationMaitre)
 		{
@@ -524,7 +524,7 @@ public class StationClient {
 			
 		}
 		System.out.println("--2) Emprunter des Vélos");
-		//System.out.println("--3) Déposer des vélos");
+		System.out.println("--3) Déposer des vélos");
 		//System.out.println("--4) Mettre un vélo en atelier de réparation");
 		//System.out.println("--5) Déposer un vélo de l'atelier de réparation");
 		System.out.println("--6) Se déconnecter");
@@ -567,7 +567,7 @@ public class StationClient {
 					System.err.println("Erreur 10600 : Utilisateur inexistant.");
 					break;
 				case -2:
-					System.err.println("Erreur 10601 : Utilisateur non opérateur.");
+					System.err.println("Erreur 10601 : L'utilisateur n'a pas la carte d'accès necessaire.");
 					break;
 				case -3:
 					System.err.println("Erreur 10602 : Station inexistante.");
@@ -605,7 +605,7 @@ public class StationClient {
 				pause(TEMPS_PAUSE);
 				menuPrincipal();
 				break;
-			/*case "3":
+			case "3":
 				// retourne les ids de vélo à déposer si place disponible !
 				// sinon => la notification à planté 
 				//la méthode deposerVeloOperateur doit retourner aucun idVélo si pas place
@@ -623,7 +623,7 @@ public class StationClient {
 					menuPrincipal();
 				}
 				break;
-			*/
+			
 			/*case "4":
 			 	do{
 					verificationFormat = true;
@@ -761,7 +761,7 @@ public class StationClient {
 		Station stationLaPlusProche;
 		
 		System.out.println("--------- Menu Client ----------");
-		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNbrVelo(idStation) +" ");
+		System.out.println("*Nombre de velo disponible : "+ proxyGS.getNombreVelosLibresGS(idStation) +" ");
 		System.out.println("Que voulez-vous faire ?");
 		System.out.println("--1) Emprunter un vélo");
 		System.out.println("--2) Se déconnecter");
