@@ -12,7 +12,7 @@ public interface GestionStation extends Remote {
 	
 	public void setNotification(GestionStationNotif notification) throws RemoteException;
 	
-	public int creerStation(String nomStation, double longitude, double latitude, int capacite, boolean estMaitre) throws RemoteException;
+	public int creerStation(String nomStation, double longitude, double latitude, int capacite) throws RemoteException;
 	
 	public void supprimerStation(int idStation) throws RemoteException;
 	
@@ -41,7 +41,7 @@ public interface GestionStation extends Remote {
 
 	public int[] dureePrixEmpruntVeloClient(int idUtilisateur, int idStation) throws RemoteException;
 	
-	public boolean gestionStationHasMaitre() throws RemoteException;
+	public boolean gestionStationHasMaitre(int idStation) throws RemoteException;
 	
 	public void ajouterRoleUtilisateur(int idUtilisateur, Role role) throws RemoteException;
 

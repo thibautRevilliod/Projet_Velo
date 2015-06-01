@@ -902,14 +902,15 @@ public class StationClient {
 		double latitude = Math.random()*10;
 		int capacite = 30;
 		
-		//méthode pour vérifier s'il y a une station maître
-		stationMaitre = proxyGS.gestionStationHasMaitre();
 		
-		idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite, !stationMaitre);
+		idStation = proxyGS.creerStation(nomStation, longitude, latitude, capacite);
+		
+		//méthode pour vérifier s'il y a une station maître
+		stationMaitre = proxyGS.gestionStationHasMaitre(idStation);
 
 		//creation de vélos 
 		//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
-		if(stationMaitre){
+		if(!stationMaitre){
 			for(int i = 0; i < capacite-6; i++)
 				proxyGS.ajouterVeloStation(new Velo(),idStation);
 		}else{

@@ -46,7 +46,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 
 	@Override
-	public int creerStation(String nomStation, double longitude, double latitude, int capacite, boolean estMaitre) throws java.rmi.RemoteException
+	public int creerStation(String nomStation, double longitude, double latitude, int capacite) throws java.rmi.RemoteException
 	{
 		Position position = new Position(longitude, latitude);
 		Station nouvelleStation = new Station(nomStation, position, capacite);
@@ -305,8 +305,8 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 
 	@Override
-	public boolean gestionStationHasMaitre() throws RemoteException {
-		return Station.hasMaitre();
+	public boolean gestionStationHasMaitre(int idStation) throws RemoteException {
+		return Station.getStation(idStation).isEstMaitre();
 	}
 	
 	public synchronized void ajouterRoleUtilisateur(int idUtilisateur, Role role) throws RemoteException

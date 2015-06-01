@@ -18,6 +18,11 @@ public class Station {
 	private static int idsStation = 0; 
 	private static boolean estMaitre = true;
 	
+	public static boolean isEstMaitre() {
+		return estMaitre;
+	}
+
+
 	public Station(String nomStation, Position position, int capacite) 
 	{		
 		this.nomStation = nomStation;
