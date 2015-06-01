@@ -16,7 +16,7 @@ public class Station {
 	private static HashMap<Integer, Station> lesStations = new HashMap<Integer, Station>();
 	private ArrayList<Velo> lesVelos ;
 	private static int idsStation = 0; 
-	private boolean estMaitre;
+	private static boolean estMaitre = true;
 	
 	public Station(String nomStation, Position position, int capacite) 
 	{		
@@ -27,7 +27,11 @@ public class Station {
 		this.idStation = idsStation;
 		Station.lesStations.put(Integer.valueOf(idsStation),this);
 		this.lesVelos = new ArrayList<Velo>();
-		this.estMaitre = false;
+		
+		if(Station.hasMaitre())
+		{
+			estMaitre=false;
+		}
 	}
 	
 	
