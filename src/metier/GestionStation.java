@@ -35,6 +35,8 @@ public interface GestionStation extends Remote {
 	
 	public int deposerVelos(int idUtilisateur, int idStation) throws RemoteException;
 	
+	public int deposerVelos(int idUtilisateur, int idStation, int idVelo) throws RemoteException;
+	
 	public boolean estUtilisateurIdentifie(int identifiant, String motDePasse) throws RemoteException;
 	
 	public String[] getRoleUtilisateur(int identifiant) throws RemoteException;
@@ -56,4 +58,6 @@ public interface GestionStation extends Remote {
 	public Velo getVelo(int idVelo) throws RemoteException;
 	
 	public boolean hasUtilisateurEmprunteVelos(int idUtilisateur) throws RemoteException;
+	
+	public boolean hasUtilisateurVeloEnReparation(int idUtilisateur) throws RemoteException;
 }

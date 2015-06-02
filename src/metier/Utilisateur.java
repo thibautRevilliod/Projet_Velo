@@ -55,7 +55,8 @@ public abstract class Utilisateur {
 	public int getIdUtilisateur() {return idUtilisateur;}
 	public String getMotDePasse() {return motDePasse;}
 	public void setMotDePasse(String motDePasse) {this.motDePasse = motDePasse;}
-	public Velo getVelo() {return this.lesVelos.get(0);}
+	public HashMap<Integer, Velo> getLesVelos() {return lesVelos;}
+
 	//public void setVelo(Velo velo) {this.lesVelos.put(new Integer(velo.getIdVelo()),velo);}
 	public static HashMap<Integer, Utilisateur> getLesUtilisateurs() {return lesUtilisateurs;}
 
@@ -93,9 +94,21 @@ public abstract class Utilisateur {
 		this.lesVelos.remove(velo);
 	}
 	
-	public boolean hasUtilisateurEmprunteVelos()
+	public boolean hasUtilisateurVelosEtat(metier.Velo.Etat etat)
 	{
-		return !lesVelos.isEmpty();
+		Iterator it = lesVelos.entrySet().iterator();
+		
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Integer idVelo = (Integer) pair.getKey();
+	        Velo veloListe = (Velo) pair.getValue();
+	        if(veloListe.getEtat() == etat)
+		    {
+	        	return true;
+		    }
+		}
+	    
+	    return false;
 	}
 	
 	public static Utilisateur supprimerUtilisateur(Utilisateur utilisateur)
@@ -176,12 +189,23 @@ public abstract class Utilisateur {
 	    while (it.hasNext()) {
 	        Map.Entry pair = (Map.Entry)it.next();
 	        Integer idVelo = (Integer) pair.getKey();
-	        Velo veloListe = (Velo) pair.getValue();
-
-        	veloTemp = veloListe;
-        	veloTemp.setEtat(Etat.Libre);
-			supprimerVelo(veloTemp);
+	        
+	        deposerVelo(idVelo);
+	        
+//	        Velo veloListe = (Velo) pair.getValue();
+//
+//        	veloTemp = veloListe;
+//        	veloTemp.setEtat(Etat.Libre);
+//			supprimerVelo(veloTemp);
 		}
+	}
+	
+	public void deposerVelo(int idVelo)
+	{
+		Velo veloADeposer = lesVelos.get(idVelo);
+		veloADeposer.setEtat(Etat.Libre);
+		supprimerVelo(veloADeposer);
+		
 	}
 	
 	public void ajouterRoleUtilisateur(Role r) {

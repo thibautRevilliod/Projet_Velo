@@ -97,7 +97,7 @@ public class Station {
 		int i = 0, nbVelos = idsVelos.length;
 		while(i < nbVelos)
 		{
-			veloTemp = lesVelos.get(idsVelos[i]);
+			veloTemp = lesVelos.get(idsVelos[i]); //TODO pourquoi récupère-t-on les Velo dans cette HashMap ?
 			ajouterVelo(veloTemp);
 			i++;
 		}

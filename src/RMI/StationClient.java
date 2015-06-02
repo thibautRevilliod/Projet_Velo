@@ -1,5 +1,5 @@
 package RMI;
-
+//TODO : remplir les HashMap de stations quand on appelle stationLaPlusProche ?
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,7 +15,7 @@ import metier.Operateur;
 import metier.Station;
 import metier.Utilisateur;
 import metier.Velo;
-
+//TODO gérer retour depos vélo en réparation pour admin 
 public class StationClient {
 	private static final int TEMPS_PAUSE = 2;
 	private static GestionStation proxyGS;

@@ -44,7 +44,8 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	public void setNotification(GestionStationNotif notification) {
 		this.notification = notification;
 	}
-
+	
+	// TODO : méthode synchronized ?
 	@Override
 	public int creerStation(String nomStation, double longitude, double latitude, int capacite) throws java.rmi.RemoteException
 	{
@@ -100,6 +101,8 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	{
 		boolean result;
 		Station station = Station.getLesStations().get(idStation);
+		//TODO ? Station stationGS = lesStations.get(idStation);
+		//TODO ? stationGS.ajouterVelo(velo)
 		result = station.ajouterVelo(velo);
 		return result;
 	}
@@ -109,6 +112,8 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	{
 		Station station = Station.getLesStations().get(idStation);
 		station.supprimerVelo(velo);
+		//TODO ? Station stationGS = lesStations.get(idStation);
+		//TODO ? stationGS.supprimerVelo(velo);
 	}
 	
 	@Override
@@ -188,7 +193,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		utilisateur.emprunterVelos(lesIdVelos, roleEmprunt, idStation);
 		//Suppression des vélos de la station
 		station.supprimerVelos(lesIdVelos);
-				
+		//TODO ? supprimerVeloStation de GestionStation
 			
 
 		return lesIdVelos;
@@ -217,6 +222,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 					utilisateur.emprunterVelos(lesIdVelos, Role.Administrateur, idStation);
 					//Suppression du vélo de la station
 					station.supprimerVelo(velo);
+					//TODO ? supprimerVeloStation de GestionStation
 					lesIdVelos[1] = 0;//Tout s'est bien passé : code 0
 				}
 				else
@@ -247,14 +253,42 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		int nbVelos;
 		if(Utilisateur.getLesUtilisateurs().containsKey(idUtilisateur) && Station.getLesStations().containsKey(idStation))
 		{
-			utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
-			station = Station.getLesStations().get(idStation);
+			utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur); //TODO : utiliser hashmap de GestionSTation ?
+			station = Station.getLesStations().get(idStation); //TODO : utiliser hashmap de GestionSTation ?
 			lesIdVelos = utilisateur.getIdVelos();
 			nbVelos = lesIdVelos.length;
 			if(station.getNombrePlacesDispos() >= nbVelos)
 			{
+				//TODO ajoutVeloStation de GestionStation ?
 				station.ajouterVelos(lesIdVelos);
 				utilisateur.deposerVelos();
+			}
+			else
+				idStationDepot = station.getStationLaPlusProche().getIdStation();
+		}
+		return idStationDepot;
+	}
+	
+	// utilisé par l'administrateur pour déposer un vélo précédemment en maintenance
+	@Override
+	public int deposerVelos(int idUtilisateur, int idStation, int idVelo) throws RemoteException
+	{
+		Utilisateur utilisateur;
+		Station station;
+		Velo veloADeposer;
+		int idStationDepot = idStation;
+		int[] idVeloADeposer = new int[1];
+		if(Utilisateur.getLesUtilisateurs().containsKey(idUtilisateur) && Station.getLesStations().containsKey(idStation))
+		{
+			utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur); //TODO : utiliser hashmap de GestionSTation ?
+			station = Station.getLesStations().get(idStation); //TODO : utiliser hashmap de GestionSTation ?
+			veloADeposer = utilisateur.getLesVelos().get(idVelo);
+			if(station.getNombrePlacesDispos() >= 1 && veloADeposer.getIdVelo()==idVelo)
+			{
+				idVeloADeposer[0] = idVelo;
+				//TODO ajoutVeloStation de GestionStation ?
+				station.ajouterVelos(idVeloADeposer);
+				utilisateur.deposerVelo(idVeloADeposer[0]);
 			}
 			else
 				idStationDepot = station.getStationLaPlusProche().getIdStation();
@@ -350,7 +384,14 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	public boolean hasUtilisateurEmprunteVelos(int idUtilisateur)
 			throws RemoteException {
 		Utilisateur utilisateur = lesUtilisateurs.get(idUtilisateur);
-		return utilisateur.hasUtilisateurEmprunteVelos();
+		return utilisateur.hasUtilisateurVelosEtat(metier.Velo.Etat.Emprunte);
+	}
+	
+	@Override
+	public boolean hasUtilisateurVeloEnReparation(int idUtilisateur)
+			throws RemoteException {
+		Utilisateur utilisateur = lesUtilisateurs.get(idUtilisateur);
+		return utilisateur.hasUtilisateurVelosEtat(metier.Velo.Etat.EnReparation);
 	}
 	
 }

@@ -14,3 +14,4 @@ public interface GestionStationNotif extends Remote {
 	
 	public void notificationOK(int idNotification) throws RemoteException;
 }
+//TODO : mise en place notifications
