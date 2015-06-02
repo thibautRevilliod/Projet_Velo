@@ -95,7 +95,7 @@ public abstract class Utilisateur {
 	
 	public boolean hasUtilisateurEmprunteVelos()
 	{
-		return lesVelos.size()>0;
+		return !lesVelos.isEmpty();
 	}
 	
 	public static Utilisateur supprimerUtilisateur(Utilisateur utilisateur)
