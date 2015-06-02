@@ -147,11 +147,10 @@ public class Station {
 		int nbVelosNecessaires = nbVelos;
 		int[] listeIdsVelosLibres = new int[nbVelos + 1];
 		int j = 0;
-		int i = 0;
 		
 		Iterator it = lesVelos.entrySet().iterator();
 		
-	    while (it.hasNext() && i < nbVelosNecessaires) {
+	    while (it.hasNext() && j < nbVelosNecessaires) {
 	        Map.Entry pair = (Map.Entry)it.next();
 	        Integer idVelo = (Integer) pair.getKey();
 	        Velo veloListe = (Velo) pair.getValue();
@@ -160,7 +159,6 @@ public class Station {
 		    	listeIdsVelosLibres[j] = veloListe.getIdVelo();
 		    	j++;
 		    }
-	        i++;
 		}
 		//On vérifie que le nombre voulu de vélos est libre, sinon -> getStationLaPlusProche
 		if(j < nbVelosNecessaires)
