@@ -14,7 +14,7 @@ public class Station {
 	private Position position;
 	private int capacite;
 	private static HashMap<Integer, Station> lesStations = new HashMap<Integer, Station>();
-	private ArrayList<Velo> lesVelos ;
+	private HashMap<Integer, Velo> lesVelos ;
 	private static int idsStation = 0; 
 	private static boolean estMaitre = true;
 	
@@ -38,7 +38,7 @@ public class Station {
 		idsStation++;
 		this.idStation = idsStation;
 		Station.lesStations.put(new Integer(idsStation),this);
-		this.lesVelos = new ArrayList<Velo>();
+		this.lesVelos = new HashMap<Integer, Velo>();
 
 		
 	}
@@ -52,8 +52,8 @@ public class Station {
 	public void setPosition(Position position) {this.position = position;}
 	public int getCapacite() {return capacite;}
 	public void setCapacite(int capacite) {this.capacite = capacite;}
-	public ArrayList<Velo> getLesVelos() {return lesVelos;}
-	public void setLesVelos(ArrayList<Velo> lesVelos) {this.lesVelos = lesVelos;}
+	public HashMap<Integer, Velo> getLesVelos() {return lesVelos;}
+	public void setLesVelos(HashMap<Integer, Velo> lesVelos) {this.lesVelos = lesVelos;}
 	public boolean EstMaitre() {return estMaitre;}
 	public void setEstMaitre(boolean estMaitre) {this.estMaitre = estMaitre;}
 	public static HashMap<Integer, Station> getLesStations() {return lesStations;}
@@ -67,12 +67,15 @@ public class Station {
 	public int getNombreVelosLibres()
 	{
 		int nombreVelosLibres = 0;
-		for(int i = 0; i < lesVelos.size(); i++)
-		{
-		    Velo velo = lesVelos.get(i);
-		    if(velo.getEtat() == Etat.Libre)
+	
+		Iterator it = lesVelos.entrySet().iterator();
+		
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Velo veloListe = (Velo) pair.getValue();
+	        if(veloListe.getEtat() == Etat.Libre)
 		    {
-		    	nombreVelosLibres++;
+	        	nombreVelosLibres++;
 		    }
 		}
 		
@@ -84,7 +87,8 @@ public class Station {
 		if(getNombrePlacesDispos() == 0 )
 			return false;
 		else
-			return lesVelos.add(velo);
+			lesVelos.put(new Integer(velo.getIdVelo()),velo);
+			return true;
 	}
 	
 	public void ajouterVelos(int[] idsVelos)
@@ -101,8 +105,11 @@ public class Station {
 	
 	public boolean supprimerVelo(Velo velo)
 	{
-		if(lesVelos.contains(velo))
-			return lesVelos.remove(velo);
+		if(lesVelos.containsKey(velo.getIdVelo()))
+		{
+			lesVelos.remove(velo.getIdVelo());
+			return true;
+		}
 		else
 			return false;
 	}
@@ -149,15 +156,20 @@ public class Station {
 		int nbVelosNecessaires = nbVelos;
 		int[] listeIdsVelosLibres = new int[nbVelos + 1];
 		int j = 0;
+		int i = 0;
 		
-		for(int i = 0; i < nbVelosNecessaires; i++)
-		{
-		    Velo velo = lesVelos.get(i);
-		    if(velo.getEtat() == Etat.Libre)
+		Iterator it = lesVelos.entrySet().iterator();
+		
+	    while (it.hasNext() && i < nbVelosNecessaires) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Integer idVelo = (Integer) pair.getKey();
+	        Velo veloListe = (Velo) pair.getValue();
+	        if(veloListe.getEtat() == Etat.Libre)
 		    {
-		    	listeIdsVelosLibres[j] = velo.getIdVelo();
+		    	listeIdsVelosLibres[j] = veloListe.getIdVelo();
 		    	j++;
 		    }
+	        i++;
 		}
 		//On vérifie que le nombre voulu de vélos est libre, sinon -> getStationLaPlusProche
 		if(j < nbVelosNecessaires)
@@ -295,7 +307,7 @@ public class Station {
 	public boolean supprimerVelo(int idVelo)
 	{
 		//Hypothèse : un vélo ne peut être supprimé que s'il est libre
-		if(lesVelos.contains(idVelo) && lesVelos.get(idVelo).getEtat() == Etat.Libre)
+		if(lesVelos.containsKey(idVelo) && lesVelos.get(idVelo).getEtat() == Etat.Libre)
 		{
 			lesVelos.remove(idVelo);
 			return true;
