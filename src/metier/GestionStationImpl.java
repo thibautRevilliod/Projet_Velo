@@ -344,5 +344,13 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	{
 		return Velo.getVelo(idVelo);
 	}
+
+
+	@Override
+	public boolean hasUtilisateurEmprunteVelos(int idUtilisateur)
+			throws RemoteException {
+		Utilisateur utilisateur = lesUtilisateurs.get(idUtilisateur);
+		return utilisateur.hasUtilisateurEmprunteVelos();
+	}
 	
 }

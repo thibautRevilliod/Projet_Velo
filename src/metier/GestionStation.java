@@ -54,4 +54,6 @@ public interface GestionStation extends Remote {
 	public Station getStation(int idStation) throws RemoteException;
 
 	public Velo getVelo(int idVelo) throws RemoteException;
+	
+	public boolean hasUtilisateurEmprunteVelos(int idUtilisateur) throws RemoteException;
 }
