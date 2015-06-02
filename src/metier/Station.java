@@ -139,16 +139,7 @@ public class Station {
 	
 	public Velo getVeloStation(int idVelo)
 	{
-		for(int i = 0; i < lesVelos.size(); i++){
-		    Velo velo = lesVelos.get(i);
-		    
-		    if(velo.getIdVelo() == idVelo)
-		    {
-		    	return velo;
-		    }
-		}
-		
-		return null;
+		return lesVelos.get(idVelo);	
 	}
 	
 	public int[] getVelosLibresStation(int nbVelos)
@@ -182,12 +173,16 @@ public class Station {
 	
 	public int chercherVeloLibreStation()
 	{
-		for(int i = 0; i < lesVelos.size(); i++){
-		    Velo velo = lesVelos.get(i);
-		    
-		    if(velo.getEtat() == Etat.Libre)
+		
+		Iterator it = lesVelos.entrySet().iterator();
+		
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Integer idVelo = (Integer) pair.getKey();
+	        Velo veloListe = (Velo) pair.getValue();
+	        if(veloListe.getEtat() == Etat.Libre)
 		    {
-		    	return velo.getIdVelo();
+		    	return veloListe.getIdVelo();
 		    }
 		}
 		

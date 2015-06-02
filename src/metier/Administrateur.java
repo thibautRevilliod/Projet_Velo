@@ -25,7 +25,7 @@ public class Administrateur extends Utilisateur {
 			if(veloTemp != null && lesVelos.size() < 1)
 			{
 				veloTemp.setEtat(Etat.Emprunte);
-				this.setVelo(veloTemp);
+				this.ajouterVelo(veloTemp);
 			}
 		}
 		else if (roleEmprunt.equals(Role.Administrateur))
@@ -38,7 +38,7 @@ public class Administrateur extends Utilisateur {
 				veloTemp.setEtat(Etat.EnReparation);
 				System.out.println("test");
 //				this.setVelo(veloTemp);
-				lesVelos.add(veloTemp);
+				lesVelos.put(new Integer(veloTemp.getIdVelo()),veloTemp);
 			}	
 			
 		}

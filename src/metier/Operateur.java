@@ -25,7 +25,7 @@ public class Operateur extends Utilisateur {
 			if(veloTemp != null && lesVelos.size() < 1)
 			{
 				veloTemp.setEtat(Etat.Emprunte);
-				this.setVelo(veloTemp);
+				this.ajouterVelo(veloTemp);
 			}
 		}
 		else if (roleEmprunt.equals(Role.Operateur))

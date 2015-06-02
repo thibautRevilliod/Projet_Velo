@@ -22,7 +22,7 @@ public class Client extends Utilisateur {
 		{
 			veloTemp.setEtat(Etat.Emprunte);
 //			this.setVelo(veloTemp);
-			lesVelos.add(veloTemp);
+			lesVelos.put(new Integer(veloTemp.getIdVelo()),veloTemp);
 		}	
 	}
 	

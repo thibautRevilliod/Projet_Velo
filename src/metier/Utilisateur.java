@@ -26,7 +26,7 @@ public abstract class Utilisateur {
 	//un utilisateur peut avoir plusieurs cartes d'acces (ex : le gestionnaire peut être aussi client)
 	protected HashMap<Role,CarteAcces> lesCartesAccesUtilisateur ;
 	//Chaque utilisateur a une liste de vélo, dont le plafond est défini pour un Client
-	protected ArrayList<Velo> lesVelos ;
+	protected HashMap<Integer, Velo> lesVelos ;
 	private static HashMap<Integer, Utilisateur> lesUtilisateurs = new HashMap<Integer, Utilisateur>();
 	private static int idsUtilisateur = 0; 
 	
@@ -41,7 +41,7 @@ public abstract class Utilisateur {
 		idUtilisateur = idsUtilisateur;
 		Utilisateur.lesUtilisateurs.put(new Integer(idsUtilisateur),this);
 		lesCartesAccesUtilisateur = new HashMap<Role, CarteAcces>();
-		lesVelos = new ArrayList<Velo>();
+		lesVelos = new HashMap<Integer, Velo>();
 	}
 	
 	private static Utilisateur getUtilisateur(int identifiant)
@@ -56,7 +56,7 @@ public abstract class Utilisateur {
 	public String getMotDePasse() {return motDePasse;}
 	public void setMotDePasse(String motDePasse) {this.motDePasse = motDePasse;}
 	public Velo getVelo() {return this.lesVelos.get(0);}
-	public void setVelo(Velo velo) {this.lesVelos.set(0, velo);}
+	//public void setVelo(Velo velo) {this.lesVelos.put(new Integer(velo.getIdVelo()),velo);}
 	public static HashMap<Integer, Utilisateur> getLesUtilisateurs() {return lesUtilisateurs;}
 
 	public int[] getIdVelos()
@@ -64,22 +64,38 @@ public abstract class Utilisateur {
 		int nbVelos = lesVelos.size();
 		int[] listeIdsVelos = new int[nbVelos];
 		Velo veloTemp;
-		for(int i = 0; i < nbVelos; i++)
-		{
-			veloTemp = lesVelos.get(i);
-			listeIdsVelos[i] = veloTemp.getIdVelo();
+		int i = 0;
+		
+		Iterator it = lesVelos.entrySet().iterator();
+		
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Integer idVelo = (Integer) pair.getKey();
+	        Velo veloListe = (Velo) pair.getValue();
+	        if(veloListe.getEtat() == Etat.Libre)
+		    {
+	        	veloTemp = veloListe;
+				listeIdsVelos[i] = veloTemp.getIdVelo();
+				i++;
+		    }
 		}
+		
 		return listeIdsVelos;
 	}
 	
 	public void ajouterVelo(Velo velo)
 	{
-		this.lesVelos.add(velo);
+		this.lesVelos.put(new Integer(velo.getIdVelo()),velo);
 	}
 	
 	public void supprimerVelo(Velo velo)
 	{
 		this.lesVelos.remove(velo);
+	}
+	
+	public boolean hasUtilisateurEmprunteVelos()
+	{
+		return lesVelos.size()>0;
 	}
 	
 	public static Utilisateur supprimerUtilisateur(Utilisateur utilisateur)
@@ -154,12 +170,18 @@ public abstract class Utilisateur {
 	public void deposerVelos() throws java.rmi.RemoteException
 	{	
 		Velo veloTemp;
-		for(int i = 0; i < lesVelos.size(); i++)
-		{
-			veloTemp = lesVelos.get(i);
-			veloTemp.setEtat(Etat.Libre);
+		
+		Iterator it = lesVelos.entrySet().iterator();
+		
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Integer idVelo = (Integer) pair.getKey();
+	        Velo veloListe = (Velo) pair.getValue();
+
+        	veloTemp = veloListe;
+        	veloTemp.setEtat(Etat.Libre);
 			supprimerVelo(veloTemp);
-		}	
+		}
 	}
 	
 	public void ajouterRoleUtilisateur(Role r) {
