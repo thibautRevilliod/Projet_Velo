@@ -23,6 +23,8 @@ public interface GestionStation extends Remote {
 	
 	public boolean ajouterVeloStation(Velo velo, int idStation) throws RemoteException;
 	
+	public boolean ajouterVeloStation(int idStation) throws RemoteException;
+	
 	public void supprimerVeloStation(Velo velo, int idStation) throws RemoteException;
 	
 	public void transfererVelo(Velo velo, int idStationOrigine, int idStationDestination) throws RemoteException;
@@ -60,4 +62,6 @@ public interface GestionStation extends Remote {
 	public boolean hasUtilisateurEmprunteVelos(int idUtilisateur) throws RemoteException;
 	
 	public boolean hasUtilisateurVeloEnReparation(int idUtilisateur) throws RemoteException;
+	
+	public int[] getIdsVelosEtat(int idUtilisateur, metier.Velo.Etat etat) throws RemoteException;
 }

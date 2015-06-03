@@ -45,7 +45,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		this.notification = notification;
 	}
 	
-	// TODO : méthode synchronized ?
 	@Override
 	public synchronized int creerStation(String nomStation, double longitude, double latitude, int capacite) throws java.rmi.RemoteException
 	{
@@ -101,6 +100,19 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	public synchronized boolean ajouterVeloStation(Velo velo, int idStation) throws RemoteException
 	{
 		boolean result;
+
+		Station station = Station.getLesStations().get(idStation);
+		//TODO ? Station stationGS = lesStations.get(idStation);
+		//TODO ? stationGS.ajouterVelo(velo)
+		result = station.ajouterVelo(velo);
+		return result;
+	}
+	
+	@Override
+	public synchronized boolean ajouterVeloStation(int idStation) throws RemoteException
+	{
+		boolean result;
+		Velo velo = new Velo();
 		Station station = Station.getLesStations().get(idStation);
 		//TODO ? Station stationGS = lesStations.get(idStation);
 		//TODO ? stationGS.ajouterVelo(velo)
@@ -244,6 +256,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		return lesIdVelos;
 	}
 	
+	// utilisé par un client ou un opérateur
 	@Override
 	public synchronized int deposerVelos(int idUtilisateur, int idStation) throws RemoteException
 	{
@@ -254,15 +267,18 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		int nbVelos;
 		if(Utilisateur.getLesUtilisateurs().containsKey(idUtilisateur) && Station.getLesStations().containsKey(idStation))
 		{
-			utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur); //TODO : utiliser hashmap de GestionSTation ?
-			station = Station.getLesStations().get(idStation); //TODO : utiliser hashmap de GestionSTation ?
+			utilisateur = lesUtilisateurs.get(idUtilisateur);
+			station = lesStations.get(idStation);
 			lesIdVelos = utilisateur.getIdVelos();
+			System.out.println("lesidsvelo : "+lesIdVelos[0]);
 			nbVelos = lesIdVelos.length;
 			if(station.getNombrePlacesDispos() >= nbVelos)
 			{
 				//TODO ajoutVeloStation de GestionStation ?
 				station.ajouterVelos(lesIdVelos);
 				utilisateur.deposerVelos();
+				System.out.println("velos GestionSTation :"+lesStations.get(idStation).getLesVelos().toString());
+				System.out.println("velos STation :"+Station.getLesStations().get(idStation).getLesVelos().toString());
 			}
 			else
 				idStationDepot = station.getStationLaPlusProche().getIdStation();
@@ -393,6 +409,14 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 			throws RemoteException {
 		Utilisateur utilisateur = lesUtilisateurs.get(idUtilisateur);
 		return utilisateur.hasUtilisateurVelosEtat(metier.Velo.Etat.EnReparation);
+	}
+
+
+	@Override
+	public int[] getIdsVelosEtat(int idUtilisateur, Etat etat)
+			throws RemoteException {
+		Utilisateur utilisateur = lesUtilisateurs.get(idUtilisateur);
+		return utilisateur.getIdVelosEtat(etat);
 	}
 	
 }
