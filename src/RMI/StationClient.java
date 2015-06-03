@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import metier.CarteAcces.Role;
 import metier.Administrateur;
@@ -489,10 +491,10 @@ public class StationClient {
 						verificationFormat = true;
 						try{
 							System.out.println("***** Les vélos que vous avez amenés en réparation *****");
-							int[] lesVelosEnReparationAdmin = proxyGS.getIdsVelosEtat(identifiant, Etat.EnReparation);
-							for(int i = 0; i < lesVelosEnReparationAdmin.length; i++ )
+							ArrayList<Integer> lesVelosEnReparationAdmin = proxyGS.getIdsVelosEtat(identifiant, Etat.EnReparation);
+							for(Integer i : lesVelosEnReparationAdmin)
 							{
-								System.out.println("**Vélo n° " + lesVelosEnReparationAdmin[i]);
+								System.out.println("**Vélo n° " + i);
 							}
 							System.out.println("***************");
 							System.out.println("Veuillez entrer l'id du vélo à déposer provenant de l'atelier :");
