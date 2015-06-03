@@ -37,8 +37,6 @@ public class Station {
 		}
 		Station.lesStations.put(new Integer(idsStation),this);
 		this.lesVelos = new HashMap<Integer, Velo>();
-		System.out.println("Test : "+lesStations.toString());
-
 	}
 	
 	

@@ -7,11 +7,19 @@ public interface GestionStationNotif extends Remote {
 
 	//retourne -1 s'il y pas de notification et l'id de la notification s'il y en a.
 	// modifie le statut de la notification en "EnCours" !
-	public int estnotificationStation() throws RemoteException;
+//	public int estnotificationStation() throws RemoteException;
 	
 	// return [0] = nbreVelos; [1] = stationSaturée; [2] = stationPénurie
-	public String[] detailNotificationStation(int idNotification) throws RemoteException;
+//	public String[] detailNotificationStation(int idNotification) throws RemoteException;
+//	
+//	public void notificationOK(int idNotification) throws RemoteException;
+//
+	public void notificationPenurie(Station idStation) throws RemoteException;
+
+	public void notificationSaturee(Station idStation) throws RemoteException;
 	
-	public void notificationOK(int idNotification) throws RemoteException;
+	public Notifications getNotification() throws RemoteException;
+	
+	public void supprimerNotification() throws RemoteException;
 }
 //TODO : mise en place notifications

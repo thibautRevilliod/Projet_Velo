@@ -9,11 +9,11 @@ import metier.CarteAcces.Role;
 
 public interface GestionStation extends Remote {
 	
-	public GestionStationNotif getNotification() throws RemoteException;
-	
-	public void setNotification(GestionStationNotif notification) throws RemoteException;
-	
 	public int creerStation(String nomStation, double longitude, double latitude, int capacite) throws RemoteException;
+	
+	public Notifications getNotification() throws RemoteException;
+	
+	public void supprimerNotification() throws RemoteException;
 	
 	public void supprimerStation(int idStation) throws RemoteException;
 	
@@ -22,13 +22,16 @@ public interface GestionStation extends Remote {
 	
 	public void supprimerUtilisateur (Utilisateur utilisateur) throws RemoteException;
 	
-	public boolean ajouterVeloStation(Velo velo, int idStation) throws RemoteException;
+	//public boolean ajouterVeloStation(Velo velo, int idStation) throws RemoteException;
 	
 	public boolean ajouterVeloStation(int idStation) throws RemoteException;
 	
+	//permet d'initialiser les stations avec des vélos sans avoir l'alerte de notification
+	public boolean ajouterVeloStationInitialisation(int idStation) throws RemoteException;
+	
 	public void supprimerVeloStation(Velo velo, int idStation) throws RemoteException;
 	
-	public void transfererVelo(Velo velo, int idStationOrigine, int idStationDestination) throws RemoteException;
+//	public void transfererVelo(Velo velo, int idStationOrigine, int idStationDestination) throws RemoteException;
 	
 	public int isEmprunterVelosPossible(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws RemoteException;
 	

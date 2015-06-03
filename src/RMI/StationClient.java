@@ -13,6 +13,7 @@ import metier.Administrateur;
 import metier.Client;
 import metier.GestionStation;
 import metier.GestionStationNotifImpl;
+import metier.Notifications;
 import metier.Operateur;
 import metier.Station;
 import metier.Utilisateur;
@@ -20,7 +21,7 @@ import metier.Velo;
 import metier.Velo.Etat;
 //TODO gérer retour depos vélo en réparation pour admin 
 public class StationClient {
-	private static final int TEMPS_PAUSE = 2;
+	private static final int TEMPS_PAUSE = 0;
 	private static GestionStation proxyGS;
 	private static String valeurChoix;
 	private static int idStation;
@@ -39,7 +40,7 @@ public class StationClient {
 		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		
 		if(!stationMaitre){
-			System.out.println("------------ Bienvenue dans la station Cliente ------------");
+			System.out.println("------------ Bienvenue dans la station Cliente n°"+ idStation +" ------------");
 		}else{
 			System.out.println("------------ Bienvenue dans la station Maître ------------");
 		}
@@ -358,7 +359,7 @@ public class StationClient {
 					}
 				}while(!verificationFormat);
 				
-				boolean resultat = proxyGS.ajouterVeloStation(new Velo(), idStationVelo);
+				boolean resultat = proxyGS.ajouterVeloStation(idStationVelo);
 				if(!resultat)
 				{
 					System.out.println("Plus de place disponible");
@@ -499,6 +500,10 @@ public class StationClient {
 							System.out.println("***************");
 							System.out.println("Veuillez entrer l'id du vélo à déposer provenant de l'atelier :");
 							idVelo = Integer.valueOf(entree.readLine());
+							if(!lesVelosEnReparationAdmin.contains(idVelo))
+							{
+								throw new Exception("Vélo non emprunté");
+							}
 						}catch(Exception e){
 							System.out.println("Saisie incorrecte");
 							verificationFormat  = false;
@@ -733,16 +738,12 @@ public class StationClient {
 	}
 	
 	private static void menuOperateurNotification(int identifiant, String mdp) throws IOException, InterruptedException, RemoteException {
-		int notification = -1;
 		boolean continuer = true;
-		GestionStationNotifImpl notificationGestionStation = new GestionStationNotifImpl();
-		
-		proxyGS.setNotification(notificationGestionStation);
-		
+
 		System.out.println("En attente de notifications...");
-		notification = proxyGS.getNotification().estnotificationStation();
+		Notifications notification = proxyGS.getNotification();
 		pause(TEMPS_PAUSE);
-		while((notification == -1) && (continuer))
+		while((notification == null) && (continuer))
 		{
 			System.out.println("Voulez-vous continuer à attendre des notifications ? (o/n)");
 			String rep = entree.readLine();
@@ -753,27 +754,35 @@ public class StationClient {
 			{
 				System.out.println("En attente de notifications...");
 				//retourne s'il y des notifications.
-				notification = proxyGS.getNotification().estnotificationStation();
+				notification = proxyGS.getNotification();
 				pause(TEMPS_PAUSE);
 			}
 		}
 		
-		if(notification != -1)
+		if(notification != null)
 		{
-			String detailNotification[] = proxyGS.getNotification().detailNotificationStation(notification);
-			
-			System.out.println("Veuillez transférer " + detailNotification[0] + " vélos de la station saturée " + detailNotification[1] + " à la station en pénurie " + detailNotification[2]);
-			int nombreVeloTransferes = Integer.parseInt(detailNotification[0]);
-			Station stationSaturee = proxyGS.getStation(Integer.parseInt(detailNotification[1]));
-			Station stationEnPenurie = proxyGS.getStation(Integer.parseInt(detailNotification[2]));
-			
-			int[] listeIdsVeloATRansferer = stationSaturee.getVelosLibresStation(nombreVeloTransferes);
-
-			for(int i=0; i<listeIdsVeloATRansferer.length;i++)
+			if(notification.getTypeNotification().toString().equals("Penurie"))
 			{
-				Velo velosATransferer = proxyGS.getVelo(listeIdsVeloATRansferer[i]);
-				proxyGS.transfererVelo(velosATransferer,stationSaturee.getIdStation(), stationEnPenurie.getIdStation());
+				System.out.println("La station n°" + notification.getStation() + " est en " + notification.getTypeNotification().toString() + ".");
 			}
+			else
+			{
+				System.out.println("La station n°" + notification.getStation() + " est " + notification.getTypeNotification().toString() + ".");
+			}
+//			String detailNotification[] = proxyGS.getNotification().detailNotificationStation(notification);
+//			
+//			System.out.println("Veuillez transférer " + detailNotification[0] + " vélos de la station saturée " + detailNotification[1] + " à la station en pénurie " + detailNotification[2]);
+//			int nombreVeloTransferes = Integer.parseInt(detailNotification[0]);
+//			Station stationSaturee = proxyGS.getStation(Integer.parseInt(detailNotification[1]));
+//			Station stationEnPenurie = proxyGS.getStation(Integer.parseInt(detailNotification[2]));
+//			
+//			int[] listeIdsVeloATRansferer = stationSaturee.getVelosLibresStation(nombreVeloTransferes);
+//
+//			for(int i=0; i<listeIdsVeloATRansferer.length;i++)
+//			{
+//				Velo velosATransferer = proxyGS.getVelo(listeIdsVeloATRansferer[i]);
+//				proxyGS.transfererVelo(velosATransferer,stationSaturee.getIdStation(), stationEnPenurie.getIdStation());
+//			}
 			
 			System.out.println("Veuillez valider par 'ok' dès que l'action est terminée : ");
 			String actionOK = entree.readLine();
@@ -782,7 +791,7 @@ public class StationClient {
 				System.out.println("Veuillez valider par 'ok' dès que l'action est terminée : ");
 				actionOK = entree.readLine();
 			}
-			proxyGS.getNotification().notificationOK(notification);
+			proxyGS.supprimerNotification();
 		}
 		
 		menuOperateur(identifiant,mdp);
@@ -931,10 +940,9 @@ public class StationClient {
 
 		//creation de vélos 
 		//(pas d'id en paramètre du constructeur de vélo car généré automatiquemnt)
-		System.out.println("id station : "+idStation);
 		if(!stationMaitre){
 			for(int i = 0; i < capacite-5; i++)
-				proxyGS.ajouterVeloStation(idStation);
+				proxyGS.ajouterVeloStationInitialisation(idStation);
 		}else{
 			// creation d'instances utilisateurs pour les tests
 			initialisationInstances();

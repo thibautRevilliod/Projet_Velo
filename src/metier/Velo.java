@@ -1,6 +1,5 @@
 package metier;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
 public class Velo{

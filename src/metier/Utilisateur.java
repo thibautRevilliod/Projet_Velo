@@ -1,5 +1,6 @@
 package metier;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,6 +30,9 @@ public abstract class Utilisateur {
 	protected HashMap<Integer, Velo> lesVelos ;
 	private static HashMap<Integer, Utilisateur> lesUtilisateurs = new HashMap<Integer, Utilisateur>();
 	private static int idsUtilisateur = 0; 
+//	protected GestionStationNotif notif;
+//	protected static final int SEUIL_ALERT_PENURIE = 5;
+//	protected static final int SEUIL_ALERT_SATUREE = 26;
 	
 	public Utilisateur(String pnom, String pprenom, String pmotdepasse, String ptelephone, String padressemail, String padressepostale){
 		nom = pnom;
@@ -202,11 +206,13 @@ public abstract class Utilisateur {
 	public abstract void emprunterVelos(int[] idVelos, Role roleEmprunt, int idStation) throws java.rmi.RemoteException;
 	
 	//La méthode déposer ne dépend pas des droits de l'utilisateur (pas d'authentification)
-	public void deposerVelos() throws java.rmi.RemoteException
+	public void deposerVelos(int idStation) throws java.rmi.RemoteException
 	{	
 		Velo veloTemp;
 		
 		Iterator it = lesVelos.entrySet().iterator();
+		
+		Station stationTemp = Station.getLesStations().get(idStation);
 		
 	    while (it.hasNext()) {
 	        Map.Entry pair = (Map.Entry)it.next();
@@ -224,14 +230,16 @@ public abstract class Utilisateur {
 	}
 
 	// pour admin
-	public void deposerVelo(int idVelo)
+	public void deposerVelo(int idVelo, int idStation) throws RemoteException
 	{
 		Velo veloADeposer = lesVelos.get(idVelo);
+		Station stationTemp = Station.getLesStations().get(idStation);
+		
 		if(veloADeposer.getEtat() == Etat.EnReparation)
 		{
 			veloADeposer.setEtat(Etat.Libre);
 			supprimerVelo(veloADeposer);
-		}		
+		}	
 	}
 	
 	public void ajouterRoleUtilisateur(Role r) {

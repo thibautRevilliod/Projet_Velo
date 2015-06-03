@@ -22,9 +22,16 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	private HashMap<Integer, Station> lesStations = new HashMap<Integer, Station>(); //On gère ici la liste de toutes les stations, qui elles-même gèrent les vélos
 	private HashMap<Integer, Utilisateur> lesUtilisateurs= new HashMap<Integer, Utilisateur>(); //On gère ici la liste de tous les utilisateurs
 	
-	public GestionStationNotif notification;
+	public GestionStationNotif gestionStationNotif = new GestionStationNotifImpl();
+	protected static final int SEUIL_ALERT_PENURIE = 5;
+	protected static final int SEUIL_ALERT_SATUREE = 26;
 
 	
+	public Notifications getNotification() throws RemoteException {
+		return gestionStationNotif.getNotification();
+	}
+
+
 	public GestionStationImpl() throws RemoteException {
 		super();
 	}
@@ -33,18 +40,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	public HashMap<Integer, Station> getLesStations() {return lesStations;}
 
 	public HashMap<Integer, Utilisateur> getLesUtilisateurs() {return lesUtilisateurs;}
-
-
-
-	@Override
-	public synchronized GestionStationNotif getNotification() {
-		return this.notification;
-	}
-	
-	@Override
-	public synchronized void setNotification(GestionStationNotif notification) {
-		this.notification = notification;
-	}
 	
 	@Override
 	public synchronized int creerStation(String nomStation, double longitude, double latitude, int capacite) throws java.rmi.RemoteException
@@ -53,7 +48,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		Station nouvelleStation = new Station(nomStation, position, capacite);
 		int idStation = nouvelleStation.getIdStation();
 		lesStations.put(new Integer(idStation), nouvelleStation);
-		System.out.println("GestionStation : "+lesStations.toString());
 		return idStation;
 	}
 	
@@ -97,18 +91,18 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	    
 	}
 	
-	@Override
-	public synchronized boolean ajouterVeloStation(Velo velo, int idStation) throws RemoteException
-	{
-		boolean result;
-
-		Station station = Station.getLesStations().get(idStation);
-		//TODO ? Station stationGS = lesStations.get(idStation);
-		//TODO ? stationGS.ajouterVelo(velo)
-		result = station.ajouterVelo(velo);
-		return result;
-	}
-	
+//	@Override
+//	public synchronized boolean ajouterVeloStation(Velo velo, int idStation) throws RemoteException
+//	{
+//		boolean result;
+//
+//		Station station = Station.getLesStations().get(idStation);
+//		//TODO ? Station stationGS = lesStations.get(idStation);
+//		//TODO ? stationGS.ajouterVelo(velo)
+//		result = station.ajouterVelo(velo);
+//		return result;
+//	}
+//	
 	@Override
 	public synchronized boolean ajouterVeloStation(int idStation) throws RemoteException
 	{
@@ -118,6 +112,21 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		//TODO ? Station stationGS = lesStations.get(idStation);
 		//TODO ? stationGS.ajouterVelo(velo)
 		result = station.ajouterVelo(velo);
+		gestionNotification(station);
+		
+		return result;
+	}
+	
+	@Override
+	public synchronized boolean ajouterVeloStationInitialisation(int idStation) throws RemoteException
+	{
+		boolean result;
+		Velo velo = new Velo();
+		Station station = Station.getLesStations().get(idStation);
+		//TODO ? Station stationGS = lesStations.get(idStation);
+		//TODO ? stationGS.ajouterVelo(velo)
+		result = station.ajouterVelo(velo);
+		
 		return result;
 	}
 	
@@ -203,12 +212,13 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		//On teste que la méthode précédente ne retourne pas un idStation différent
 		
 		//On assigne les vélos à l'utilisateur, en spécifiant son rôle pour traitements spécifiques
-		System.out.println("utlis nom : "+utilisateur.getIdUtilisateur());
 		utilisateur.emprunterVelos(lesIdVelos, roleEmprunt, idStation);
 		//Suppression des vélos de la station
 		station.supprimerVelos(lesIdVelos);
 		//TODO ? supprimerVeloStation de GestionStation
 			
+		//notification
+		gestionNotification(station);
 
 		return lesIdVelos;
 	}
@@ -238,6 +248,9 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 					station.supprimerVelo(velo);
 					//TODO ? supprimerVeloStation de GestionStation
 					lesIdVelos[1] = 0;//Tout s'est bien passé : code 0
+					
+					//notification
+					gestionNotification(station);
 				}
 				else
 				{
@@ -271,15 +284,15 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 			utilisateur = lesUtilisateurs.get(idUtilisateur);
 			station = lesStations.get(idStation);
 			lesIdVelos = utilisateur.getIdVelos();
-			System.out.println("lesidsvelo : "+lesIdVelos[0]);
 			nbVelos = lesIdVelos.length;
 			if(station.getNombrePlacesDispos() >= nbVelos)
 			{
 				//TODO ajoutVeloStation de GestionStation ?
 				station.ajouterVelos(lesIdVelos);
-				utilisateur.deposerVelos();
-				System.out.println("velos GestionSTation :"+lesStations.get(idStation).getLesVelos().toString());
-				System.out.println("velos STation :"+Station.getLesStations().get(idStation).getLesVelos().toString());
+				utilisateur.deposerVelos(idStation);
+				
+				//notification
+				gestionNotification(station);
 			}
 			else
 				idStationDepot = station.getStationLaPlusProche().getIdStation();
@@ -306,7 +319,10 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 				idVeloADeposer[0] = idVelo;
 				//TODO ajoutVeloStation de GestionStation ?
 				station.ajouterVelos(idVeloADeposer);
-				utilisateur.deposerVelo(idVeloADeposer[0]);
+				utilisateur.deposerVelo(idVeloADeposer[0], idStation);
+				
+				//notification
+				gestionNotification(station);
 			}
 			else
 				idStationDepot = station.getStationLaPlusProche().getIdStation();
@@ -314,20 +330,20 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		return idStationDepot;
 	}
 	
-	@Override
-	public synchronized void transfererVelo(Velo velo, int idStationOrigine, int idStationDestination) throws RemoteException
-	{
-		Station stationDestination = lesStations.get(idStationDestination);
-		if(stationDestination.getNombrePlacesDispos()==0)
-		{
-			System.out.println("La station de destination " + stationDestination.getIdStation() + "n'a plus de places disponibles");
-		}
-		else
-		{
-			supprimerVeloStation(velo, idStationOrigine);
-			ajouterVeloStation(velo, idStationDestination);
-		}		
-	}
+//	@Override
+//	public synchronized void transfererVelo(Velo velo, int idStationOrigine, int idStationDestination) throws RemoteException
+//	{
+//		Station stationDestination = lesStations.get(idStationDestination);
+//		if(stationDestination.getNombrePlacesDispos()==0)
+//		{
+//			System.out.println("La station de destination " + stationDestination.getIdStation() + "n'a plus de places disponibles");
+//		}
+//		else
+//		{
+//			supprimerVeloStation(velo, idStationOrigine);
+//			ajouterVeloStation(velo, idStationDestination);
+//		}		
+//	}
 	
 	@Override
 	public synchronized void supprimerUtilisateur (Utilisateur utilisateur) throws RemoteException
@@ -350,6 +366,8 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		LocateRegistry.createRegistry(1099);
 		Naming.rebind("MaGestionStation",new GestionStationImpl());
 		System.out.println("MaGestionStation est enregistrée");
+		GestionStationNotifImpl gestionStationNotifImpl = new GestionStationNotifImpl();
+		System.out.println("MaGestionStationNotifImpl est enregistrée");
 	}
 
 	@Override
@@ -418,6 +436,24 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 			throws RemoteException {
 		Utilisateur utilisateur = lesUtilisateurs.get(idUtilisateur);
 		return utilisateur.getIdVelosEtat(etat);
+	}
+
+
+	@Override
+	public void supprimerNotification() throws RemoteException {
+		gestionStationNotif.supprimerNotification();
+	}
+	
+	//notification
+	public void gestionNotification(Station pStation) throws RemoteException {
+		if(pStation.getLesVelos().size() <= SEUIL_ALERT_PENURIE)
+		{
+			gestionStationNotif.notificationPenurie(pStation);
+		}
+		if(pStation.getLesVelos().size() >= SEUIL_ALERT_SATUREE)
+		{
+			gestionStationNotif.notificationSaturee(pStation);
+		}
 	}
 	
 }

@@ -15,11 +15,11 @@ public class Operateur extends Utilisateur {
 	
 	public void emprunterVelos(int[] idVelos, Role roleEmprunt, int idStation) throws java.rmi.RemoteException
 	{
+		Station stationTemp = Station.getLesStations().get(idStation);
 		Velo veloTemp; 
 		int nbVelos = idVelos.length - 1; //La dernière occurence est l'idStation où se trouve le/les vélos
 		if(roleEmprunt.equals(Role.Client))
 		{
-			Station stationTemp = Station.getLesStations().get(idStation);
 			 veloTemp = stationTemp.getLesVelos().get(idVelos[0]);
 //			veloTemp = Velo.getVelo(idVelos[0]);
 			if(veloTemp != null && lesVelos.size() < 1)
@@ -32,8 +32,7 @@ public class Operateur extends Utilisateur {
 		{
 			for(int i = 0; i < nbVelos; i++)
 			{
-				Station stationTemp = Station.getLesStations().get(idStation);
-				 veloTemp = stationTemp.getLesVelos().get(idVelos[0]);
+				veloTemp = stationTemp.getLesVelos().get(idVelos[0]);
 //				veloTemp = Velo.getVelo(idVelos[i]);
 				if(veloTemp != null)
 				{
