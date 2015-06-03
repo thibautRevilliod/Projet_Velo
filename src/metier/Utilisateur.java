@@ -73,12 +73,38 @@ public abstract class Utilisateur {
 	        Map.Entry pair = (Map.Entry)it.next();
 	        Integer idVelo = (Integer) pair.getKey();
 	        Velo veloListe = (Velo) pair.getValue();
+
         	veloTemp = veloListe;
 			listeIdsVelos[i] = veloTemp.getIdVelo();
 			i++;
 		}
 		
 		return listeIdsVelos;
+	}
+	
+	public int[] getIdVelosEtat(metier.Velo.Etat etat)
+	{
+		int nbVelos = lesVelos.size();
+		int[] listeIdsVelosEtat = new int[nbVelos];
+		Velo veloTemp;
+		int i = 0;
+		
+		Iterator it = lesVelos.entrySet().iterator();
+		
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Integer idVelo = (Integer) pair.getKey();
+	        Velo veloListe = (Velo) pair.getValue();
+	        if(veloListe.getEtat() == etat)
+        	{
+	        	veloTemp = veloListe;
+	        	listeIdsVelosEtat[i] = veloTemp.getIdVelo();
+	        	i++;
+			}
+		    
+		}
+		
+		return listeIdsVelosEtat;
 	}
 	
 	public void ajouterVelo(Velo velo)
@@ -186,23 +212,27 @@ public abstract class Utilisateur {
 	    while (it.hasNext()) {
 	        Map.Entry pair = (Map.Entry)it.next();
 	        Integer idVelo = (Integer) pair.getKey();
-	        
-	        deposerVelo(idVelo);
-	        
-//	        Velo veloListe = (Velo) pair.getValue();
-//
-//        	veloTemp = veloListe;
-//        	veloTemp.setEtat(Etat.Libre);
-//			supprimerVelo(veloTemp);
+	        Velo veloListe = (Velo) pair.getValue();
+	        if(veloListe.getEtat() == Etat.Emprunte)
+	        {	
+	        	veloTemp = veloListe;
+	        	veloTemp.setEtat(Etat.Libre);
+				supprimerVelo(veloTemp);
+	        }
+			
 		}
+	    
 	}
-	
+
+	// pour admin
 	public void deposerVelo(int idVelo)
 	{
 		Velo veloADeposer = lesVelos.get(idVelo);
-		veloADeposer.setEtat(Etat.Libre);
-		supprimerVelo(veloADeposer);
-		
+		if(veloADeposer.getEtat() == Etat.EnReparation)
+		{
+			veloADeposer.setEtat(Etat.Libre);
+			supprimerVelo(veloADeposer);
+		}		
 	}
 	
 	public void ajouterRoleUtilisateur(Role r) {

@@ -3,12 +3,12 @@ package metier;
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class Velo implements Serializable{
+public class Velo{
 	
 	public enum Etat {Emprunte, Libre, EnReparation};
 	
 	private int idVelo;
-	private static HashMap<Integer, Velo> lesVelos = new HashMap<Integer, Velo>();
+	private static HashMap<Integer, Velo> lesVelos;
 	private Etat etat;
 	private static int idsVelo = 0; 
 	
@@ -16,13 +16,18 @@ public class Velo implements Serializable{
 		this.etat = Etat.Libre;
 		idsVelo++;
 		this.idVelo = idsVelo;
+		if(lesVelos == null)
+		{
+			lesVelos = new HashMap<Integer, Velo>();	
+		}
 		lesVelos.put(new Integer(idsVelo),this);
 	}
 	
 	public int getIdVelo() {return idVelo;}
 	public Etat getEtat() {return etat;}
-	public void setEtat(Etat etat) {this.etat = etat;}
-	
+	public void setEtat(Etat etat) {this.etat = etat;}	
+	public static HashMap<Integer, Velo> getLesVelos() {return lesVelos;}
+
 	public static Velo getVelo(int idVelo)
 	{
 		if(lesVelos.containsKey(idVelo))

@@ -1,5 +1,5 @@
 package RMI;
-//TODO : remplir les HashMap de stations quand on appelle stationLaPlusProche ?
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -933,7 +933,7 @@ public class StationClient {
 		System.out.println("id station : "+idStation);
 		if(!stationMaitre){
 			for(int i = 0; i < capacite-5; i++)
-				proxyGS.ajouterVeloStation(new Velo(),idStation);
+				proxyGS.ajouterVeloStation(idStation);
 		}else{
 			// creation d'instances utilisateurs pour les tests
 			initialisationInstances();
