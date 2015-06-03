@@ -91,40 +91,49 @@ public class StationClient {
 			}
 		}while(!verificationFormat);
 		
-		if(!proxyGS.hasUtilisateurEmprunteVelos(idUtilisateur))
+		if(!proxyGS.hasCompteUtilisateur(idUtilisateur))
 		{
-			System.out.println("Vous n'avez pas emprunté de vélo.");
+			System.out.println("Cet identifiant est incorrect.");
 			pause(TEMPS_PAUSE);
 			menuPrincipal();
-		}else
-		{
-			stationDepot = proxyGS.deposerVelos(idUtilisateur, idStation);
-			if ((stationDepot  == idStation)){
-				System.out.println("Vous pouvez déposer le(s) vélo(s) ");
-				// a développer côter gestionStation ! (optionnel)
-					System.out.println("Voulez-vous un reçu ? ");
-					System.out.println("--1) Oui");
-					System.out.println("--2) Non");
-					System.out.println("----");
-					valeurChoix = entree.readLine();
-					if(valeurChoix=="1"){
-						//sous forme [0] = Jours; [1] = Heures; [2] = minutes; [3] = Prix
-						int recuDureePrix[] = proxyGS.dureePrixEmpruntVeloClient(idUtilisateur, idStation); 
-						System.out.println("Votre reçu : ");
-						System.out.println("  Duree : " + recuDureePrix[0] + " Jours " + recuDureePrix[1] + " Heures " + recuDureePrix[2] + "Minutes");
-						System.out.println("  Prix : " + recuDureePrix[3]);
-					}
-				System.out.println("Merci d'avoir utilisé les services de VeloRMI.");
-				System.out.print("Déconnection");
+		}
+		else
+		{				
+			if(!proxyGS.hasUtilisateurEmprunteVelos(idUtilisateur))
+			{
+				System.out.println("Vous n'avez pas emprunté de vélo.");
 				pause(TEMPS_PAUSE);
-			}else{
-				stationLaPlusProche = proxyGS.getStation(stationDepot);
-				System.out.println("Plus de place disponible dans cette station.");
-				System.out.println("Veuillez aller à la station " + stationDepot + " qui dispose de place : ");
-				System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
-				System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
-				System.out.println("Déconnexion");
-				pause(TEMPS_PAUSE);
+				menuPrincipal();
+			}else
+			{
+				stationDepot = proxyGS.deposerVelos(idUtilisateur, idStation);
+				if ((stationDepot  == idStation)){
+					System.out.println("Vous pouvez déposer le(s) vélo(s) ");
+					// a développer côter gestionStation ! (optionnel)
+						System.out.println("Voulez-vous un reçu ? ");
+						System.out.println("--1) Oui");
+						System.out.println("--2) Non");
+						System.out.println("----");
+						valeurChoix = entree.readLine();
+						if(valeurChoix=="1"){
+							//sous forme [0] = Jours; [1] = Heures; [2] = minutes; [3] = Prix
+							int recuDureePrix[] = proxyGS.dureePrixEmpruntVeloClient(idUtilisateur, idStation); 
+							System.out.println("Votre reçu : ");
+							System.out.println("  Duree : " + recuDureePrix[0] + " Jours " + recuDureePrix[1] + " Heures " + recuDureePrix[2] + "Minutes");
+							System.out.println("  Prix : " + recuDureePrix[3]);
+						}
+					System.out.println("Merci d'avoir utilisé les services de VeloRMI.");
+					System.out.print("Déconnection");
+					pause(TEMPS_PAUSE);
+				}else{
+					stationLaPlusProche = proxyGS.getStation(stationDepot);
+					System.out.println("Plus de place disponible dans cette station.");
+					System.out.println("Veuillez aller à la station " + stationDepot + " qui dispose de place : ");
+					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
+					System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
+					System.out.println("Déconnexion");
+					pause(TEMPS_PAUSE);
+				}
 			}
 		}
 	}
@@ -844,9 +853,12 @@ public class StationClient {
 						case -4:
 							System.err.println("Erreur 10603 : Le nombre de vélos demandés est supérieur à la capacité de la station.");
 							break;
-		
+//						case -5:
+//							System.err.println("Erreur 10604 : La station ne dispose plus de vélos libres.");
+//							break;
 						case 0:
 						default:
+							//TODO : fix bug : l'appli plante quand on veut emprunter 1 vélo quand le nombre d vélos est 0
 							idVeloEmprunteClient = proxyGS.emprunterVelos(pidUtilisateur, idStation, 1, Role.Client);
 							stationDepot = idVeloEmprunteClient[1];;
 							if(stationDepot == idStation)

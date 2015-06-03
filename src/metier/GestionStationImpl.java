@@ -109,8 +109,8 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		boolean result;
 		Velo velo = new Velo();
 		Station station = Station.getLesStations().get(idStation);
-		//TODO ? Station stationGS = lesStations.get(idStation);
-		//TODO ? stationGS.ajouterVelo(velo)
+		//TODO ? Station stationGS = lesStations.get(idStation); -->
+		//TODO ? stationGS.ajouterVelo(velo) --> OK
 		result = station.ajouterVelo(velo);
 		gestionNotification(station);
 		
@@ -123,8 +123,8 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		boolean result;
 		Velo velo = new Velo();
 		Station station = Station.getLesStations().get(idStation);
-		//TODO ? Station stationGS = lesStations.get(idStation);
-		//TODO ? stationGS.ajouterVelo(velo)
+		//TODO ? Station stationGS = lesStations.get(idStation); --> OK
+		//TODO ? stationGS.ajouterVelo(velo) --> OK
 		result = station.ajouterVelo(velo);
 		
 		return result;
@@ -136,7 +136,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		Station station = Station.getLesStations().get(idStation);
 		station.supprimerVelo(velo);
 		//TODO ? Station stationGS = lesStations.get(idStation);
-		//TODO ? stationGS.supprimerVelo(velo);
+		//TODO ? stationGS.supprimerVelo(velo); --> OK
 	}
 	
 	@Override
@@ -146,37 +146,44 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		Utilisateur utilisateur;
 		Station station;
 		int[] lesIdVelos = new int[nbVelos + 1]; //On rajoute un emplacement qui contiendra l'idStation des vélos
-		if(Utilisateur.getLesUtilisateurs().containsKey(idUtilisateur))
+		if(Utilisateur.getLesUtilisateurs().containsKey(idUtilisateur)) // l'utilisateur existe
 		{
-			if(Station.getLesStations().containsKey(idStation))
+			if(Station.getLesStations().containsKey(idStation)) // la station existe
 			{
 				station = Station.getLesStations().get(idStation);
-				if(station.getCapacite()>=nbVelos)
+				if(station.getCapacite() >= nbVelos)
 				{
-					utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
-					//On vérifie les droits de l'utilisateur
-					
-					if(utilisateur.hasRole(roleEmprunt))
-					{
-						if((nbVelos > 1 && roleEmprunt == Role.Operateur) || (nbVelos == 1))
+					//TODO ? if(station.getNombreVelosLibres() > 0)
+					//{
+						utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
+						//On vérifie les droits de l'utilisateur
+						
+						if(utilisateur.hasRole(roleEmprunt))
 						{
-							//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
-							lesIdVelos = station.getVelosLibresStation(nbVelos);
-							//On teste que la méthode précédente ne retourne pas un idStation différent
-							if(lesIdVelos[nbVelos] == idStation)
+							if((nbVelos > 1 && roleEmprunt == Role.Operateur) || (nbVelos == 1))
 							{
-								resultat = 0; // pas d'erreur : l'emprunt est possible
+								//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
+								lesIdVelos = station.getVelosLibresStation(nbVelos);
+								//On teste que la méthode précédente ne retourne pas un idStation différent
+								if(lesIdVelos[nbVelos] == idStation)
+								{
+									resultat = 0; // pas d'erreur : l'emprunt est possible
+								}
+								else
+								{
+									resultat = lesIdVelos[nbVelos]; // idSTation de la station la plus proche
+								}
 							}
 							else
 							{
-								resultat = lesIdVelos[nbVelos]; // idSTation de la station la plus proche
+								resultat = -2; //Erreur : l'utilisateur n'a pas le bon rôle
 							}
 						}
-						else
-						{
-							resultat = -2; //Erreur : l'utilisateur n'a pas le bon rôle
-						}
-					}
+					//}
+					//else
+					//{
+						//resultat = -5; // Erreur : plus de vélos libres
+					//}
 				}
 				else
 				{
@@ -208,6 +215,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		
 		station = Station.getLesStations().get(idStation);
 		//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
+		//TODO : ajouter check nbVelos == 0 ?
 		lesIdVelos = station.getVelosLibresStation(nbVelos);
 		//On teste que la méthode précédente ne retourne pas un idStation différent
 		
@@ -215,7 +223,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		utilisateur.emprunterVelos(lesIdVelos, roleEmprunt, idStation);
 		//Suppression des vélos de la station
 		station.supprimerVelos(lesIdVelos);
-		//TODO ? supprimerVeloStation de GestionStation
+		//TODO ? supprimerVeloStation de GestionStation --> OK
 			
 		//notification
 		gestionNotification(station);
@@ -246,7 +254,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 					utilisateur.emprunterVelos(lesIdVelos, Role.Administrateur, idStation);
 					//Suppression du vélo de la station
 					station.supprimerVelo(velo);
-					//TODO ? supprimerVeloStation de GestionStation
+					//TODO ? supprimerVeloStation de GestionStation --> OK
 					lesIdVelos[1] = 0;//Tout s'est bien passé : code 0
 					
 					//notification
@@ -287,7 +295,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 			nbVelos = lesIdVelos.length;
 			if(station.getNombrePlacesDispos() >= nbVelos)
 			{
-				//TODO ajoutVeloStation de GestionStation ?
+				//TODO ajoutVeloStation de GestionStation ? --> OK
 				station.ajouterVelos(lesIdVelos);
 				utilisateur.deposerVelos(idStation);
 				
@@ -317,7 +325,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 			if(station.getNombrePlacesDispos() >= 1 && veloADeposer.getIdVelo()==idVelo)
 			{
 				idVeloADeposer[0] = idVelo;
-				//TODO ajoutVeloStation de GestionStation ?
+				//TODO ajoutVeloStation de GestionStation ? --> OK
 				station.ajouterVelos(idVeloADeposer);
 				utilisateur.deposerVelo(idVeloADeposer[0], idStation);
 				
@@ -413,6 +421,12 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	public synchronized Velo getVelo(int idVelo) throws RemoteException
 	{
 		return Velo.getVelo(idVelo);
+	}
+	
+	@Override
+	public boolean hasCompteUtilisateur(int idUtilisateur) throws RemoteException
+	{
+		return lesUtilisateurs.containsKey(idUtilisateur);
 	}
 
 

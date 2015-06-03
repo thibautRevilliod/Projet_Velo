@@ -13,6 +13,7 @@ public class Operateur extends Utilisateur {
 		lesCartesAccesUtilisateur.put(carteAcces.getRole(),carteAcces);
 	}
 	
+	//TODO fix bug : emprunt de 5 vélos dans une station et dépot de seulement 1 vélo dans un autre
 	public void emprunterVelos(int[] idVelos, Role roleEmprunt, int idStation) throws java.rmi.RemoteException
 	{
 		Station stationTemp = Station.getLesStations().get(idStation);

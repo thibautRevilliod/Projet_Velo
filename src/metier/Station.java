@@ -184,7 +184,7 @@ public class Station {
 		return -1; // si aucun velo libre trouvé
 	}
 	
-	
+	//TODO : retourner aussi nombre de vélos (voir bonus)
 	public Station getStationLaPlusProche()
 	{
 		Station stationPlusProche = null;
@@ -226,7 +226,7 @@ public class Station {
 		else
 			return false;
 	}
-	
+	//TODO : à supprimer ?
 	public static Station getStationSaturee()
 	{
 		Station stationSatureee = null;
@@ -250,6 +250,7 @@ public class Station {
 	    return stationSatureee;
 	}
 	
+	//TODO : à supprimer ?
 	public static Station getStationEnPenurie()
 	{
 		Station stationEnPenurie = null;

@@ -22,4 +22,3 @@ public interface GestionStationNotif extends Remote {
 	
 	public void supprimerNotification() throws RemoteException;
 }
-//TODO : mise en place notifications
