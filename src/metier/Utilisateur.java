@@ -73,12 +73,9 @@ public abstract class Utilisateur {
 	        Map.Entry pair = (Map.Entry)it.next();
 	        Integer idVelo = (Integer) pair.getKey();
 	        Velo veloListe = (Velo) pair.getValue();
-	        if(veloListe.getEtat() == Etat.Libre)
-		    {
-	        	veloTemp = veloListe;
-				listeIdsVelos[i] = veloTemp.getIdVelo();
-				i++;
-		    }
+        	veloTemp = veloListe;
+			listeIdsVelos[i] = veloTemp.getIdVelo();
+			i++;
 		}
 		
 		return listeIdsVelos;
