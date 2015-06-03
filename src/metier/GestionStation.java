@@ -2,6 +2,7 @@ package metier;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import metier.CarteAcces.Role;
@@ -63,5 +64,5 @@ public interface GestionStation extends Remote {
 	
 	public boolean hasUtilisateurVeloEnReparation(int idUtilisateur) throws RemoteException;
 	
-	public int[] getIdsVelosEtat(int idUtilisateur, metier.Velo.Etat etat) throws RemoteException;
+	public ArrayList<Integer> getIdsVelosEtat(int idUtilisateur, metier.Velo.Etat etat) throws RemoteException;
 }

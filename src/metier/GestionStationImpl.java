@@ -4,6 +4,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
@@ -413,7 +414,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 
 
 	@Override
-	public int[] getIdsVelosEtat(int idUtilisateur, Etat etat)
+	public ArrayList<Integer> getIdsVelosEtat(int idUtilisateur, Etat etat)
 			throws RemoteException {
 		Utilisateur utilisateur = lesUtilisateurs.get(idUtilisateur);
 		return utilisateur.getIdVelosEtat(etat);

@@ -82,10 +82,9 @@ public abstract class Utilisateur {
 		return listeIdsVelos;
 	}
 	
-	public int[] getIdVelosEtat(metier.Velo.Etat etat)
+	public ArrayList<Integer> getIdVelosEtat(metier.Velo.Etat etat)
 	{
-		int nbVelos = lesVelos.size();
-		int[] listeIdsVelosEtat = new int[nbVelos];
+		ArrayList<Integer> listeIdsVelosEtat = new ArrayList<Integer>();
 		Velo veloTemp;
 		int i = 0;
 		
@@ -98,7 +97,7 @@ public abstract class Utilisateur {
 	        if(veloListe.getEtat() == etat)
         	{
 	        	veloTemp = veloListe;
-	        	listeIdsVelosEtat[i] = veloTemp.getIdVelo();
+	        	listeIdsVelosEtat.add(new Integer(veloTemp.getIdVelo()));
 	        	i++;
 			}
 		    
