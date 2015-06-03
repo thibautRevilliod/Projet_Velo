@@ -411,9 +411,8 @@ public class StationClient {
 				{
 					System.out.println("Aucun vélo de disponible dans cette station");
 				}
-				System.out.print("Déconnexion");
 				pause(TEMPS_PAUSE);
-				menuPrincipal();
+				menuAdministrateur(identifiant, mdp);
 				break;
 			case "3":
 				System.out.println("--------- Menu creer Compte ----------");
@@ -481,7 +480,7 @@ public class StationClient {
 				menuPrincipal();
 				break;
 			case "4":			
-				if(!proxyGS.hasUtilisateurVeloEnReparation(idUtilisateur))
+				if(!proxyGS.hasUtilisateurVeloEnReparation(identifiant))
 				{
 					System.out.println("Vous n'avez pas emprunté de vélo en réparation.");
 				}else
@@ -490,10 +489,10 @@ public class StationClient {
 						verificationFormat = true;
 						try{
 							System.out.println("***** Les vélos que vous avez amenés en réparation *****");
-							int lesVelosEnReparationAdmin = proxyGS.getIdsVelosEtat(identifiant, Etat.EnReparation);
+							int[] lesVelosEnReparationAdmin = proxyGS.getIdsVelosEtat(identifiant, Etat.EnReparation);
 							for(int i = 0; i < lesVelosEnReparationAdmin.length; i++ )
 							{
-								System.out.println("**Vélo n° " + lesVelos[i]);
+								System.out.println("**Vélo n° " + lesVelosEnReparationAdmin[i]);
 							}
 							System.out.println("***************");
 							System.out.println("Veuillez entrer l'id du vélo à déposer provenant de l'atelier :");
