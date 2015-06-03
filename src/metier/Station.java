@@ -13,10 +13,10 @@ public class Station {
 	private String nomStation;
 	private Position position;
 	private int capacite;
-	private static HashMap<Integer, Station> lesStations = new HashMap<Integer, Station>();
+	private static HashMap<Integer, Station> lesStations;
 	private HashMap<Integer, Velo> lesVelos ;
 	private static int idsStation = 0; 
-	private static boolean estMaitre = true;
+	private boolean estMaitre = false;
 	
 	public boolean isEstMaitre() {
 		return estMaitre;
@@ -24,23 +24,21 @@ public class Station {
 
 
 	public Station(String nomStation, Position position, int capacite) 
-	{		
-		
-		if(Station.hasMaitre())
-		{
-			System.out.println("dans hasMaitre");
-			estMaitre=false;
-		}
-		
+	{						
 		this.nomStation = nomStation;
 		this.position = position;
 		this.capacite = capacite;
 		idsStation++;
 		this.idStation = idsStation;
+		if(lesStations == null)
+		{
+			lesStations = new HashMap<Integer, Station>();	
+			this.estMaitre = !hasMaitre();
+		}
 		Station.lesStations.put(new Integer(idsStation),this);
 		this.lesVelos = new HashMap<Integer, Velo>();
+		System.out.println("Test : "+lesStations.toString());
 
-		
 	}
 	
 	

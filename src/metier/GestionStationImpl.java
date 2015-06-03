@@ -36,23 +36,24 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 
 
 	@Override
-	public GestionStationNotif getNotification() {
+	public synchronized GestionStationNotif getNotification() {
 		return this.notification;
 	}
 	
 	@Override
-	public void setNotification(GestionStationNotif notification) {
+	public synchronized void setNotification(GestionStationNotif notification) {
 		this.notification = notification;
 	}
 	
 	// TODO : méthode synchronized ?
 	@Override
-	public int creerStation(String nomStation, double longitude, double latitude, int capacite) throws java.rmi.RemoteException
+	public synchronized int creerStation(String nomStation, double longitude, double latitude, int capacite) throws java.rmi.RemoteException
 	{
 		Position position = new Position(longitude, latitude);
 		Station nouvelleStation = new Station(nomStation, position, capacite);
 		int idStation = nouvelleStation.getIdStation();
 		lesStations.put(new Integer(idStation), nouvelleStation);
+		System.out.println("GestionStation : "+lesStations.toString());
 		return idStation;
 	}
 	
@@ -117,7 +118,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 	
 	@Override
-	public int isEmprunterVelosPossible(int idUtilisateur, int idStation,
+	public synchronized int isEmprunterVelosPossible(int idUtilisateur, int idStation,
 			int nbVelos, Role roleEmprunt) throws RemoteException {
 		int resultat = 0;
 		Utilisateur utilisateur;
@@ -175,7 +176,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	
 	// à modifier
 	@Override
-	public int[] emprunterVelos(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws RemoteException
+	public synchronized int[] emprunterVelos(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws RemoteException
 	{
 		Utilisateur utilisateur;
 		Station station;
@@ -200,7 +201,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 	
 	@Override
-	public int[] emprunterVelos(int idUtilisateur, int idStation, int idVelo) throws RemoteException
+	public synchronized int[] emprunterVelos(int idUtilisateur, int idStation, int idVelo) throws RemoteException
 	{
 		Utilisateur utilisateur;
 		Station station;
@@ -244,7 +245,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 	
 	@Override
-	public int deposerVelos(int idUtilisateur, int idStation) throws RemoteException
+	public synchronized int deposerVelos(int idUtilisateur, int idStation) throws RemoteException
 	{
 		Utilisateur utilisateur;
 		Station station;
@@ -271,7 +272,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	
 	// utilisé par l'administrateur pour déposer un vélo précédemment en maintenance
 	@Override
-	public int deposerVelos(int idUtilisateur, int idStation, int idVelo) throws RemoteException
+	public synchronized int deposerVelos(int idUtilisateur, int idStation, int idVelo) throws RemoteException
 	{
 		Utilisateur utilisateur;
 		Station station;
@@ -335,13 +336,13 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 
 	@Override
-	public int[] dureePrixEmpruntVeloClient(int idUtilisateur, int idStation) throws RemoteException {
+	public synchronized int[] dureePrixEmpruntVeloClient(int idUtilisateur, int idStation) throws RemoteException {
 		// TODO code dureePrixEmpruntVeloClient method
 		return null;
 	}
 
 	@Override
-	public boolean gestionStationHasMaitre(int idStation) throws RemoteException {
+	public synchronized boolean gestionStationHasMaitre(int idStation) throws RemoteException {
 		return lesStations.get(idStation).isEstMaitre();
 	}
 	
@@ -352,43 +353,43 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 
 	@Override
-	public int[] getVelosLibresStation(int idStation) throws RemoteException 
+	public synchronized int[] getVelosLibresStation(int idStation) throws RemoteException 
 	{
 		Station station = lesStations.get(idStation);
 		station.getNombreVelosLibres();
 		return station.getVelosLibresStation(station.getNombreVelosLibres());
 	}
 
-	public HashMap<Integer, Station> getLesStationsGS() throws RemoteException
+	public synchronized HashMap<Integer, Station> getLesStationsGS() throws RemoteException
 	{
 		return Station.getLesStations();
 	}
 	
-	public HashMap<Integer, Utilisateur> getLesUtilisateursGS() throws RemoteException
+	public synchronized HashMap<Integer, Utilisateur> getLesUtilisateursGS() throws RemoteException
 	{
 		return Utilisateur.getLesUtilisateurs();
 	}
 	
-	public Station getStation(int idStation) throws RemoteException
+	public synchronized Station getStation(int idStation) throws RemoteException
 	{
 		return lesStations.get(idStation);
 	}
 	
-	public Velo getVelo(int idVelo) throws RemoteException
+	public synchronized Velo getVelo(int idVelo) throws RemoteException
 	{
 		return Velo.getVelo(idVelo);
 	}
 
 
 	@Override
-	public boolean hasUtilisateurEmprunteVelos(int idUtilisateur)
+	public synchronized boolean hasUtilisateurEmprunteVelos(int idUtilisateur)
 			throws RemoteException {
 		Utilisateur utilisateur = lesUtilisateurs.get(idUtilisateur);
 		return utilisateur.hasUtilisateurVelosEtat(metier.Velo.Etat.Emprunte);
 	}
 	
 	@Override
-	public boolean hasUtilisateurVeloEnReparation(int idUtilisateur)
+	public synchronized boolean hasUtilisateurVeloEnReparation(int idUtilisateur)
 			throws RemoteException {
 		Utilisateur utilisateur = lesUtilisateurs.get(idUtilisateur);
 		return utilisateur.hasUtilisateurVelosEtat(metier.Velo.Etat.EnReparation);
