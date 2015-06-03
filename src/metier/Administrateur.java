@@ -33,7 +33,7 @@ public class Administrateur extends Utilisateur {
 			Station stationTemp = Station.getLesStations().get(idStation);
 			 veloTemp = stationTemp.getLesVelos().get(idVelos[0]);
 //			veloTemp = Velo.getVelo(idVelos[0]);
-			if(veloTemp != null && lesVelos.size() < 1)
+			if(veloTemp != null)
 			{
 				veloTemp.setEtat(Etat.EnReparation);
 				System.out.println("test");
