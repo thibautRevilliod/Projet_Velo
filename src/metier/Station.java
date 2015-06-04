@@ -1,13 +1,16 @@
 package metier;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.sun.org.apache.bcel.internal.generic.SIPUSH;
+
 import metier.Velo.Etat;
 
-public class Station {
+public class Station implements Serializable {
 	
 	private int idStation;
 	private String nomStation;
@@ -54,7 +57,12 @@ public class Station {
 	public void setEstMaitre(boolean estMaitre) {this.estMaitre = estMaitre;}
 	public static HashMap<Integer, Station> getLesStations() {return lesStations;}
 
-
+	
+	public boolean hasVelosStation()
+	{
+		return !lesVelos.isEmpty();
+	}
+	
 	public int getNombrePlacesDispos()
 	{
 		return this.capacite - this.lesVelos.size();
@@ -115,12 +123,22 @@ public class Station {
 		Velo veloTemp;
 		boolean suppOk = true;
 		int i = 0, nbVelos = idsVelos.length -1;//La dernière occurence est l'idStation où se trouve le/les vélos
-		while(i < nbVelos && suppOk)
+		if(hasVelosStation())
 		{
-			veloTemp = lesVelos.get(idsVelos[i]);
-			if(!supprimerVelo(veloTemp))
-				suppOk = false;
-			i++;
+			while(i < nbVelos && suppOk)
+			{
+				
+					veloTemp = lesVelos.get(idsVelos[i]);
+					if(!supprimerVelo(veloTemp))
+					{
+						suppOk = false;
+					}
+				i++;
+			}
+		}
+		else
+		{
+			suppOk = false;
 		}
 		return suppOk;
 	}
@@ -138,7 +156,7 @@ public class Station {
 		return lesVelos.get(idVelo);	
 	}
 	
-	public int[] getVelosLibresStation(int nbVelos) throws Exception
+	public int[] getVelosLibresStation(int nbVelos)
 	{
 		int nbVelosNecessaires = nbVelos;
 		int[] listeIdsVelosLibres = new int[nbVelos + 1];
@@ -158,7 +176,7 @@ public class Station {
 		}
 		//On vérifie que le nombre voulu de vélos est libre, sinon -> getStationLaPlusProche
 		if(j < nbVelosNecessaires)
-			listeIdsVelosLibres[nbVelos] = getStationLaPlusProche(nbVelosNecessaires).getIdStation();
+			listeIdsVelosLibres[nbVelos] = getStationLaPlusProchePourPenurie(nbVelosNecessaires, lesStations);
 		else
 			listeIdsVelosLibres[nbVelos] = this.idStation;
 		return listeIdsVelosLibres;
@@ -183,7 +201,8 @@ public class Station {
 		return -1; // si aucun velo libre trouvé
 	}
 	
-	public Station getStationLaPlusProche(int nbVelos) throws Exception
+	// retourne idSTation de la station la plus proche
+	public int getStationLaPlusProchePourPenurie(int nbVelos, HashMap<Integer, Station> lesStationsGS)
 	{
 		Station stationPlusProche = null;
 		Station stationTemp;
@@ -191,13 +210,14 @@ public class Station {
 		double distanceCalculee = 0; 
 		boolean premiereBoucle = true;
 		boolean trouve = false;
+		lesStations=lesStationsGS;
 		
 		Iterator<Station> it = lesStations.values().iterator();
 	    while (it.hasNext()) 
 	    {
 	        stationTemp = it.next();
 	        distanceCalculee = Distance.distanceInKilometers(this.getPosition().getLatitude(), this.getPosition().getLongitude(), stationTemp.getPosition().getLatitude(), stationTemp.getPosition().getLongitude());
-	        if(premiereBoucle)
+	        if(premiereBoucle && !stationTemp.estMaitre)
 	        {
 	        	distanceMinimale = distanceCalculee;
 	        	premiereBoucle = false;
@@ -207,18 +227,59 @@ public class Station {
 	        	if(stationTemp.getNombreVelosLibres()>= nbVelos && stationTemp != this && !stationTemp.estMaitre)
 	        	{
 	        		distanceMinimale=distanceCalculee;
-	        		stationPlusProche=stationTemp;
+	        		stationPlusProche = stationTemp;
 	        		trouve = true;
 	        	}	        	
 	        }	        
 	    }
-	    it.remove(); // avoids a ConcurrentModificationException
+	    it.remove();
 	    
 	    if(!trouve)
     	{
-    		throw new Exception("Il n'y a pas de station disponible avec suffisamment de vélos.");
+	    	return -6; // voir isEmprunterPossible dans GestionSTationImpl
+	    	//("Il n'y a pas de station disponible avec suffisamment de vélos.");
     	}
-		return stationPlusProche;
+		return stationPlusProche.getIdStation();
+	}
+	
+	public int getStationLaPlusProchePourSaturee(int nbVelos, HashMap<Integer, Station> lesStationsGS)
+	{
+		Station stationPlusProche = null;
+		Station stationTemp;
+		double distanceMinimale = 0; 
+		double distanceCalculee = 0; 
+		boolean premiereBoucle = true;
+		boolean trouve = false;
+		lesStations=lesStationsGS;
+		
+		Iterator<Station> it = lesStations.values().iterator();
+	    while (it.hasNext()) 
+	    {
+	        stationTemp = it.next();
+	        distanceCalculee = Distance.distanceInKilometers(this.getPosition().getLatitude(), this.getPosition().getLongitude(), stationTemp.getPosition().getLatitude(), stationTemp.getPosition().getLongitude());
+	        if(premiereBoucle && !stationTemp.estMaitre)
+	        {
+	        	distanceMinimale = distanceCalculee;
+	        	premiereBoucle = false;
+	        }
+	        if(distanceCalculee <= distanceMinimale)
+	        {
+	        	if(stationTemp.getNombrePlacesDispos()>= nbVelos && stationTemp != this && !stationTemp.estMaitre)
+	        	{
+	        		distanceMinimale=distanceCalculee;
+	        		stationPlusProche = stationTemp;
+	        		trouve = true;
+	        	}	        	
+	        }	        
+	    }
+	    it.remove();
+	    
+	    if(!trouve)
+    	{
+	    	return -6; // voir isEmprunterPossible dans GestionSTationImpl
+	    	//("Il n'y a pas de station disponible avec suffisamment de vélos.");
+    	}
+		return stationPlusProche.getIdStation();
 	}
 	
 	public boolean supprimerStation()

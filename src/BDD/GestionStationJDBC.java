@@ -15,7 +15,6 @@ Connection conn;
 		    // on cree un objet Statement qui va permettre l'execution des requetes
 	        Statement s = conn.createStatement();
 	
-	        System.out.println("test");
 	        
 //			ResultSet rs = s.executeQuery("select * from UTILISATEUR");
 //	        if (rs.next()) {

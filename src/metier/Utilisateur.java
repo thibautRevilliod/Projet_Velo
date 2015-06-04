@@ -117,7 +117,7 @@ public abstract class Utilisateur {
 	
 	public void supprimerVelo(Velo velo)
 	{
-		this.lesVelos.remove(velo);
+		this.lesVelos.remove(velo.getIdVelo());
 	}
 	
 	public boolean hasUtilisateurVelosEtat(metier.Velo.Etat etat)
@@ -203,7 +203,7 @@ public abstract class Utilisateur {
 			return null;
 	}
 	//La méthode emprunter va dépendre du type d'utilisateur et de son rôle
-	public abstract void emprunterVelos(int[] idVelos, Role roleEmprunt, int idStation) throws java.rmi.RemoteException;
+	public abstract void emprunterVelos(int[] idVelos, Role roleEmprunt, int idStation, HashMap<Integer,Station> lesStationsGS) throws java.rmi.RemoteException;
 	
 	//La méthode déposer ne dépend pas des droits de l'utilisateur (pas d'authentification)
 	public void deposerVelos(int idStation) throws java.rmi.RemoteException

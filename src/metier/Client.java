@@ -1,5 +1,7 @@
 package metier;
 
+import java.util.HashMap;
+
 import metier.CarteAcces.Role;
 import metier.Velo.Etat;
 
@@ -13,10 +15,14 @@ public class Client extends Utilisateur {
 		lesCartesAccesUtilisateur.put(carteAcces.getRole(),carteAcces);
 	}
 	
-	public void emprunterVelos(int[] idVelos, Role roleEmprunt, int idStation) throws java.rmi.RemoteException
+	public void emprunterVelos(int[] idVelos, Role roleEmprunt, int idStation, HashMap<Integer,Station> lesStationsGS) throws java.rmi.RemoteException
 	{
-		Station stationTemp = Station.getLesStations().get(idStation);
-		Velo veloTemp = stationTemp.getLesVelos().get(idVelos[0]);
+		Station stationTemp = lesStationsGS.get(idStation);
+		Velo veloTemp = null;
+		if(stationTemp.hasVelosStation())
+		{
+			veloTemp = stationTemp.getLesVelos().get(idVelos[0]);
+		}
 //		Velo veloTemp = Velo.getVelo(idVelos[0]);
 		if(veloTemp != null && lesVelos.size() < 1)
 		{

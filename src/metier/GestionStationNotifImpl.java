@@ -128,14 +128,14 @@ implements GestionStationNotif {
 
 	@Override
 	public void notificationPenurie(Station pStation) throws RemoteException {
-		System.out.println("Station n°" + pStation.getIdStation() + " en pénurie.");
+		//System.out.println("Station n°" + pStation.getIdStation() + " en pénurie.");
 		Notifications n = new Notifications(TypeNotification.Penurie, pStation.getIdStation());
 		listeNotifications.add(n);
 	}
 
 	@Override
 	public void notificationSaturee(Station pStation) throws RemoteException {
-		System.out.println("Station n°" + pStation.getIdStation() + " saturée.");
+		//System.out.println("Station n°" + pStation.getIdStation() + " saturée.");
 		Notifications n = new Notifications(TypeNotification.Saturee, pStation.getIdStation());
 		listeNotifications.add(n);
 	}

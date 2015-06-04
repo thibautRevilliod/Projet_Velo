@@ -28,7 +28,7 @@ public class StationClient {
 	private static boolean stationMaitre;
 	private static BufferedReader entree = new BufferedReader(new InputStreamReader(System.in)); 
 	
-	public static void enTeteMenu() throws Exception{
+	public static void enTeteMenu() throws IOException, InterruptedException{
 		if(!stationMaitre){
 			System.out.println("*Nombre de velo disponible : "+ 
 					(proxyGS.getVelosLibresStation(idStation).length-1)
@@ -36,7 +36,7 @@ public class StationClient {
 		}
 	}
 	
-	public static void menuPrincipal() throws IOException, InterruptedException{
+	public static void menuPrincipal() throws IOException, InterruptedException {
 		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		
 		if(!stationMaitre){
@@ -45,8 +45,7 @@ public class StationClient {
 			System.out.println("------------ Bienvenue dans la station Maître ------------");
 		}
 		
-		try {
-			enTeteMenu();
+		enTeteMenu();
 		
 			System.out.println("--1) Créer compte");
 			System.out.println("--2) S'identifier");
@@ -70,14 +69,10 @@ public class StationClient {
 				default :
 					menuPrincipal();
 			}
-		} catch (Exception e) {
-			System.out.println("Il n'y a pas de station disponible avec suffisamment de vélos.");
-			pause(TEMPS_PAUSE);
-			menuPrincipal();
-		}
+
 	}
 	
-	private static void menuDeposerVelo() throws Exception {
+	private static void menuDeposerVelo() throws IOException, InterruptedException {
 		int stationDepot;
 		int idUtilisateur = 0;
 		Station stationLaPlusProche;
@@ -129,15 +124,22 @@ public class StationClient {
 							System.out.println("  Prix : " + recuDureePrix[3]);
 						}
 					System.out.println("Merci d'avoir utilisé les services de VeloRMI.");
-					System.out.print("Déconnection");
+					System.out.print("Déconnexion");
 					pause(TEMPS_PAUSE);
-				}else{
+				}else if(stationDepot > 0)
+				{
 					stationLaPlusProche = proxyGS.getStation(stationDepot);
 					System.out.println("Plus de place disponible dans cette station.");
 					System.out.println("Veuillez aller à la station " + stationDepot + " qui dispose de place : ");
 					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 					System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
 					System.out.println("  Nombre de vélos : " + stationLaPlusProche.getNombreVelosLibres());
+					System.out.println("Déconnexion");
+					pause(TEMPS_PAUSE);
+				}
+				else
+				{
+					System.out.println("Il n'y a pas de station disponible avec suffisamment de vélos.");
 					System.out.println("Déconnexion");
 					pause(TEMPS_PAUSE);
 				}
@@ -197,7 +199,7 @@ public class StationClient {
 		}
 	}
 	
-	public static void menuCreerCompteAdministrateur() throws IOException, InterruptedException{
+	public static void menuCreerCompteAdministrateur() throws IOException, InterruptedException {
 		String tab[];
 		int identifiantUtilisateur = 0;
 		
@@ -264,7 +266,7 @@ public class StationClient {
 		return result;
 	}
 	
-	public static void menuIdentification() throws Exception
+	public static void menuIdentification() throws IOException, InterruptedException
 	{
 		int identifiant = 0;
 		String mdp;
@@ -340,7 +342,7 @@ public class StationClient {
 		}
 	}
 	
-	private static void menuAdministrateur(int identifiant, String mdp) throws Exception {
+	private static void menuAdministrateur(int identifiant, String mdp) throws IOException, InterruptedException {
 		int idVelo = 0;
 		int[] resultats;
 		int idStationVelo = 0;
@@ -549,7 +551,7 @@ public class StationClient {
 		}
 	}
 	
-	private static void menuOperateur(int identifiant, String mdp) throws Exception {
+	private static void menuOperateur(int identifiant, String mdp) throws IOException, InterruptedException {
 		int[] lesIdVelo;
 		int nbVelos = 0;
 		int stationDepot;
@@ -624,6 +626,9 @@ public class StationClient {
 					case -4:
 						System.err.println("Erreur 10603 : Le nombre de vélos demandés est supérieur à la capacité de la station.");
 						break;
+					case -6:
+						System.err.println("Erreur 10604 : Aucune station proche trouvée avec assez de vélos.");
+						break;
 						
 
 					case 0:
@@ -647,6 +652,7 @@ public class StationClient {
 							System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 							System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
 							System.out.println("  Nombre de vélos : " + stationLaPlusProche.getNombreVelosLibres());
+
 						}
 						break;
 					}
@@ -757,7 +763,7 @@ public class StationClient {
 		}
 	}
 	
-	private static void menuOperateurNotification(int identifiant, String mdp) throws Exception {
+	private static void menuOperateurNotification(int identifiant, String mdp) throws IOException, InterruptedException {
 		boolean continuer = true;
 
 		System.out.println("En attente de notifications...");
@@ -817,7 +823,7 @@ public class StationClient {
 		menuOperateur(identifiant,mdp);
 	}
 
-	public static void menuClient(int pidUtilisateur, String pmdpUtilisateur) throws Exception{
+	public static void menuClient(int pidUtilisateur, String pmdpUtilisateur) throws IOException, InterruptedException {
 		int[] idVeloEmprunteClient;
 		int stationDepot;
 		int resultEmprunterVelos;
@@ -864,12 +870,13 @@ public class StationClient {
 						case -4:
 							System.err.println("Erreur 10603 : Le nombre de vélos demandés est supérieur à la capacité de la station.");
 							break;
+						case -6:
+							System.err.println("Erreur 10604 : Aucune station proche trouvée avec assez de vélos.");
 //						case -5:
 //							System.err.println("Erreur 10604 : La station ne dispose plus de vélos libres.");
 //							break;
 						case 0:
 						default:
-							//TODO : fix bug : l'appli plante quand on veut emprunter 1 vélo quand le nombre d vélos est 0
 							idVeloEmprunteClient = proxyGS.emprunterVelos(pidUtilisateur, idStation, 1, Role.Client);
 							stationDepot = idVeloEmprunteClient[1];;
 							if(stationDepot == idStation)

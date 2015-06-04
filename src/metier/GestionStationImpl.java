@@ -133,7 +133,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	
 	@Override
 	public synchronized int isEmprunterVelosPossible(int idUtilisateur, int idStation,
-			int nbVelos, Role roleEmprunt) throws Exception, RemoteException {
+			int nbVelos, Role roleEmprunt) throws RemoteException {
 		int resultat = 0;
 		Utilisateur utilisateur;
 		Station station;
@@ -145,8 +145,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 				station = Station.getLesStations().get(idStation);
 				if(station.getCapacite() >= nbVelos)
 				{
-					//TODO ? if(station.getNombreVelosLibres() > 0)
-					//{
 						utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
 						//On vérifie les droits de l'utilisateur
 						
@@ -161,6 +159,10 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 								{
 									resultat = 0; // pas d'erreur : l'emprunt est possible
 								}
+								else if(lesIdVelos[nbVelos] == -6)
+								{
+									resultat = lesIdVelos[nbVelos]; // pas de station plus proche avec assez de vélos
+								}
 								else
 								{
 									resultat = lesIdVelos[nbVelos]; // idSTation de la station la plus proche
@@ -171,11 +173,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 								resultat = -2; //Erreur : l'utilisateur n'a pas le bon rôle
 							}
 						}
-					//}
-					//else
-					//{
-						//resultat = -5; // Erreur : plus de vélos libres
-					//}
 				}
 				else
 				{
@@ -197,7 +194,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	
 	// 
 	@Override
-	public synchronized int[] emprunterVelos(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws Exception, RemoteException
+	public synchronized int[] emprunterVelos(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws RemoteException
 	{
 		Utilisateur utilisateur;
 		Station station;
@@ -205,12 +202,12 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		
 		utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur);
 		
-		station = Station.getLesStations().get(idStation);
+		station = lesStations.get(idStation);
 		//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
 		lesIdVelos = station.getVelosLibresStation(nbVelos);
 		//On teste que la méthode précédente ne retourne pas un idStation différent
 		//On assigne les vélos à l'utilisateur, en spécifiant son rôle pour traitements spécifiques
-		utilisateur.emprunterVelos(lesIdVelos, roleEmprunt, idStation);
+		utilisateur.emprunterVelos(lesIdVelos, roleEmprunt, idStation, lesStations);
 		//Suppression des vélos de la station
 		station.supprimerVelos(lesIdVelos);
 			
@@ -240,7 +237,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 				if(velo != null && velo.getEtat().equals(Etat.Libre))
 				{
 					//On assigne les vélos à l'utilisateur, en spécifiant son rôle pour traitements spécifiques
-					utilisateur.emprunterVelos(lesIdVelos, Role.Administrateur, idStation);
+					utilisateur.emprunterVelos(lesIdVelos, Role.Administrateur, idStation, lesStations);
 					//Suppression du vélo de la station
 					station.supprimerVelo(velo);
 					lesIdVelos[1] = 0;//Tout s'est bien passé : code 0
@@ -268,7 +265,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	
 	// utilisé par un client ou un opérateur
 	@Override
-	public synchronized int deposerVelos(int idUtilisateur, int idStation) throws Exception, RemoteException
+	public synchronized int deposerVelos(int idUtilisateur, int idStation) throws RemoteException
 	{
 		Utilisateur utilisateur;
 		Station station;
@@ -290,14 +287,14 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 				gestionNotification(station);
 			}
 			else
-				idStationDepot = station.getStationLaPlusProche(nbVelos).getIdStation();
+				idStationDepot = station.getStationLaPlusProchePourSaturee(nbVelos, new HashMap<Integer,Station>(lesStations));
 		}
 		return idStationDepot;
 	}
 	
 	// utilisé par l'administrateur pour déposer un vélo précédemment en maintenance
 	@Override
-	public synchronized int deposerVelos(int idUtilisateur, int idStation, int idVelo) throws Exception, RemoteException
+	public synchronized int deposerVelos(int idUtilisateur, int idStation, int idVelo) throws RemoteException
 	{
 		Utilisateur utilisateur;
 		Station station;
@@ -319,7 +316,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 				gestionNotification(station);
 			}
 			else
-				idStationDepot = station.getStationLaPlusProche(1).getIdStation();
+				idStationDepot = station.getStationLaPlusProchePourSaturee(1, new HashMap<Integer,Station>(lesStations));
 		}
 		return idStationDepot;
 	}
@@ -382,7 +379,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	}
 
 	@Override
-	public synchronized int[] getVelosLibresStation(int idStation) throws Exception, RemoteException 
+	public synchronized int[] getVelosLibresStation(int idStation) throws RemoteException 
 	{
 		Station station = lesStations.get(idStation);
 		station.getNombreVelosLibres();
