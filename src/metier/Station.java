@@ -93,8 +93,7 @@ public class Station {
 		int i = 0, nbVelos = idsVelos.length;
 		while(i < nbVelos)
 		{
-			System.out.println("les velos de Velo : "+Velo.getLesVelos().toString());
-			veloTemp = Velo.getLesVelos().get(idsVelos[i]); //TODO pourquoi récupère-t-on les Velo dans cette HashMap ?
+			veloTemp = Velo.getLesVelos().get(idsVelos[i]);
 			ajouterVelo(veloTemp);
 			i++;
 		}
@@ -184,7 +183,6 @@ public class Station {
 		return -1; // si aucun velo libre trouvé
 	}
 	
-	//TODO : retourner aussi nombre de vélos (voir bonus)
 	public Station getStationLaPlusProche(int nbVelos) throws Exception
 	{
 		Station stationPlusProche = null;
