@@ -28,7 +28,7 @@ public class StationClient {
 	private static boolean stationMaitre;
 	private static BufferedReader entree = new BufferedReader(new InputStreamReader(System.in)); 
 	
-	public static void enTeteMenu() throws IOException, InterruptedException{
+	public static void enTeteMenu() throws Exception{
 		if(!stationMaitre){
 			System.out.println("*Nombre de velo disponible : "+ 
 					(proxyGS.getVelosLibresStation(idStation).length-1)
@@ -45,33 +45,42 @@ public class StationClient {
 			System.out.println("------------ Bienvenue dans la station Maître ------------");
 		}
 		
-		enTeteMenu();
+		try {
+			enTeteMenu();
 		
-		System.out.println("--1) Créer compte");
-		System.out.println("--2) S'identifier");
-		System.out.println("--3) Déposer un vélo");
-		System.out.println("-----------------------------------");
-		valeurChoix = entree.readLine();
-		
-		switch(valeurChoix)
-		{
-			case "1":
-				menuCreerComptePrincipal();
-				menuPrincipal();
-				break;
-			case "2":
-				menuIdentification();
-				break;
-			case "3":
-				menuDeposerVelo();
-				menuPrincipal();
-				break;
-			default :
-				menuPrincipal();
+			System.out.println("--1) Créer compte");
+			System.out.println("--2) S'identifier");
+			System.out.println("--3) Déposer un vélo");
+			System.out.println("-----------------------------------");
+			valeurChoix = entree.readLine();
+			
+			switch(valeurChoix)
+			{
+				case "1":
+					menuCreerComptePrincipal();
+					menuPrincipal();
+					break;
+				case "2":
+					menuIdentification();
+					break;
+				case "3":
+					menuDeposerVelo();
+					menuPrincipal();
+					break;
+				default :
+					menuPrincipal();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.getMessage();
+			e.notify();
+			e.getCause();
+			System.out.println("test");
+			menuPrincipal();
 		}
 	}
 	
-	private static void menuDeposerVelo() throws IOException, RemoteException, InterruptedException {
+	private static void menuDeposerVelo() throws Exception {
 		int stationDepot;
 		int idUtilisateur = 0;
 		Station stationLaPlusProche;
@@ -257,7 +266,7 @@ public class StationClient {
 		return result;
 	}
 	
-	public static void menuIdentification() throws NumberFormatException, IOException, InterruptedException
+	public static void menuIdentification() throws Exception
 	{
 		int identifiant = 0;
 		String mdp;
@@ -333,7 +342,7 @@ public class StationClient {
 		}
 	}
 	
-	private static void menuAdministrateur(int identifiant, String mdp) throws IOException, InterruptedException {
+	private static void menuAdministrateur(int identifiant, String mdp) throws Exception {
 		int idVelo = 0;
 		int[] resultats;
 		int idStationVelo = 0;
@@ -540,7 +549,7 @@ public class StationClient {
 		}
 	}
 	
-	private static void menuOperateur(int identifiant, String mdp) throws IOException, InterruptedException {
+	private static void menuOperateur(int identifiant, String mdp) throws Exception {
 		int[] lesIdVelo;
 		int nbVelos = 0;
 		int stationDepot;
@@ -746,7 +755,7 @@ public class StationClient {
 		}
 	}
 	
-	private static void menuOperateurNotification(int identifiant, String mdp) throws IOException, InterruptedException, RemoteException {
+	private static void menuOperateurNotification(int identifiant, String mdp) throws Exception {
 		boolean continuer = true;
 
 		System.out.println("En attente de notifications...");
@@ -806,7 +815,7 @@ public class StationClient {
 		menuOperateur(identifiant,mdp);
 	}
 
-	public static void menuClient(int pidUtilisateur, String pmdpUtilisateur) throws IOException, InterruptedException{
+	public static void menuClient(int pidUtilisateur, String pmdpUtilisateur) throws Exception{
 		int[] idVeloEmprunteClient;
 		int stationDepot;
 		int resultEmprunterVelos;

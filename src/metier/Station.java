@@ -139,7 +139,7 @@ public class Station {
 		return lesVelos.get(idVelo);	
 	}
 	
-	public int[] getVelosLibresStation(int nbVelos)
+	public int[] getVelosLibresStation(int nbVelos) throws Exception
 	{
 		int nbVelosNecessaires = nbVelos;
 		int[] listeIdsVelosLibres = new int[nbVelos + 1];
@@ -159,7 +159,7 @@ public class Station {
 		}
 		//On vérifie que le nombre voulu de vélos est libre, sinon -> getStationLaPlusProche
 		if(j < nbVelosNecessaires)
-			listeIdsVelosLibres[nbVelos] = getStationLaPlusProche().getIdStation();
+			listeIdsVelosLibres[nbVelos] = getStationLaPlusProche(nbVelosNecessaires).getIdStation();
 		else
 			listeIdsVelosLibres[nbVelos] = this.idStation;
 		return listeIdsVelosLibres;
@@ -185,7 +185,7 @@ public class Station {
 	}
 	
 	//TODO : retourner aussi nombre de vélos (voir bonus)
-	public Station getStationLaPlusProche()
+	public Station getStationLaPlusProche(int nbVelos) throws Exception
 	{
 		Station stationPlusProche = null;
 		Station stationTemp;
@@ -199,8 +199,16 @@ public class Station {
 	        distanceCalculee = Distance.distanceInKilometers(this.getPosition().getLatitude(), this.getPosition().getLongitude(), stationTemp.getPosition().getLatitude(), stationTemp.getPosition().getLongitude());
 	        if(distanceCalculee < distanceMinimale)
 	        {
-	        	distanceMinimale=distanceCalculee;
-	        	stationPlusProche=stationTemp;
+	        	if(stationTemp.getNombreVelosLibres()>= nbVelos)
+	        	{
+	        		distanceMinimale=distanceCalculee;
+	        		stationPlusProche=stationTemp;
+	        	}
+	        	else
+	        	{
+	        		throw new Exception("Il n'y a pas de station disponible avec suffisamment de vélos.");
+	        	}
+	        	
 	        }	        
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
@@ -272,6 +280,27 @@ public class Station {
 	    }
 	    
 	    return stationEnPenurie;
+	}
+	
+	public boolean isAutreStationClienteLance()
+	{
+		boolean autreStationLance = false;
+		Iterator it = lesStations.entrySet().iterator();
+		
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        Integer idStation = (Integer) pair.getKey();
+	        Station stationListe = (Station) pair.getValue();
+	        
+	        if(stationListe!=this && stationListe.estMaitre == false)
+	        {
+	        	return true;
+	        }
+	        
+	        it.remove(); // avoids a ConcurrentModificationException
+	    }
+	    
+	    return false;
 	}
 	
 	public static boolean hasMaitre()
