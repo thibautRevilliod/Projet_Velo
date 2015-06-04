@@ -201,7 +201,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		return resultat;
 	}
 	
-	// à modifier
+	// 
 	@Override
 	public synchronized int[] emprunterVelos(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws Exception, RemoteException
 	{

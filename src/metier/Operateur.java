@@ -33,10 +33,11 @@ public class Operateur extends Utilisateur {
 		{
 			for(int i = 0; i < nbVelos; i++)
 			{
-				veloTemp = stationTemp.getLesVelos().get(idVelos[0]);
+				veloTemp = stationTemp.getLesVelos().get(idVelos[i]);
 //				veloTemp = Velo.getVelo(idVelos[i]);
 				if(veloTemp != null)
 				{
+					System.out.println("velo a emprunter operateur : "+veloTemp.getIdVelo());
 					veloTemp.setEtat(Etat.Emprunte);
 					this.ajouterVelo(veloTemp);
 				}	
