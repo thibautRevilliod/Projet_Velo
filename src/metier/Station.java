@@ -189,29 +189,37 @@ public class Station {
 	{
 		Station stationPlusProche = null;
 		Station stationTemp;
-		double distanceMinimale = 10000; 
+		double distanceMinimale = 0; 
 		double distanceCalculee = 0; 
+		boolean premiereBoucle = true;
+		boolean trouve = false;
 		
 		Iterator<Station> it = lesStations.values().iterator();
 	    while (it.hasNext()) 
 	    {
 	        stationTemp = it.next();
 	        distanceCalculee = Distance.distanceInKilometers(this.getPosition().getLatitude(), this.getPosition().getLongitude(), stationTemp.getPosition().getLatitude(), stationTemp.getPosition().getLongitude());
-	        if(distanceCalculee < distanceMinimale)
+	        if(premiereBoucle)
 	        {
-	        	if(stationTemp.getNombreVelosLibres()>= nbVelos)
+	        	distanceMinimale = distanceCalculee;
+	        	premiereBoucle = false;
+	        }
+	        if(distanceCalculee <= distanceMinimale)
+	        {
+	        	if(stationTemp.getNombreVelosLibres()>= nbVelos && stationTemp != this && !stationTemp.estMaitre)
 	        	{
 	        		distanceMinimale=distanceCalculee;
 	        		stationPlusProche=stationTemp;
-	        	}
-	        	else
-	        	{
-	        		throw new Exception("Il n'y a pas de station disponible avec suffisamment de vélos.");
-	        	}
-	        	
+	        		trouve = true;
+	        	}	        	
 	        }	        
-	        it.remove(); // avoids a ConcurrentModificationException
 	    }
+	    it.remove(); // avoids a ConcurrentModificationException
+	    
+	    if(!trouve)
+    	{
+    		throw new Exception("Il n'y a pas de station disponible avec suffisamment de vélos.");
+    	}
 		return stationPlusProche;
 	}
 	

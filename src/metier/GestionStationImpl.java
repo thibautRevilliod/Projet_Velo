@@ -215,7 +215,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
 		lesIdVelos = station.getVelosLibresStation(nbVelos);
 		//On teste que la méthode précédente ne retourne pas un idStation différent
-		System.out.println("test: "+lesIdVelos.toString());
 		//On assigne les vélos à l'utilisateur, en spécifiant son rôle pour traitements spécifiques
 		utilisateur.emprunterVelos(lesIdVelos, roleEmprunt, idStation);
 		//Suppression des vélos de la station

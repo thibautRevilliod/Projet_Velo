@@ -21,7 +21,7 @@ import metier.Velo;
 import metier.Velo.Etat;
 //TODO gérer retour depos vélo en réparation pour admin 
 public class StationClient {
-	private static final int TEMPS_PAUSE = 0;
+	private static final int TEMPS_PAUSE = 2;
 	private static GestionStation proxyGS;
 	private static String valeurChoix;
 	private static int idStation;
@@ -72,10 +72,10 @@ public class StationClient {
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			e.getMessage();
-			e.notify();
-			e.getCause();
-			System.out.println("test");
+			System.out.println("Il n'y a pas de station disponible avec suffisamment de vélos.");
+			pause(TEMPS_PAUSE);
 			menuPrincipal();
 		}
 	}
@@ -907,7 +907,7 @@ public class StationClient {
 
 	public static void pause(int n) throws InterruptedException{
 		for(int i = 1; i<n+1; i++){
-			Thread.sleep(1000);
+			Thread.sleep(100);
 			System.out.print(".");
 		}
 		System.out.println("");	
