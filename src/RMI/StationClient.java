@@ -131,6 +131,7 @@ public class StationClient {
 					System.out.println("Veuillez aller à la station " + stationDepot + " qui dispose de place : ");
 					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 					System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
+					System.out.println("  Nombre de vélos : " + stationLaPlusProche.getNombreVelosLibres());
 					System.out.println("Déconnexion");
 					pause(TEMPS_PAUSE);
 				}
@@ -376,6 +377,7 @@ public class StationClient {
 					System.out.println("Veuillez aller à la station " + stationLaPlusProche.getIdStation() + " qui dispose de vélo : ");
 					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 					System.out.println("  longitude : " + stationLaPlusProche.getPosition().getLongitude());
+					System.out.println("  Nombre de vélos : " + stationLaPlusProche.getNombreVelosLibres());
 					System.out.println("Déconnexion");
 					pause(TEMPS_PAUSE);
 				}
@@ -530,6 +532,7 @@ public class StationClient {
 						System.out.println("Veuillez aller à la station " + stationDepot + " qui dispose de place : ");
 						System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 						System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
+						System.out.println("  Nombre de vélos : " + stationLaPlusProche.getNombreVelosLibres());
 					}
 				}
 				pause(TEMPS_PAUSE);
@@ -637,6 +640,7 @@ public class StationClient {
 							System.out.println("Veuillez aller à la station " + stationDepot + " qui dispose de place : ");
 							System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 							System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
+							System.out.println("  Nombre de vélos : " + stationLaPlusProche.getNombreVelosLibres());
 						}
 						break;
 					}
@@ -727,6 +731,7 @@ public class StationClient {
 					System.out.println("Veuillez aller à la station " + stationLaPlusProche.getIdStation() + " qui dispose de place : ");
 					System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 					System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
+					System.out.println("  Nombre de vélos : " + stationLaPlusProche.getNombreVelosLibres());
 				}else
 				{
 					System.out.println("Veuillez déposer le vélo " + veloADeposer);
@@ -872,6 +877,7 @@ public class StationClient {
 								System.out.println("Veuillez aller à la station " + stationDepot + " qui dispose de place : ");
 								System.out.println("  Latitude : " + stationLaPlusProche.getPosition().getLatitude());
 								System.out.println("  Longitude : " + stationLaPlusProche.getPosition().getLongitude());
+								System.out.println("  Nombre de vélos : " + stationLaPlusProche.getNombreVelosLibres());
 								System.out.println("Déconnexion");
 							}
 							pause(TEMPS_PAUSE);
