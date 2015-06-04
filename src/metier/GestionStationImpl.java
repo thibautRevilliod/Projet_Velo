@@ -107,8 +107,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		boolean result;
 		Velo velo = new Velo();
 		Station station = Station.getLesStations().get(idStation);
-		//TODO ? Station stationGS = lesStations.get(idStation); -->
-		//TODO ? stationGS.ajouterVelo(velo) --> OK
 		result = station.ajouterVelo(velo);
 		gestionNotification(station);
 		
@@ -121,8 +119,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		boolean result;
 		Velo velo = new Velo();
 		Station station = Station.getLesStations().get(idStation);
-		//TODO ? Station stationGS = lesStations.get(idStation); --> OK
-		//TODO ? stationGS.ajouterVelo(velo) --> OK
 		result = station.ajouterVelo(velo);
 		
 		return result;
@@ -133,8 +129,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 	{
 		Station station = Station.getLesStations().get(idStation);
 		station.supprimerVelo(velo);
-		//TODO ? Station stationGS = lesStations.get(idStation);
-		//TODO ? stationGS.supprimerVelo(velo); --> OK
 	}
 	
 	@Override
@@ -201,7 +195,7 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		return resultat;
 	}
 	
-	// à modifier
+	// 
 	@Override
 	public synchronized int[] emprunterVelos(int idUtilisateur, int idStation, int nbVelos, Role roleEmprunt) throws Exception, RemoteException
 	{
@@ -219,7 +213,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		utilisateur.emprunterVelos(lesIdVelos, roleEmprunt, idStation);
 		//Suppression des vélos de la station
 		station.supprimerVelos(lesIdVelos);
-		//TODO ? supprimerVeloStation de GestionStation --> OK
 			
 		//notification
 		gestionNotification(station);
@@ -250,7 +243,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 					utilisateur.emprunterVelos(lesIdVelos, Role.Administrateur, idStation);
 					//Suppression du vélo de la station
 					station.supprimerVelo(velo);
-					//TODO ? supprimerVeloStation de GestionStation --> OK
 					lesIdVelos[1] = 0;//Tout s'est bien passé : code 0
 					
 					//notification

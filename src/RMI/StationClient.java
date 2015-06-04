@@ -1,5 +1,5 @@
 package RMI;
-
+//TODO supprimer commentaire it.remove
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -71,9 +71,6 @@ public class StationClient {
 					menuPrincipal();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			e.getMessage();
 			System.out.println("Il n'y a pas de station disponible avec suffisamment de vélos.");
 			pause(TEMPS_PAUSE);
 			menuPrincipal();
@@ -859,7 +856,7 @@ public class StationClient {
 							System.err.println("Erreur 10600 : Utilisateur inexistant.");
 							break;
 						case -2:
-							System.err.println("Erreur 10601 : Utilisateur non opérateur."); //TODO ou client non ?
+							System.err.println("Erreur 10601 : Utilisateur non opérateur.");
 							break;
 						case -3:
 							System.err.println("Erreur 10602 : Station inexistante.");
