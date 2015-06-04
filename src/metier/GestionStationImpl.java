@@ -97,8 +97,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 //		boolean result;
 //
 //		Station station = Station.getLesStations().get(idStation);
-//		//TODO ? Station stationGS = lesStations.get(idStation);
-//		//TODO ? stationGS.ajouterVelo(velo)
 //		result = station.ajouterVelo(velo);
 //		return result;
 //	}
@@ -215,10 +213,9 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		
 		station = Station.getLesStations().get(idStation);
 		//Méthode qui retourne les vélos de la station (ou de la plus proche) avec idStation
-		//TODO : ajouter check nbVelos == 0 ?
 		lesIdVelos = station.getVelosLibresStation(nbVelos);
 		//On teste que la méthode précédente ne retourne pas un idStation différent
-		
+		System.out.println("test: "+lesIdVelos.toString());
 		//On assigne les vélos à l'utilisateur, en spécifiant son rôle pour traitements spécifiques
 		utilisateur.emprunterVelos(lesIdVelos, roleEmprunt, idStation);
 		//Suppression des vélos de la station
@@ -295,7 +292,6 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 			nbVelos = lesIdVelos.length;
 			if(station.getNombrePlacesDispos() >= nbVelos)
 			{
-				//TODO ajoutVeloStation de GestionStation ? --> OK
 				station.ajouterVelos(lesIdVelos);
 				utilisateur.deposerVelos(idStation);
 				
@@ -319,13 +315,12 @@ public class GestionStationImpl extends UnicastRemoteObject implements GestionSt
 		int[] idVeloADeposer = new int[1];
 		if(Utilisateur.getLesUtilisateurs().containsKey(idUtilisateur) && Station.getLesStations().containsKey(idStation))
 		{
-			utilisateur = Utilisateur.getLesUtilisateurs().get(idUtilisateur); //TODO : utiliser hashmap de GestionSTation ?
-			station = Station.getLesStations().get(idStation); //TODO : utiliser hashmap de GestionSTation ?
+			utilisateur = lesUtilisateurs.get(idUtilisateur);
+			station = lesStations.get(idStation);
 			veloADeposer = utilisateur.getLesVelos().get(idVelo);
 			if(station.getNombrePlacesDispos() >= 1 && veloADeposer.getIdVelo()==idVelo)
 			{
 				idVeloADeposer[0] = idVelo;
-				//TODO ajoutVeloStation de GestionStation ? --> OK
 				station.ajouterVelos(idVeloADeposer);
 				utilisateur.deposerVelo(idVeloADeposer[0], idStation);
 				
