@@ -184,7 +184,6 @@ public class Station {
 		return -1; // si aucun velo libre trouvé
 	}
 	
-	//TODO : retourner aussi nombre de vélos (voir bonus)
 	public Station getStationLaPlusProche()
 	{
 		Station stationPlusProche = null;
@@ -201,7 +200,7 @@ public class Station {
 	        {
 	        	distanceMinimale=distanceCalculee;
 	        	stationPlusProche=stationTemp;
-	        }	        
+	        }	 
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 		return stationPlusProche;
@@ -226,53 +225,53 @@ public class Station {
 		else
 			return false;
 	}
-	//TODO : à supprimer ?
-	public static Station getStationSaturee()
-	{
-		Station stationSatureee = null;
-		Iterator it = lesStations.entrySet().iterator();
-		
-	    while (it.hasNext()) {
-	        Map.Entry pair = (Map.Entry)it.next();
-	        Integer idStation = (Integer) pair.getKey();
-	        Station stationListe = (Station) pair.getValue();
-	        stationSatureee = stationListe;
-	        
-	        if(stationListe.capacite > stationSatureee.capacite)
-	        {
-	        	stationSatureee = stationListe;
-	        }
 
-	        
-	        it.remove(); // avoids a ConcurrentModificationException
-	    }
-	    
-	    return stationSatureee;
-	}
-	
-	//TODO : à supprimer ?
-	public static Station getStationEnPenurie()
-	{
-		Station stationEnPenurie = null;
-		Iterator it = lesStations.entrySet().iterator();
-		
-	    while (it.hasNext()) {
-	        Map.Entry pair = (Map.Entry)it.next();
-	        Integer idStation = (Integer) pair.getKey();
-	        Station stationListe = (Station) pair.getValue();
-	        stationEnPenurie = stationListe;
-	        
-	        if(stationListe.capacite == 0)
-	        {
-	        	stationEnPenurie = stationListe;
-	        }
+//	public static Station getStationSaturee()
+//	{
+//		Station stationSatureee = null;
+//		Iterator it = lesStations.entrySet().iterator();
+//		
+//	    while (it.hasNext()) {
+//	        Map.Entry pair = (Map.Entry)it.next();
+//	        Integer idStation = (Integer) pair.getKey();
+//	        Station stationListe = (Station) pair.getValue();
+//	        stationSatureee = stationListe;
+//	        
+//	        if(stationListe.capacite > stationSatureee.capacite)
+//	        {
+//	        	stationSatureee = stationListe;
+//	        }
+//
+//	        
+//	        it.remove(); // avoids a ConcurrentModificationException
+//	    }
+//	    
+//	    return stationSatureee;
+//	}
+//	
 
-	        
-	        it.remove(); // avoids a ConcurrentModificationException
-	    }
-	    
-	    return stationEnPenurie;
-	}
+//	public static Station getStationEnPenurie()
+//	{
+//		Station stationEnPenurie = null;
+//		Iterator it = lesStations.entrySet().iterator();
+//		
+//	    while (it.hasNext()) {
+//	        Map.Entry pair = (Map.Entry)it.next();
+//	        Integer idStation = (Integer) pair.getKey();
+//	        Station stationListe = (Station) pair.getValue();
+//	        stationEnPenurie = stationListe;
+//	        
+//	        if(stationListe.capacite == 0)
+//	        {
+//	        	stationEnPenurie = stationListe;
+//	        }
+//
+//	        
+//	        it.remove(); // avoids a ConcurrentModificationException
+//	    }
+//	    
+//	    return stationEnPenurie;
+//	}
 	
 	public static boolean hasMaitre()
 	{
